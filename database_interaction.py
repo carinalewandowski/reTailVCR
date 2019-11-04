@@ -5,7 +5,7 @@ def get_available_db():
     connection = None
     try:
         connection = psycopg2.connect(user = "postgres",
-                                      password = "Super123",
+                                      password = "*****",
                                       host = "localhost",
                                       port = "5432",
                                       database = "retail_db")
