@@ -4,7 +4,7 @@ import psycopg2
 def add_to_db():
     try:
         connection = psycopg2.connect(user = "postgres",
-                                      password = "Super123",
+                                      password = "*******",
                                       host = "localhost",
                                       port = "5432",
                                       database = "retail_db")
