@@ -8,6 +8,8 @@
 from sys import argv, stderr, exit
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
+from database_interaction import get_available_db
+#import psycopg2
 
 #-----------------------------------------------------------------------
 
@@ -32,8 +34,10 @@ def buy_item_control():
 @app.route('/')
 def home_control():
     try:
-
-        html = render_template('home_view.html')
+        print("1")
+        results = get_available_db()
+        print(len(results))
+        html = render_template('home_view.html', results=results)
         response = make_response(html)
         return response
 
@@ -57,8 +61,15 @@ def history_control():
 
 #-----------------------------------------------------------------------
 
+
+
+#-----------------------------------------------------------------------
+
+
 if __name__ == '__main__':
     if len(argv) != 2:
         print('Usage: ' + argv[0] + ' port')
         exit(1)
+    # add things to db
+    # 
     app.run(host='0.0.0.0', port=int(argv[1]), debug=True)

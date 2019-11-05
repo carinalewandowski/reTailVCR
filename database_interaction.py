@@ -2,39 +2,37 @@ import psycopg2
 
 
 def get_available_db():
-    connection = None
     try:
         connection = psycopg2.connect(user = "postgres",
-                                      password = "*****",
+                                      password = "Super123",
                                       host = "localhost",
                                       port = "5432",
                                       database = "retail_db")
 
         cursor = connection.cursor()
+       
+        cursor.execute("""SELECT * from "Available_Items";""")
+        results = cursor.fetchall()
 
-        cursor.execute("""SELECT * FROM "Available_Items";""")
-        record = cursor.fetchone()
-        print(record[1],"\n")
-        print(record[3],"\n")
+        return results   
 
-        
+    except (Exception, psycopg2.Error) as error:
 
-    except (Exception, psycopg2.Error) as error :
         print ("Error while connecting to PostgreSQL", error)
 
     finally:
+    #closing database connection.
         if(connection):
             cursor.close()
             connection.close()
             print("PostgreSQL connection is closed")
 
-#--------------------------------------------------------------------------------
 
+#---------------------------------------------------------------------
 def add_to_db():
-    connection = None
     try:
         connection = psycopg2.connect(user = "postgres",
-                                      password = "*******",
+                                      password = "Super123",
                                       host = "localhost",
                                       port = "5432",
                                       database = "retail_db")
@@ -63,15 +61,15 @@ def add_to_db():
         item_data = [[1, '2019-11-04', 'ps21', 2, None, 'animal crackers', 'crackers'], 
         [2, '2019-11-03', 'pablob', 341, None, 'live animal', 'elephant'], 
         [3, '2019-11-02', 'carinal', 10, None, 'pet animal', 'animal']]
-        # for entry in item_data:
-        #     postgres_insert_query = """ INSERT INTO "Available_Items" 
-        #     (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMAGE, DESCRIPTION, TITLE) VALUES (%s,%s,%s,%s,%s,%s,%s)"""
-        #     record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6])
-        #     cursor.execute(postgres_insert_query, record_to_insert)
+        for entry in item_data:
+            postgres_insert_query = """ INSERT INTO "Available_Items" 
+            (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMAGE, DESCRIPTION, TITLE) VALUES (%s,%s,%s,%s,%s,%s,%s)"""
+            record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6])
+            cursor.execute(postgres_insert_query, record_to_insert)
 
-        #     connection.commit()
-        #     count = cursor.rowcount
-        #     print (count, "Record inserted successfully into mobile table")
+            connection.commit()
+            count = cursor.rowcount
+            print (count, "Record inserted successfully into mobile table")
 
     except (Exception, psycopg2.Error) as error :
         print ("Error while connecting to PostgreSQL", error)
@@ -85,3 +83,4 @@ def add_to_db():
 if __name__ == '__main__':
     #add_to_db()
     get_available_db()
+

@@ -4,13 +4,41 @@
 <html>
    <head>
       <title>reTail Home Page</title>
+      <style>
+         table, th, td {
+            border: 1px solid black;
+         }
+      </style>
    </head>
    <body>
       <h2>Popular Items</h2>
       <hr>
       <!-- filters somewhere, maybe just a basic list for now? -->
       <!-- --------------------------------------------------------------------------------------------------- -->
-      <a href="http://localhost:1001/buy_item_control">item</a>
+      <!-- <a href="http://localhost:1001/buy_item_control">item</a> -->
       <a href="http://localhost:1001/history_control">history</a>
+
+      <table>
+            <tr>
+                <th align="left">Item ID</th>
+                <th align="left">Date</th>
+                <th align="left">Seller NETID</th>
+                <th align="left">Price</th>
+                <th align="left">Image</th>
+                <th align="left">Name</th>
+                <th align="left">Description</th>
+            </tr>
+            {% for entry in results: %}
+                <tr>
+                    <td align="left"><a href="http://localhost:1001/buy_item_control">{{entry[0]}}</a></td>
+                    <td align="left">{{entry[1]}}</td>
+                    <td align="left">{{entry[2]}}</td>
+                    <td align="left">{{entry[3]}}</td>
+                    <td align="left">{{entry[4]}}</td>
+                    <td align="left">{{entry[6]}}</td>
+                    <td align="left">{{entry[5]}}</td>
+                </tr>
+            {% endfor %} 
+        </table> 
    </body>
 </html>
