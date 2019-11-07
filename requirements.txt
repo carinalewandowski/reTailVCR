@@ -1,5 +1,1 @@
-buy_item_view.html
-databasse_interaction.py
-history_view.html
-home_view.html
-reTail_server.py
+Flask==0.8
