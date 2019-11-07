@@ -60,7 +60,17 @@ def history_control():
         exit(1) 
 
 #-----------------------------------------------------------------------
+@app.route('/sell_control')
+def sell_control():
+    try:
 
+        html = render_template('sell_item_view.html')
+        response = make_response(html)
+        return response
+
+    except Exception as e:
+        print("error" + str(e), file=stderr)
+        exit(1) 
 
 
 #-----------------------------------------------------------------------

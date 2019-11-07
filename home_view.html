@@ -11,13 +11,15 @@
       </style>
    </head>
    <body>
-      <h2>Popular Items</h2>
+      <h2>reTail Home Page: Welcome :) </h2>
+      <br>
+      <a href="/history_control">history</a>
+      <br>
+      <a href="/sell_control">sell</a>
       <hr>
       <!-- filters somewhere, maybe just a basic list for now? -->
       <!-- --------------------------------------------------------------------------------------------------- -->
       <!-- <a href="http://localhost:1001/buy_item_control">item</a> -->
-      <a href="http://localhost:1001/history_control">history</a>
-
       <table>
             <tr>
                 <th align="left">Item ID</th>
@@ -30,7 +32,7 @@
             </tr>
             {% for entry in results: %}
                 <tr>
-                    <td align="left"><a href="http://localhost:1001/buy_item_control">{{entry[0]}}</a></td>
+                    <td align="left"><a href="/buy_item_control">{{entry[0]}}</a></td>
                     <td align="left">{{entry[1]}}</td>
                     <td align="left">{{entry[2]}}</td>
                     <td align="left">{{entry[3]}}</td>
