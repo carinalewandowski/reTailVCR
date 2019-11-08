@@ -105,6 +105,32 @@ def add_to_db():
             connection.close()
             print("PostgreSQL connection is closed")
 
+def get_item(itemid):
+    try:
+        connection = psycopg2.connect(user = user,
+                                      password = pwd,
+                                      host = host,
+                                      port = port,
+                                      database = db)
+
+        cursor = connection.cursor()
+       
+        cursor.execute("""SELECT * from "available_items" WHERE item_id="""+itemid+";")
+        entry = cursor.fetchall()
+
+        return entry   
+
+    except (Exception, psycopg2.Error) as error:
+
+        print ("Error while connecting to PostgreSQL", error)
+
+    finally:
+    #closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
 if __name__ == '__main__':
     add_to_db()
     #get_available_db()
