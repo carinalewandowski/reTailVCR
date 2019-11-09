@@ -1,1 +1,1 @@
-web: gunicorn src.reTail_server:app
+web: gunicorn reTail_server:app
