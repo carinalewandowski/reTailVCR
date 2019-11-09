@@ -1,1 +1,1 @@
-web: gunicorn reTail_server.py:re-tail
+web: gunicorn reTail_server:re-tail
