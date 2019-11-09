@@ -81,9 +81,10 @@ def history_control():
 
 
 if __name__ == '__main__':
-    if len(argv) != 2:
-        print('Usage: ' + argv[0] + ' port')
-        exit(1)
-    # add things to db
-    # 
-    app.run(host='0.0.0.0', port=int(argv[1]), debug=True)
+    # if len(argv) != 2:
+    #     print('Usage: ' + argv[0] + ' port')
+    #     exit(1)
+    # # add things to db
+    # # 
+    # app.run(host='0.0.0.0', port=int(argv[1]), debug=True)
+    app.run()
