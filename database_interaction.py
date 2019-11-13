@@ -172,6 +172,37 @@ def add_to_db():
             connection.close()
             print("PostgreSQL connection is closed")
 
+#---------------------------------------------------------------------
+
+def delete_from_db(itemId):
+    try:
+        connection = psycopg2.connect(user = user,
+                                      password =pwd,
+                                      host = host,
+                                      port = port,
+                                      database = db)
+
+        cursor = connection.cursor()
+
+        postgres_delete_query = """ DELETE FROM "available_items" WHERE ITEM_ID = %s """
+        record_to_delete = (itemId, )
+        cursor.execute(postgres_delete_query, record_to_delete)
+
+        connection.commit()
+        count = cursor.rowcount
+        print (count, "Record deleted successfully from table")
+
+    except (Exception, psycopg2.Error) as error :
+        print ("Error while connecting to PostgreSQL", error)
+    finally:
+    #closing database connection.
+        if(connection):
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
+#---------------------------------------------------------------------
+
 def get_item(itemid):
     try:
         connection = psycopg2.connect(user = user,
@@ -200,7 +231,8 @@ def get_item(itemid):
 
 if __name__ == '__main__':
     #get_image(13)
-    add_pic_db()
+    #add_pic_db()
     #add_to_db()
+    delete_from_db(19)
     #get_available_db()
 
