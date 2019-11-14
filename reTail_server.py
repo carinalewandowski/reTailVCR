@@ -8,7 +8,7 @@
 from sys import argv, stderr, exit
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
-from database_interaction import get_available_db, get_item
+from database_interaction import Database
 #import psycopg2
 
 #-----------------------------------------------------------------------
@@ -17,19 +17,22 @@ app = Flask(__name__, template_folder='.')
 
 #-----------------------------------------------------------------------
 
-
-
 @app.route('/item')
 def item():
     itemid = request.args.get('itemid')
-    entry = get_item(itemid)
+
     try:
+        database = Database()
+        database.connect()
+        entry = database.get_item(itemid)
+        database.disconnect()
         html = render_template('item.html', entry=entry[0])
         response = make_response(html)
         return response
     except Exception as e:
         print("error" + str(e), file=stderr)
         exit(1)
+
 #-----------------------------------------------------------------------
 
 @app.route('/sell')
@@ -41,6 +44,7 @@ def sell():
     except Exception as e:
         print("error" + str(e), file=stderr)
         exit(1)
+
 #-----------------------------------------------------------------------
 
 @app.route('/redirect_home_control')
@@ -49,7 +53,12 @@ def sell():
 def home_control():
     try:
         print("1")
-        results = get_available_db()
+
+        database = Database()
+        database.connect()
+        results = database.get_available_db()
+        database.disconnect()
+
         print(len(results))
         html = render_template('index.html', results=results)
         response = make_response(html)
@@ -75,7 +84,16 @@ def history_control():
 
 #-----------------------------------------------------------------------
 
-
+@app.route('/search')
+def search():
+    try:
+        string = request.args.get('string')
+        if (string is None) or (string.strip() == ''):
+            string = ''
+        
+    except Exception as e:
+        print('error' + str(e), file=stderr)
+        exit(1)
 
 #-----------------------------------------------------------------------
 
