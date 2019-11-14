@@ -20,6 +20,42 @@ db = "d6om41i3v32f"
 # Heroku CLI
 # heroku pg:psql postgresql-animated-99582 --app re-tail
 
+#---------------------------------------------------------------------
+
+class Database:
+
+    def __init__(self):
+        self._connection = None
+    
+    def connect(self):
+        self._connection = psycopg2.connect(user = user,
+                                            password = pwd,
+                                            host = host,
+                                            port = port,
+                                            database = db)
+    
+    def disconnect(self):
+        if self._connection:
+            self._connection.close()
+            print("PostgreSQL connection is closed")
+    
+    def get_available_db(self):
+        cursor = self._connection.cursor()
+
+        cursor.execute("""SELECT * from "available_items";""")
+        results = cursor.fetchall()
+
+        return results
+    
+    def get_item(self, itemid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "available_items" WHERE item_id="""+itemid+";")
+        entry = cursor.fetchall()
+        
+        return entry
+
 
 # get all available items from Database
 def get_available_db():
@@ -105,6 +141,8 @@ def add_to_db():
             connection.close()
             print("PostgreSQL connection is closed")
 
+#---------------------------------------------------------------------
+
 def get_item(itemid):
     try:
         connection = psycopg2.connect(user = user,
@@ -115,6 +153,7 @@ def get_item(itemid):
 
         cursor = connection.cursor()
        
+       # NOTE: Shouldn't this be a prepared statement?
         cursor.execute("""SELECT * from "available_items" WHERE item_id="""+itemid+";")
         entry = cursor.fetchall()
 
