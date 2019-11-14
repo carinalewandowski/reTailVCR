@@ -37,7 +37,6 @@ class Database:
     def disconnect(self):
         if self._connection:
             self._connection.close()
-            print("PostgreSQL connection is closed")
     
     def get_available_db(self):
         cursor = self._connection.cursor()
@@ -55,6 +54,16 @@ class Database:
         entry = cursor.fetchall()
         
         return entry
+    
+    def delete_from_db(self, itemid):
+        cursor = self._connection.cursor()
+
+        postgres_delete_query = """ DELETE FROM "available_items" WHERE ITEM_ID = %s """
+        record_to_delete = (itemid, )
+        cursor.execute(postgres_delete_query, record_to_delete)
+
+        self._connection.commit()
+
 
 
 
