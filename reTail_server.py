@@ -52,16 +52,14 @@ def sell():
 @app.route('/')
 def home_control():
     try:
-        print("1")
-
         database = Database()
         database.connect()
         results = database.get_available_db()
         database.disconnect()
 
-        print(len(results))
-        html = render_template('index.html', results=results)
+        html = render_template('index.html', results=results, lastSearch='')
         response = make_response(html)
+        response.set_cookie('lastSearch', '')
         return response
 
     except Exception as e:
@@ -90,6 +88,16 @@ def search():
         string = request.args.get('string')
         if (string is None) or (string.strip() == ''):
             string = ''
+        
+        database = Database()
+        database.connect()
+        results = database.search(string)
+        database.disconnect()
+
+        html = render_template('index.html', results=results, lastSearch=string)
+        response = make_response(html)
+        response.set_cookie('lastSearch', string)
+        return response
         
     except Exception as e:
         print('error' + str(e), file=stderr)
