@@ -69,7 +69,7 @@ class Database:
 
         query_string = '%' + string + '%'
 
-        postgres_search_string = """SELECT * FROM "available_items" WHERE (description LIKE %s) OR (title LIKE %s);"""
+        postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s) OR (title ILIKE %s);"""
         string_to_search = (query_string, query_string)
         cursor.execute(postgres_search_string, string_to_search)
 
@@ -85,7 +85,22 @@ class Database:
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
 
+
+
+
+
+
+
+
+
+
+#---------------------------------------------------------------------
+# in progress features
+#---------------------------------------------------------------------
 def get_image(item_id):
     try:
         entry = get_item(str(13))
@@ -301,6 +316,7 @@ if __name__ == '__main__':
     #delete_from_db(19)
     database1 = Database()
     database1.connect()
-    database1.add_to_db(111, "2019-11-15", "jjsalama", 999, None, "incredibly large elephant", "Jumbo Elephant")
+    #database1.add_to_db(1162, "2019-11-15", "jjsalama", 9999, None, "unbelievably cool thing", "Cool water bottle")
+    database1.delete_from_db(1162)
     #get_available_db()
 
