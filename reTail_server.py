@@ -47,6 +47,18 @@ def sell():
 
 #-----------------------------------------------------------------------
 
+@app.route('/track')
+def track():
+    try:
+        html = render_template('track.html')
+        response = make_response(html)
+        return response
+    except Exception as e:
+        print("error" + str(e), file=stderr)
+        exit(1)
+
+#-----------------------------------------------------------------------
+
 @app.route('/redirect_home_control')
 @app.route('/index')
 @app.route('/')
