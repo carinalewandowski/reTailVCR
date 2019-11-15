@@ -76,7 +76,14 @@ class Database:
         results = cursor.fetchall()
         return results
 
-
+    def add_to_db(self, itemid, postdate, netid, price, image, description, title):
+        cursor = self._connection.cursor()
+        entry = [itemid, postdate, netid, price, image, description, title]
+        postgres_insert_query = """ INSERT INTO "available_items" 
+        (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMAGE, DESCRIPTION, TITLE) VALUES (%s,%s,%s,%s,%s,%s,%s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6])
+        cursor.execute(postgres_insert_query, record_to_insert)
+        self._connection.commit()
 
 
 def get_image(item_id):
@@ -291,6 +298,9 @@ if __name__ == '__main__':
     #get_image(13)
     #add_pic_db()
     #add_to_db()
-    delete_from_db(19)
+    #delete_from_db(19)
+    database1 = Database()
+    database1.connect()
+    database1.add_to_db(111, "2019-11-15", "jjsalama", 999, None, "incredibly large elephant", "Jumbo Elephant")
     #get_available_db()
 
