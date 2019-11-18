@@ -4,12 +4,11 @@
 # backend server
 # Author: Paskalino Spirollari
 #-----------------------------------------------------------------------
-### testing vc
 
 from sys import argv, stderr, exit
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
-from database_interaction import get_available_db, get_item
+from database_interaction import Database
 #import psycopg2
 
 #-----------------------------------------------------------------------
@@ -18,19 +17,22 @@ app = Flask(__name__, template_folder='.')
 
 #-----------------------------------------------------------------------
 
-
-
 @app.route('/item')
 def item():
     itemid = request.args.get('itemid')
-    entry = get_item(itemid)
+
     try:
+        database = Database()
+        database.connect()
+        entry = database.get_item(itemid)
+        database.disconnect()
         html = render_template('item.html', entry=entry[0])
         response = make_response(html)
         return response
     except Exception as e:
         print("error" + str(e), file=stderr)
         exit(1)
+
 #-----------------------------------------------------------------------
 
 @app.route('/sell')
@@ -42,6 +44,19 @@ def sell():
     except Exception as e:
         print("error" + str(e), file=stderr)
         exit(1)
+
+#-----------------------------------------------------------------------
+
+@app.route('/track')
+def track():
+    try:
+        html = render_template('track.html')
+        response = make_response(html)
+        return response
+    except Exception as e:
+        print("error" + str(e), file=stderr)
+        exit(1)
+
 #-----------------------------------------------------------------------
 
 @app.route('/redirect_home_control')
@@ -49,11 +64,14 @@ def sell():
 @app.route('/')
 def home_control():
     try:
-        print("1")
-        results = get_available_db()
-        print(len(results))
-        html = render_template('index.html', results=results)
+        database = Database()
+        database.connect()
+        results = database.get_available_db()
+        database.disconnect()
+
+        html = render_template('index.html', results=results, lastSearch='')
         response = make_response(html)
+        response.set_cookie('lastSearch', '')
         return response
 
     except Exception as e:
@@ -76,7 +94,26 @@ def history_control():
 
 #-----------------------------------------------------------------------
 
+@app.route('/search')
+def search():
+    try:
+        string = request.args.get('string')
+        if (string is None) or (string.strip() == ''):
+            string = ''
+        
+        database = Database()
+        database.connect()
+        results = database.search(string)
+        database.disconnect()
 
+        html = render_template('index.html', results=results, lastSearch=string)
+        response = make_response(html)
+        response.set_cookie('lastSearch', string)
+        return response
+        
+    except Exception as e:
+        print('error' + str(e), file=stderr)
+        exit(1)
 
 #-----------------------------------------------------------------------
 
