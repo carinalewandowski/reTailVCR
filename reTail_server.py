@@ -87,7 +87,13 @@ def sell():
 @app.route('/track')
 def track():
     try:
-        html = render_template('track.html')
+        database = Database()
+        database.connect()
+        netid_results = database.get_all_items_from_netid("carinal")
+        bidder_results = database.get_all_items_from_maxbidder("carinal")
+        database.disconnect()
+
+        html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
         response = make_response(html)
         return response
     except Exception as e:
