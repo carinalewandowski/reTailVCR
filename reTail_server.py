@@ -49,7 +49,7 @@ def item():
         if bid is None:
             bid = ''
         #if netid is None:
-        netid = 'carinal'
+        netid = username
 
         # add listing to database
         database = Database()
@@ -102,7 +102,7 @@ def sell():
         #if postdate is None:
         postdate = '2019-11-18'
         #if netid is None:
-        netid = 'carinal'
+        netid = username
         #if image is None:
         image = ''
     
@@ -144,8 +144,8 @@ def track():
         database.connect()
         database.delete_from_db(itemid)
 
-        netid_results = database.get_all_items_from_netid('carinal')
-        bidder_results = database.get_all_items_from_maxbidder('carinal')
+        netid_results = database.get_all_items_from_netid(username)
+        bidder_results = database.get_all_items_from_maxbidder(username)
 
         database.disconnect()
 
@@ -156,8 +156,8 @@ def track():
     else:
         database = Database()
         database.connect()
-        netid_results = database.get_all_items_from_netid("carinal")
-        bidder_results = database.get_all_items_from_maxbidder("carinal")
+        netid_results = database.get_all_items_from_netid(username)
+        bidder_results = database.get_all_items_from_maxbidder(username)
         database.disconnect()
 
         html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
@@ -220,7 +220,7 @@ def search():
         check_user(username)
     else:
         username = session.get('username')
-        
+
     try:
         string = request.args.get('string')
         if (string is None) or (string.strip() == ''):
