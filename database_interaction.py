@@ -85,8 +85,12 @@ class Database:
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
-    def set_max_bid(self, max_bid, max_bid_user):
+    def bid(self, itemid, max_bid, max_bid_user):
         cursor = self._connection.cursor()
+        postgres_update_query = """UPDATE "available_items" SET price = %s, max_bid_user = %s WHERE ITEM_ID = %s;"""
+        record_to_update = (max_bid, max_bid_user, itemid)
+        cursor.execute(postgres_update_query, record_to_update)
+        self._connection.commit()
 
 #---------------------------------------------------------------------
 
