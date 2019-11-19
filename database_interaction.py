@@ -38,6 +38,27 @@ class Database:
         if self._connection:
             self._connection.close()
     
+    def user_exists(self, netid):
+        cursor = self._connection.cursor()
+        cursor.execute("""SELECT * from "users" WHERE netid = %s;""", (netid, ))
+        user = cursor.fetchone()
+
+        if user is None:
+            return False
+        return True
+    
+    def get_user(self, netid):
+        cursor = self._connection.cursor()
+        cursor.execute("""SELECT * from "users" WHERE netid = %s;""", (netid, ))
+
+        return cursor.fetchone()
+    
+    def add_user(self, netid):
+        cursor = self._connection.cursor()
+        cursor.execute(""" INSERT INTO "users" (NETID) VALUES (%s);""", (netid, ))
+        self._connection.commit()
+        
+    
     def get_available_db(self):
         cursor = self._connection.cursor()
 
