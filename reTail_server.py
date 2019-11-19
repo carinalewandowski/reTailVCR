@@ -18,21 +18,40 @@ app = Flask(__name__, template_folder='.')
 
 #-----------------------------------------------------------------------
 
-@app.route('/item')
+@app.route('/item', methods=('GET', 'POST'))
 def item():
     itemid = request.args.get('itemid')
 
-    try:
+    if request.method == 'POST':
+        bid = request.form['bid']
+        print(bid)
+        if bid is None:
+            bid = ''
+        #if netid is None:
+        netid = 'carinal'
+
+        # add listing to database
         database = Database()
         database.connect()
+        database.bid(itemid, bid, netid)
         entry = database.get_item(itemid)
         database.disconnect()
+
         html = render_template('item.html', entry=entry[0])
         response = make_response(html)
         return response
-    except Exception as e:
-        print("error" + str(e), file=stderr)
-        exit(1)
+    else:
+        try:
+            database = Database()
+            database.connect()
+            entry = database.get_item(itemid)
+            database.disconnect()
+            html = render_template('item.html', entry=entry[0])
+            response = make_response(html)
+            return response
+        except Exception as e:
+            print("error" + str(e), file=stderr)
+            exit(1)
 
 #-----------------------------------------------------------------------
 
