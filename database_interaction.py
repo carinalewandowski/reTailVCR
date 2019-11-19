@@ -85,6 +85,9 @@ class Database:
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
+    def set_max_bid(self, max_bid, max_bid_user):
+        cursor = self._connection.cursor()
+
 #---------------------------------------------------------------------
 
 if __name__ == '__main__':
