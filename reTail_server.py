@@ -67,7 +67,7 @@ def sell():
         database.add_to_db(itemid, postdate, netid, price, image, description, title)
         database.disconnect()
 
-        html = render_template('sell.html')
+        html = render_template('confirmation.html')
         response = make_response(html)
         return response
 
