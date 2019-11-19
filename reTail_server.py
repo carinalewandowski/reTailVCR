@@ -11,6 +11,7 @@ from flask import render_template, session
 from database_interaction import Database
 from CASClient import CASClient
 import random
+import datetime
 #import psycopg2
 
 #-----------------------------------------------------------------------
@@ -100,7 +101,7 @@ def sell():
         #if itemid is None:
         itemid = random.uniform(100, 1000000)
         #if postdate is None:
-        postdate = '2019-11-18'
+        postdate = datetime.date.today()
         #if netid is None:
         netid = username
         #if image is None:
