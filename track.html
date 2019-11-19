@@ -11,7 +11,7 @@
   <title>reTail // track</title>
 
   <!-- Bootstrap core CSS -->
-  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
 
   <!-- Custom styles for this template -->
   <link href="{{ url_for('static', filename='css/retail.css') }}" rel="stylesheet">
@@ -55,18 +55,15 @@
                 <div class="col">
                     <table>
                         <tr>
-                            <th>Item Name: {{entry[6]}}</th>
+                            <th><a href=../item?itemid={{entry[0]}}>{{entry[6]}}</a></th>
                         </tr>
                         <tr>
-                            <td>Item Description: {{entry[5]}}</td>
+                            <td>${{entry[3]}}</td>
                         </tr>
                     </table>
                 </div>
                 <div class="col">
                         <table>
-                        <tr>
-                            <td>Current Max Bid: ${{entry[3]}}</td>
-                        </tr>
                         <tr>
                             <td><button type="submit" class="btn btn-primary">Accept Bid</button></td>
                         </tr>
@@ -82,18 +79,15 @@
                     <div class="col">
                         <table>
                             <tr>
-                                <th>Item Name: {{entry[6]}}</th>
+                                <th><a href=../item?itemid={{entry[0]}}>{{entry[6]}}</a></th>
                             </tr>
                             <tr>
-                                <td>Item Description: {{entry[5]}}</td>
+                                <td>${{entry[3]}}</td>
                             </tr>
                         </table>
                     </div>
                     <div class="col">
                             <table>
-                            <tr>
-                                <td>My Current Bid: ${{entry[3]}}</td>
-                            </tr>
                             <tr>
                                 <td><button type="submit" class="btn btn-primary">Update Bid</button></td>
                             </tr>
@@ -107,9 +101,9 @@
   <!-- /.container -->
 
   <!-- Footer -->
-  <footer class="py-0 bg-dark fixed-bottom">
+  <footer class="py-0 bg-white fixed-bottom">
     <div class="container">
-      <p class="m-0 text-center text-white"><small>Copyright &copy; reTail 2019</small></p>
+      <p class="m-0 text-center text-dark"><small>copyright &copy; reTail 2019</small></p>
     </div>
     <!-- /.container -->
   </footer>
