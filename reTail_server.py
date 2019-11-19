@@ -9,6 +9,7 @@ from sys import argv, stderr, exit
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 from database_interaction import Database
+import random
 #import psycopg2
 
 #-----------------------------------------------------------------------
@@ -52,7 +53,7 @@ def sell():
         if price is None:
             price = ''
         #if itemid is None:
-        itemid = '324'
+        itemid = random.uniform(100, 1000000)
         #if postdate is None:
         postdate = '2019-11-18'
         #if netid is None:
