@@ -11,7 +11,7 @@
   <title>reTail // sell</title>
 
   <!-- Bootstrap core CSS -->
-  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
 
   <!-- Custom styles for this template -->
   <link href="{{ url_for('static', filename='css/retail.css') }}" rel="stylesheet">
@@ -21,8 +21,8 @@
 <body>
 
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container">
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="container" style="padding-right:0;padding-left:0">
       <a class="navbar-brand" href="..">reTail</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -38,7 +38,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="track">track</a>
+            <a class="nav-link" href="track" style="padding-right:0">track</a>
           </li>
         </ul>
       </div>
@@ -46,14 +46,14 @@
   </nav>
 
   <!-- Page Content -->
-  <div class="container" style="justify-content: center">
+  <div class="container" style="justify-content: center;padding-left:0;padding-right:0">
 
     <div class="row">
 
       <div class="col-lg-3"></div>
       </div>
 
-      <div class="col" style="margin-bottom: 30px">
+      <div class="col" style="margin-bottom: 30px;padding-left:0;padding-right:0">
 
         <h1 class="my-4">Sell an item</h1>
         <body>Please enter a name, description, and starting price for your item.</body>
@@ -66,8 +66,8 @@
               <label class="custom-file-label" for="inputGroupFile01">Upload image</label>
             </div>
           </div>
-          <div class="card-body">
-            <form action="sell" method="post">
+          <br>
+          <form action="sell" method="post">
               <div class="form-group">
                 <strong>Item Name:</strong><br>
                 <input type="text" class="form-control" id="bid" name="title" aria-describedby="emailHelp"><br>
@@ -78,8 +78,7 @@
               </div>
               <input type="submit" class="btn btn-primary" value="Upload Listing">
               <!--button type="submit" class="btn btn-primary">Upload Listing</button-->
-            </form>
-          </div>
+          </form>
         </div>
         <!-- /.card -->
 
@@ -111,9 +110,9 @@
   <!-- /.container -->
 
   <!-- Footer -->
-  <footer class="py-0 bg-dark fixed-bottom">
+  <footer class="py-0 bg-white fixed-bottom">
     <div class="container">
-      <p class="m-0 text-center text-white"><small>Copyright &copy; reTail 2019</small></p>
+      <p class="m-0 text-center text-dark"><small>copyright &copy; reTail 2019</small></p>
     </div>
     <!-- /.container -->
   </footer>

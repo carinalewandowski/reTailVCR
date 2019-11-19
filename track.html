@@ -11,7 +11,7 @@
   <title>reTail // track</title>
 
   <!-- Bootstrap core CSS -->
-  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
 
   <!-- Custom styles for this template -->
   <link href="{{ url_for('static', filename='css/retail.css') }}" rel="stylesheet">
@@ -21,8 +21,8 @@
 <body>
 
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-    <div class="container">
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="container" style="padding-right:0;padding-left:0">
       <a class="navbar-brand" href="..">reTail</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -36,7 +36,7 @@
             <a class="nav-link" href="sell">sell</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="track">track
+            <a class="nav-link" href="track" style="padding-right:0">track
                 <span class="sr-only">(current)</span>
             </a>
           </li>
@@ -49,23 +49,21 @@
   <div class="container">
       <div class="row" style="padding-top: 5%">
           <div class ="col"><center><strong><font size=6>I'm Selling:</font></strong></center>
+            {% for entry in netid_results: %}
             <!-- Entry Start -->
             <div class ="row" style="padding-top: 5%">
-                <div class="col">
+                <div class="col" style="padding-left: 0">
                     <table>
                         <tr>
-                            <th>Item Name</th>
+                            <th><a href=../item?itemid={{entry[0]}}>{{entry[6]}}</a></th>
                         </tr>
                         <tr>
-                            <td>Item Description</td>
+                            <td>${{entry[3]}}</td>
                         </tr>
                     </table>
                 </div>
                 <div class="col">
-                        <table>
-                        <tr>
-                            <td>Current Max Bid</td>
-                        </tr>
+                        <table align="right">
                         <tr>
                             <td><button type="submit" class="btn btn-primary">Accept Bid</button></td>
                         </tr>
@@ -73,86 +71,42 @@
                 </div>
             </div>
             <!-- Entry End -->
-            <!-- Entry Start -->
-            <div class ="row" style="padding-top: 5%">
-                 <div class="col">
-                    <table>
-                        <tr>
-                            <th>Item Name</th>
-                        </tr>
-                        <tr>
-                            <td>Item Description</td>                            </tr>
-                    </table>
-                </div>
-                <div class="col">
-                    <table>
-                        <tr>
-                            <td>Current Max Bid</td>
-                        </tr>
-                        <tr>
-                            <td><button type="submit" class="btn btn-primary">Accept Bid</button></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <!-- Entry End -->
-            <!-- Entry Start -->
-            <div class ="row" style="padding-top: 5%">
-                <div class="col">
-                    <table>
-                        <tr>
-                            <th>Item Name</th>
-                        </tr>
-                        <tr>
-                            <td>Item Description</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col">
-                        <table>
-                        <tr>
-                            <td>Current Max Bid</td>
-                        </tr>
-                        <tr>
-                            <td><button type="submit" class="btn btn-primary">Accept Bid</button></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <!-- Entry End -->
+            {% endfor %}
           </div>
           <div class="col"><center><strong><font size=6>I'm Bidding On:</font></strong></center>
+            {% for entry in bidder_results: %}
             <div class ="row" style="padding-top: 5%">
                     <div class="col">
                         <table>
                             <tr>
-                                <th>Item Name</th>
+                                <th><a href=../item?itemid={{entry[0]}}>{{entry[6]}}</a></th>
                             </tr>
                             <tr>
-                                <td>Item Description</td>
+                                <td>${{entry[3]}}</td>
                             </tr>
                         </table>
                     </div>
-                    <div class="col">
-                            <table>
-                            <tr>
-                                <td>My Current Bid</td>
-                            </tr>
+                    <div class="col" style="padding-right: 0">
+                            <table align="right">
                             <tr>
                                 <td><button type="submit" class="btn btn-primary">Update Bid</button></td>
                             </tr>
                         </table>
                     </div>
                 </div>
-        </div>
+                {% endfor %}
+            </div>
         </div>
   </div>
+  <br>
+  <br>
+  
   <!-- /.container -->
 
   <!-- Footer -->
-  <footer class="py-0 bg-dark fixed-bottom">
+  <footer class="py-0 bg-white fixed-bottom">
     <div class="container">
-      <p class="m-0 text-center text-white"><small>Copyright &copy; reTail 2019</small></p>
+      <p class="m-0 text-center text-dark"><small>copyright &copy; reTail 2019</small></p>
     </div>
     <!-- /.container -->
   </footer>

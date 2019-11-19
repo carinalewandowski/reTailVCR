@@ -9,6 +9,7 @@ from sys import argv, stderr, exit
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 from database_interaction import Database
+import random
 #import psycopg2
 
 #-----------------------------------------------------------------------
@@ -17,21 +18,40 @@ app = Flask(__name__, template_folder='.')
 
 #-----------------------------------------------------------------------
 
-@app.route('/item')
+@app.route('/item', methods=('GET', 'POST'))
 def item():
     itemid = request.args.get('itemid')
 
-    try:
+    if request.method == 'POST':
+        bid = request.form['bid']
+        print(bid)
+        if bid is None:
+            bid = ''
+        #if netid is None:
+        netid = 'carinal'
+
+        # add listing to database
         database = Database()
         database.connect()
+        database.bid(itemid, bid, netid)
         entry = database.get_item(itemid)
         database.disconnect()
+
         html = render_template('item.html', entry=entry[0])
         response = make_response(html)
         return response
-    except Exception as e:
-        print("error" + str(e), file=stderr)
-        exit(1)
+    else:
+        try:
+            database = Database()
+            database.connect()
+            entry = database.get_item(itemid)
+            database.disconnect()
+            html = render_template('item.html', entry=entry[0])
+            response = make_response(html)
+            return response
+        except Exception as e:
+            print("error" + str(e), file=stderr)
+            exit(1)
 
 #-----------------------------------------------------------------------
 
@@ -52,7 +72,7 @@ def sell():
         if price is None:
             price = ''
         #if itemid is None:
-        itemid = '324'
+        itemid = random.uniform(100, 1000000)
         #if postdate is None:
         postdate = '2019-11-18'
         #if netid is None:
@@ -66,7 +86,7 @@ def sell():
         database.add_to_db(itemid, postdate, netid, price, image, description, title)
         database.disconnect()
 
-        html = render_template('sell.html')
+        html = render_template('confirmation.html')
         response = make_response(html)
         return response
 
@@ -84,7 +104,13 @@ def sell():
 @app.route('/track')
 def track():
     try:
-        html = render_template('track.html')
+        database = Database()
+        database.connect()
+        netid_results = database.get_all_items_from_netid("carinal")
+        bidder_results = database.get_all_items_from_maxbidder("carinal")
+        database.disconnect()
+
+        html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
         response = make_response(html)
         return response
     except Exception as e:
