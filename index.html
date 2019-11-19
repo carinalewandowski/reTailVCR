@@ -53,7 +53,7 @@
 
     <div class="row">
 
-      <div class="col-lg-3" style="padding-top: 3%">
+      <div class="col-xs-3" style="padding-top: 3%">
 
         <!-- <h1 class="my-4">Shop Name</h1> -->
         <!-- <div class="list-group">
@@ -61,15 +61,23 @@
           <a href="#" class="list-group-item">Category 2</a>
           <a href="#" class="list-group-item">Category 3</a>
         </div> -->
-        <form action='search' method='get'>
-          <input type='text' name='string' value='{{lastSearch}}'>
-          <input type='submit' value='Search'>
-        </form>
-
+          <form action='search' method='get'>
+              <div class="row">
+                <div class="col-lg-7" style="padding-top:2%">
+                    <h4>Welcome to reTail, Princeton's centralized platform for buying and selling items. Browse listings below.</h4>
+                </div>
+                <div class="col-lg-4" style="padding-top: 3%">
+                    <input type="text" class="form-control" name='string' value='{{lastSearch}}'>
+                </div>
+                <div class="col-lg-1" style="padding-top: 3%">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+              </div>
+          </form>
       </div>
       <!-- /.col-lg-3 -->
 
-      <div class="col-lg-9" style="margin-bottom: 50px">
+      <div class="col-xs-3" style="margin-bottom: 30px">
 
         <!-- <div id="carouselExampleIndicators" class="carousel slide my-4" data-ride="carousel">
           <ol class="carousel-indicators">
@@ -98,7 +106,7 @@
           </a>
         </div> -->
 
-        <div class="row" style="padding-top: 3%"> 
+        <div class="row" style="padding-top: 5%"> 
           {% for entry in results: %}
             <div class="col-lg-4 col-md-6 mb-4">
               <div class="card h-100">
@@ -132,9 +140,9 @@
   <!-- /.container -->
 
   <!-- Footer -->
-  <footer class="py-2 bg-dark fixed-bottom">
+  <footer class="py-0 bg-dark fixed-bottom">
     <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; reTail 2019</p>
+      <p class="m-0 text-center text-white"><small>Copyright &copy; reTail 2019</small></p>
     </div>
     <!-- /.container -->
   </footer>

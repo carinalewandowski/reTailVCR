@@ -35,15 +35,51 @@ def item():
 
 #-----------------------------------------------------------------------
 
-@app.route('/sell')
+@app.route('/sell', methods=('GET', 'POST'))
 def sell():
-    try:
+
+    # parse user input for item upload details
+    # ***** need to handle other info still *****
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form['description']
+        price = request.form['price']
+
+        if title is None:
+            title = ''
+        if description is None:
+            description = ''
+        if price is None:
+            price = ''
+        #if itemid is None:
+        itemid = '324'
+        #if postdate is None:
+        postdate = '2019-11-18'
+        #if netid is None:
+        netid = 'carinal'
+        #if image is None:
+        image = ''
+    
+        # add listing to database
+        database = Database()
+        database.connect()
+        database.add_to_db(itemid, postdate, netid, price, image, description, title)
+        database.disconnect()
+
         html = render_template('sell.html')
         response = make_response(html)
         return response
-    except Exception as e:
-        print("error" + str(e), file=stderr)
-        exit(1)
+
+
+    
+    else:
+        try:
+            html = render_template('sell.html')
+            response = make_response(html)
+            return response
+        except Exception as e:
+            print("error" + str(e), file=stderr)
+            exit(1)
 
 #-----------------------------------------------------------------------
 
