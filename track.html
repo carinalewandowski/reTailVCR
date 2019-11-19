@@ -65,7 +65,12 @@
                 <div class="col">
                         <table align="right">
                         <tr>
-                            <td><button type="submit" class="btn btn-primary">Accept Bid</button></td>
+                            <td>
+                              <form action="track" method="post">
+                                <input type="hidden" name="itemid" value={{entry[0]}}>
+                                <button type="submit" class="btn btn-primary">Accept Bid</button>
+                              </form>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -89,7 +94,9 @@
                     <div class="col" style="padding-right: 0">
                             <table align="right">
                             <tr>
-                                <td><button type="submit" class="btn btn-primary">Update Bid</button></td>
+                                <td>
+                                  <a href=../item?itemid={{entry[0]}} class="btn btn-primary" role="button">Update Bid</a>
+                                </td>
                             </tr>
                         </table>
                     </div>
