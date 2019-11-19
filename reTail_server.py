@@ -70,8 +70,6 @@ def sell():
         response = make_response(html)
         return response
 
-
-    
     else:
         try:
             html = render_template('sell.html')
