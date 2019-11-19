@@ -46,14 +46,14 @@
   </nav>
 
   <!-- Page Content -->
-  <div class="container" style="justify-content: center">
+  <div class="container" style="justify-content: center;padding-left:0;padding-right:0">
 
     <div class="row">
 
       <div class="col-lg-3"></div>
       </div>
 
-      <div class="col" style="margin-bottom: 30px">
+      <div class="col" style="margin-bottom: 30px;padding-left:0;padding-right:0">
 
         <h1 class="my-4">Sell an item</h1>
         <body>Please enter a name, description, and starting price for your item.</body>
@@ -66,8 +66,8 @@
               <label class="custom-file-label" for="inputGroupFile01">Upload image</label>
             </div>
           </div>
-          <div class="card-body">
-            <form action="sell" method="post">
+          <br>
+          <form action="sell" method="post">
               <div class="form-group">
                 <strong>Item Name:</strong><br>
                 <input type="text" class="form-control" id="bid" name="title" aria-describedby="emailHelp"><br>
@@ -78,8 +78,7 @@
               </div>
               <input type="submit" class="btn btn-primary" value="Upload Listing">
               <!--button type="submit" class="btn btn-primary">Upload Listing</button-->
-            </form>
-          </div>
+          </form>
         </div>
         <!-- /.card -->
 
