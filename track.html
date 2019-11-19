@@ -49,22 +49,23 @@
   <div class="container">
       <div class="row" style="padding-top: 5%">
           <div class ="col"><center><strong><font size=6>I'm Selling:</font></strong></center>
+            {% for entry in netid_results: %}
             <!-- Entry Start -->
             <div class ="row" style="padding-top: 5%">
                 <div class="col">
                     <table>
                         <tr>
-                            <th>Item Name</th>
+                            <th>Item Name: {{entry[6]}}</th>
                         </tr>
                         <tr>
-                            <td>Item Description</td>
+                            <td>Item Description: {{entry[5]}}</td>
                         </tr>
                     </table>
                 </div>
                 <div class="col">
                         <table>
                         <tr>
-                            <td>Current Max Bid</td>
+                            <td>Current Max Bid: ${{entry[3]}}</td>
                         </tr>
                         <tr>
                             <td><button type="submit" class="btn btn-primary">Accept Bid</button></td>
@@ -73,70 +74,25 @@
                 </div>
             </div>
             <!-- Entry End -->
-            <!-- Entry Start -->
-            <div class ="row" style="padding-top: 5%">
-                 <div class="col">
-                    <table>
-                        <tr>
-                            <th>Item Name</th>
-                        </tr>
-                        <tr>
-                            <td>Item Description</td>                            </tr>
-                    </table>
-                </div>
-                <div class="col">
-                    <table>
-                        <tr>
-                            <td>Current Max Bid</td>
-                        </tr>
-                        <tr>
-                            <td><button type="submit" class="btn btn-primary">Accept Bid</button></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <!-- Entry End -->
-            <!-- Entry Start -->
-            <div class ="row" style="padding-top: 5%">
-                <div class="col">
-                    <table>
-                        <tr>
-                            <th>Item Name</th>
-                        </tr>
-                        <tr>
-                            <td>Item Description</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col">
-                        <table>
-                        <tr>
-                            <td>Current Max Bid</td>
-                        </tr>
-                        <tr>
-                            <td><button type="submit" class="btn btn-primary">Accept Bid</button></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <!-- Entry End -->
+            {% endfor %}
           </div>
           <div class="col"><center><strong><font size=6>I'm Bidding On:</font></strong></center>
+            {% for entry in bidder_results: %}
             <div class ="row" style="padding-top: 5%">
                     <div class="col">
                         <table>
                             <tr>
-                                <th>Item Name</th>
+                                <th>Item Name: {{entry[6]}}</th>
                             </tr>
                             <tr>
-                                <td>Item Description</td>
+                                <td>Item Description: {{entry[5]}}</td>
                             </tr>
                         </table>
                     </div>
                     <div class="col">
                             <table>
                             <tr>
-                                <td>My Current Bid</td>
+                                <td>My Current Bid: ${{entry[3]}}</td>
                             </tr>
                             <tr>
                                 <td><button type="submit" class="btn btn-primary">Update Bid</button></td>
@@ -144,7 +100,8 @@
                         </table>
                     </div>
                 </div>
-        </div>
+                {% endfor %}
+            </div>
         </div>
   </div>
   <!-- /.container -->

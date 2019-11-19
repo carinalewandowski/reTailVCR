@@ -55,6 +55,25 @@ class Database:
         
         return entry
     
+    def get_all_items_from_netid(self, netid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "available_items" WHERE SELLER_NETID=\'"""+netid+"\';")
+        results = cursor.fetchall()
+        
+        return results
+    
+    def get_all_items_from_maxbidder(self, maxbidder):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "available_items" WHERE MAX_BID_USER=\'"""+maxbidder+"\';")
+        results = cursor.fetchall()
+        
+        return results
+
+    
     def delete_from_db(self, itemid):
         cursor = self._connection.cursor()
 
@@ -85,6 +104,13 @@ class Database:
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
+    def bid(self, itemid, max_bid, max_bid_user):
+        cursor = self._connection.cursor()
+        postgres_update_query = """UPDATE "available_items" SET price = %s, max_bid_user = %s WHERE ITEM_ID = %s;"""
+        record_to_update = (max_bid, max_bid_user, itemid)
+        cursor.execute(postgres_update_query, record_to_update)
+        self._connection.commit()
+
 #---------------------------------------------------------------------
 
 if __name__ == '__main__':
@@ -95,5 +121,7 @@ if __name__ == '__main__':
     database1 = Database()
     database1.connect()
     #database1.add_to_db(1162, "2019-11-15", "jjsalama", 9999, None, "unbelievably cool thing", "Cool water bottle")
-    database1.delete_from_db(1162)
+    #database1.delete_from_db(1162)
+
+    #print(database1.get_all_items_from_netid("carinal"))
     #get_available_db()
