@@ -84,12 +84,39 @@ class Database:
         results = cursor.fetchall()
         
         return results
+
+    def get_activeitems_from_netid(self, netid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "available_items" WHERE MAX_BID_USER IS NOT NULL AND SELLER_NETID=\'"""+netid+"\';")
+        results = cursor.fetchall()
+        
+        return results
     
     def get_all_items_from_maxbidder(self, maxbidder):
         cursor = self._connection.cursor()
         
         # NOTE: Shouldn't this be a prepared statement?
         cursor.execute("""SELECT * from "available_items" WHERE MAX_BID_USER=\'"""+maxbidder+"\';")
+        results = cursor.fetchall()
+        
+        return results
+
+    def get_solditems_from_netid(self, netid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "purchased_items" WHERE SELLER_NETID=\'"""+netid+"\';")
+        results = cursor.fetchall()
+
+        return results
+
+     def get_boughtitems_from_netid(self, netid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "purchased_items" WHERE BUYER_NETID=\'"""+netid+"\';")
         results = cursor.fetchall()
         
         return results
@@ -125,6 +152,33 @@ class Database:
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
+    def add_to_purchased(self, itemid, selldate, price, image, seller_netid, buyer_netid, title, description):
+        cursor = self._connection.cursor()
+        entry = [itemid, selldate, price, image, seller_netid, buyer_netid, title, description]
+        postgres_insert_query = """ INSERT INTO "purchased_items" 
+        (ITEM_ID, SELL_DATE, PRICE, IMAGE, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7])
+        cursor.execute(postgres_insert_query, record_to_insert)
+        self._connection.commit()
+
+    def copy_to_purchased(self, itemid, selldate, buyer_netid):
+        cursor = self._connection.cursor()
+        cursor.execute("""SELECT * from "available_items" WHERE item_id="""+itemid+";")
+        entry_available = cursor.fetchone()
+
+        seller_netid = entry_available[2]
+        price = entry_available[3]
+        image = entry_available[4]
+        description = entry_available[5]
+        title = entry_available[6]
+        
+        entry = [itemid, selldate, price, image, seller_netid, buyer_netid, title, description]
+        postgres_insert_query = """ INSERT INTO "purchased_items" 
+        (ITEM_ID, SELL_DATE, PRICE, IMAGE, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7])
+        cursor.execute(postgres_insert_query, record_to_insert)
+        self._connection.commit()
+
     def bid(self, itemid, max_bid, max_bid_user):
         cursor = self._connection.cursor()
         postgres_update_query = """UPDATE "available_items" SET price = %s, max_bid_user = %s WHERE ITEM_ID = %s;"""
@@ -139,8 +193,15 @@ if __name__ == '__main__':
     #add_pic_db()
     #add_to_db()
     #delete_from_db(19)
-    database1 = Database()
-    database1.connect()
+    #database1 = Database()
+    #database1.connect()
+    database = Database()
+    database.connect()
+    entry = database.get_item('14')
+    max_bid_user = (entry[0])[7]
+    print(max_bid_user)
+
+    database.copy_to_purchased('14', '2019-11-19', max_bid_user)
     #database1.add_to_db(1162, "2019-11-15", "jjsalama", 9999, None, "unbelievably cool thing", "Cool water bottle")
     #database1.delete_from_db(1162)
 

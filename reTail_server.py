@@ -36,10 +36,10 @@ def check_user(netid):
 @app.route('/item', methods=('GET', 'POST'))
 def item():
     if 'username' not in session:
-        username = CASClient().authenticate()
+        username = CASClient().authenticate().strip()
         check_user(username)
     else:
-        username = session.get('username')
+        username = session.get('username').strip()
 
     itemid = request.args.get('itemid')
 
@@ -79,10 +79,10 @@ def item():
 @app.route('/sell', methods=('GET', 'POST'))
 def sell():
     if 'username' not in session:
-        username = CASClient().authenticate()
+        username = CASClient().authenticate().strip()
         check_user(username)
     else:
-        username = session.get('username')
+        username = session.get('username').strip()
 
     # parse user input for item upload details
     # ***** need to handle other info still *****
@@ -100,7 +100,7 @@ def sell():
         #if itemid is None:
         itemid = random.uniform(100, 1000000)
         #if postdate is None:
-        postdate = '2019-11-18'
+        postdate = '2019-11-19'
         #if netid is None:
         netid = username
         #if image is None:
@@ -130,21 +130,23 @@ def sell():
 @app.route('/track', methods=('GET', 'POST'))
 def track():
     if 'username' not in session:
-        username = CASClient().authenticate()
+        username = CASClient().authenticate().strip()
         check_user(username)
     else:
-        username = session.get('username')
+        username = session.get('username').strip()
 
     if request.method == 'POST':
-        print("requesting")
         itemid = request.form['itemid']
-        print(itemid)
+        selldate = '2019-11-19'
 
         database = Database()
         database.connect()
+        entry = database.get_item(itemid)[0]
+        max_bid_user = entry[7]
+        database.copy_to_purchased(itemid, selldate, max_bid_user)
         database.delete_from_db(itemid)
 
-        netid_results = database.get_all_items_from_netid(username)
+        netid_results = database.get_activeitems_from_netid(username)
         bidder_results = database.get_all_items_from_maxbidder(username)
 
         database.disconnect()
@@ -156,7 +158,7 @@ def track():
     else:
         database = Database()
         database.connect()
-        netid_results = database.get_all_items_from_netid(username)
+        netid_results = database.get_activeitems_from_netid(username)
         bidder_results = database.get_all_items_from_maxbidder(username)
         database.disconnect()
 
@@ -166,15 +168,35 @@ def track():
 
 #-----------------------------------------------------------------------
 
+@app.route('/history')
+def history():
+    if 'username' not in session:
+        username = CASClient().authenticate().strip()
+        check_user(username)
+    else:
+        username = session.get('username').strip()
+
+    database = Database()
+    database.connect()
+    netid_results = database.get_solditems_from_netid(username)
+    bought_results = database.get_solditems_from_netid(username)
+    database.disconnect()
+
+    html = render_template('history.html', netid_results=netid_results, bought_results=bought_results)
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
 @app.route('/redirect_home_control')
 @app.route('/index')
 @app.route('/')
 def home_control():
     if 'username' not in session:
-        username = CASClient().authenticate()
+        username = CASClient().authenticate().strip()
         check_user(username)
     else:
-        username = session.get('username')
+        username = session.get('username').strip()
 
     try:
         database = Database()
@@ -189,17 +211,17 @@ def home_control():
 
     except Exception as e:
         print("error" + str(e), file=stderr)
-        exit(1) 
+        exit(1)
     
 #-----------------------------------------------------------------------
 
 @app.route('/history_control')
 def history_control():
     if 'username' not in session:
-        username = CASClient().authenticate()
+        username = CASClient().authenticate().strip()
         check_user(username)
     else:
-        username = session.get('username')
+        username = session.get('username').strip()
 
     try:
 
@@ -216,10 +238,10 @@ def history_control():
 @app.route('/search')
 def search():
     if 'username' not in session:
-        username = CASClient().authenticate()
+        username = CASClient().authenticate().strip()
         check_user(username)
     else:
-        username = session.get('username')
+        username = session.get('username').strip()
 
     try:
         string = request.args.get('string')
