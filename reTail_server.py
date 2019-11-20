@@ -9,7 +9,7 @@ from sys import argv, stderr, exit
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template, session
 from database_interaction import Database
-#from CASClient import CASClient
+from CASClient import CASClient
 import random
 import datetime
 #import psycopg2
@@ -36,13 +36,13 @@ def check_user(netid):
 
 @app.route('/item', methods=('GET', 'POST'))
 def item():
-    # if 'username' not in session:
-    #     username = CASClient().authenticate().strip()
-    #     check_user(username)
-    # else:
-    #     username = session.get('username').strip()
+    if 'username' not in session:
+        username = CASClient().authenticate().strip()
+        check_user(username)
+    else:
+        username = session.get('username').strip()
 
-    username = 'jjsalama'
+    #username = 'jjsalama'
     itemid = request.args.get('itemid')
 
     if request.method == 'POST':
@@ -80,13 +80,13 @@ def item():
 
 @app.route('/itemsold')
 def itemsold():
-    # if 'username' not in session:
-    #     username = CASClient().authenticate().strip()
-    #     check_user(username)
-    # else:
-    #     username = session.get('username').strip()
+    if 'username' not in session:
+        username = CASClient().authenticate().strip()
+        check_user(username)
+    else:
+        username = session.get('username').strip()
 
-    username = 'jjsalama'
+    #username = 'jjsalama'
     itemid = request.args.get('itemid')
 
     database = Database()
@@ -101,13 +101,13 @@ def itemsold():
 
 @app.route('/sell', methods=('GET', 'POST'))
 def sell():
-    # if 'username' not in session:
-    #     username = CASClient().authenticate().strip()
-    #     check_user(username)
-    # else:
-    #     username = session.get('username').strip()
+    if 'username' not in session:
+        username = CASClient().authenticate().strip()
+        check_user(username)
+    else:
+        username = session.get('username').strip()
 
-    username = 'jjsalama'
+    #username = 'jjsalama'
 
     # parse user input for item upload details
     # ***** need to handle other info still *****
@@ -158,13 +158,13 @@ def sell():
 
 @app.route('/track', methods=('GET', 'POST'))
 def track():
-    # if 'username' not in session:
-    #     username = CASClient().authenticate().strip()
-    #     check_user(username)
-    # else:
-    #     username = session.get('username').strip()
+    if 'username' not in session:
+        username = CASClient().authenticate().strip()
+        check_user(username)
+    else:
+        username = session.get('username').strip()
 
-    username = 'jjsalama'
+    #username = 'jjsalama'
 
     if request.method == 'POST':
         
@@ -217,13 +217,13 @@ def track():
 
 @app.route('/history')
 def history():
-    # if 'username' not in session:
-    #     username = CASClient().authenticate().strip()
-    #     check_user(username)
-    # else:
-    #     username = session.get('username').strip()
+    if 'username' not in session:
+        username = CASClient().authenticate().strip()
+        check_user(username)
+    else:
+        username = session.get('username').strip()
 
-    username = 'jjsalama'
+    #username = 'jjsalama'
 
     database = Database()
     database.connect()
@@ -241,13 +241,13 @@ def history():
 @app.route('/index')
 @app.route('/')
 def home_control():
-    # if 'username' not in session:
-    #     username = CASClient().authenticate().strip()
-    #     check_user(username)
-    # else:
-    #     username = session.get('username').strip()
+    if 'username' not in session:
+        username = CASClient().authenticate().strip()
+        check_user(username)
+    else:
+        username = session.get('username').strip()
 
-    username = 'jjsalama'
+    #username = 'jjsalama'
 
     try:
         database = Database()
@@ -290,13 +290,13 @@ def home_control():
 
 @app.route('/search')
 def search():
-    # if 'username' not in session:
-    #     username = CASClient().authenticate().strip()
-    #     check_user(username)
-    # else:
-    #     username = session.get('username').strip()
+    if 'username' not in session:
+        username = CASClient().authenticate().strip()
+        check_user(username)
+    else:
+        username = session.get('username').strip()
 
-    username = 'jjsalama'
+    #username = 'jjsalama'
 
     try:
         string = request.args.get('string')
