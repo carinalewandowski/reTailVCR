@@ -47,18 +47,21 @@ class Database:
             return False
         return True
     
-    def get_user(self, netid):
-        cursor = self._connection.cursor()
-        cursor.execute("""SELECT * from "users" WHERE netid = %s;""", (netid, ))
-
-        return cursor.fetchone()
-    
     def add_user(self, netid):
         cursor = self._connection.cursor()
         cursor.execute(""" INSERT INTO "users" (NETID) VALUES (%s);""", (netid, ))
         self._connection.commit()
         
     
+    #---------------------------------------------------------------------
+    # getting from db functions
+
+    def get_user(self, netid):
+        cursor = self._connection.cursor()
+        cursor.execute("""SELECT * from "users" WHERE netid = %s;""", (netid, ))
+
+        return cursor.fetchone()
+
     def get_available_db(self):
         cursor = self._connection.cursor()
 
@@ -76,15 +79,6 @@ class Database:
         
         return entry
 
-    def get_solditem(self, itemid):
-        cursor = self._connection.cursor()
-        
-        # NOTE: Shouldn't this be a prepared statement?
-        cursor.execute("""SELECT * from "purchased_items" WHERE item_id="""+itemid+";")
-        entry = cursor.fetchall()
-        
-        return entry
-    
     def get_all_items_from_netid(self, netid):
         cursor = self._connection.cursor()
         
@@ -112,6 +106,8 @@ class Database:
         
         return results
 
+    #---------------------------------------------------------------------
+    # functions for the purchase history 
     def get_solditems_from_netid(self, netid):
         cursor = self._connection.cursor()
         
@@ -120,6 +116,15 @@ class Database:
         results = cursor.fetchall()
 
         return results
+    
+    def get_solditem(self, itemid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "purchased_items" WHERE item_id="""+itemid+";")
+        entry = cursor.fetchall()
+        
+        return entry
 
     def get_boughtitems_from_netid(self, netid):
         cursor = self._connection.cursor()
@@ -129,37 +134,6 @@ class Database:
         results = cursor.fetchall()
         
         return results
-
-    
-    def delete_from_db(self, itemid):
-        cursor = self._connection.cursor()
-
-        postgres_delete_query = """ DELETE FROM "available_items" WHERE ITEM_ID = %s """
-        record_to_delete = (itemid, )
-        cursor.execute(postgres_delete_query, record_to_delete)
-
-        self._connection.commit()
-    
-    def search(self, string):
-        cursor = self._connection.cursor()
-
-        query_string = '%' + string + '%'
-
-        postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s) OR (title ILIKE %s);"""
-        string_to_search = (query_string, query_string)
-        cursor.execute(postgres_search_string, string_to_search)
-
-        results = cursor.fetchall()
-        return results
-
-    def add_to_db(self, itemid, postdate, netid, price, image, description, title):
-        cursor = self._connection.cursor()
-        entry = [itemid, postdate, netid, price, image, description, title]
-        postgres_insert_query = """ INSERT INTO "available_items" 
-        (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMAGE, DESCRIPTION, TITLE) VALUES (%s,%s,%s,%s,%s,%s,%s)"""
-        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6])
-        cursor.execute(postgres_insert_query, record_to_insert)
-        self._connection.commit()
 
     def add_to_purchased(self, itemid, selldate, price, image, seller_netid, buyer_netid, title, description):
         cursor = self._connection.cursor()
@@ -188,22 +162,116 @@ class Database:
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
-    def bid(self, itemid, max_bid, max_bid_user):
+    #---------------------------------------------------------------------
+    # major db functions
+
+    def add_to_db(self, itemid, postdate, netid, price, image, description, title):
+        cursor = self._connection.cursor()
+        entry = [itemid, postdate, netid, price, image, description, title]
+        postgres_insert_query = """ INSERT INTO "available_items" 
+        (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMAGE, DESCRIPTION, TITLE, INITIAL_PRICE) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[3])
+        cursor.execute(postgres_insert_query, record_to_insert)
+        self._connection.commit()
+
+    def delete_from_db(self, itemid):
         cursor = self._connection.cursor()
 
-        cursor.execute("""SELECT * from "available_items" WHERE item_id="""+itemid+";")
+        postgres_delete_query = """ DELETE FROM "available_items" WHERE ITEM_ID = %s """
+        record_to_delete = (itemid, )
+        cursor.execute(postgres_delete_query, record_to_delete)
+
+        self._connection.commit()
+
+    def search(self, string):
+        cursor = self._connection.cursor()
+
+        query_string = '%' + string + '%'
+
+        postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s) OR (title ILIKE %s);"""
+        string_to_search = (query_string, query_string)
+        cursor.execute(postgres_search_string, string_to_search)
+
+        results = cursor.fetchall()
+        return results
+
+    #---------------------------------------------------------------------
+    # bidding functions
+
+    def bid(self, itemid, max_bid, max_bid_user):
+        cursor = self._connection.cursor()
+        entry = [itemid, max_bid, max_bid_user]
+
+        postgres_select_query = """SELECT * from "available_items" WHERE item_id = %s"""
+        record_to_select = (entry[0], )
+        cursor.execute(postgres_select_query, record_to_select)
+        
         entry = cursor.fetchall()[0]
         current_price = entry[3]
-        print(type(current_price))
 
         current_bid = float(max_bid)
 
-        if (current_bid > current_price):
+        if (current_bid > current_price or max_bid_user is None):
+
+            postgres_insert_query = """ INSERT INTO "bids" (ITEM_ID, BIDDER_NETID, BID) VALUES (%s,%s,%s)"""
+            record_to_insert = (itemid, max_bid_user, max_bid)
+            cursor.execute(postgres_insert_query, record_to_insert)
+            
             postgres_update_query = """UPDATE "available_items" SET price = %s, max_bid_user = %s WHERE ITEM_ID = %s;"""
             record_to_update = (max_bid, max_bid_user, itemid)
             cursor.execute(postgres_update_query, record_to_update)
             self._connection.commit()
 
+    def remove_bid(self, itemid, max_bid_user):
+        cursor = self._connection.cursor()
+
+        postgres_delete_query = """ DELETE FROM "bids" WHERE ITEM_ID = %s AND BIDDER_NETID = %s"""
+        record_to_delete = (itemid, max_bid_user)
+        cursor.execute(postgres_delete_query, record_to_delete)
+        self._connection.commit()
+
+        cursor = self._connection.cursor()
+        postgres_select_query = """ SELECT * from "bids" WHERE ITEM_ID = %s ORDER BY BID DESC"""
+        record_to_select = (itemid, )
+        cursor.execute(postgres_select_query, record_to_select)
+
+        if (cursor.fetchone() is None):
+            cursor = self._connection.cursor()
+            postgres_update_query = """UPDATE "available_items" SET price = initial_price, max_bid_user = %s WHERE ITEM_ID = %s;"""
+            record_to_update = (None, itemid)
+            cursor.execute(postgres_update_query, record_to_update)
+            self._connection.commit()
+        else:
+            cursor = self._connection.cursor()
+            cursor.execute(postgres_select_query, record_to_select)
+            new_max_bid = cursor.fetchall()[0]
+
+            cursor = self._connection.cursor()
+            postgres_update_query = """UPDATE "available_items" SET price = %s, max_bid_user = %s WHERE ITEM_ID = %s;"""
+            record_to_update = (new_max_bid[2], new_max_bid[1], new_max_bid[0])
+            cursor.execute(postgres_update_query, record_to_update)
+            self._connection.commit()
+    
+    def delete_from_bids(self, itemid):
+        cursor = self._connection.cursor()
+
+        postgres_delete_query = """ DELETE FROM "bids" WHERE ITEM_ID = %s"""
+        record_to_delete = (itemid, )
+        cursor.execute(postgres_delete_query, record_to_delete)
+        self._connection.commit()
+
+
+    def get_max_bid(self, itemid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        postgres_select_statement = """ SELECT * from "bids" WHERE ITEM_ID = %s ORDER BY = %s DESC"""
+        record_to_select = (itemid, 'BIDS')
+        result = cursor.fetchall()[0]
+        return result
+
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
 if __name__ == '__main__':

@@ -77,7 +77,7 @@
                             <td>
                               {% if entry[7] is not none %}
                                 <form action="track" method="post">
-                                  <input type="hidden" name="itemid" value={{entry[0]}}>
+                                  <input type="hidden" name="accept" value={{entry[0]}}>
                                   <button type="submit" class="btn btn-primary">Accept Bid</button>
                                 </form>
                               {% endif %}
@@ -107,6 +107,12 @@
                             <tr>
                                 <td>
                                   <a href=../item?itemid={{entry[0]}} class="btn btn-primary" role="button">Update Bid</a>
+                                </td>
+                                <td>
+                                  <form action="track" method="post">
+                                    <input type="hidden" name="delete" value={{entry[0]}}>
+                                    <button type="submit" class="btn btn-primary">Remove Bid</button>
+                                  </form>
                                 </td>
                             </tr>
                         </table>

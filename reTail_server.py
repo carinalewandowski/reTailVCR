@@ -123,7 +123,7 @@ def sell():
         if price is None:
             price = ''
         #if itemid is None:
-        itemid = random.uniform(100, 1000000)
+        itemid = int(random.uniform(100, 1000000))
         #if postdate is None:
         postdate = datetime.date.today()
         #if netid is None:
@@ -135,6 +135,10 @@ def sell():
         database = Database()
         database.connect()
         database.add_to_db(itemid, postdate, netid, price, image, description, title)
+
+        # add to bid database with null bidder netid
+        database.bid(itemid, price, None)
+
         database.disconnect()
 
         html = render_template('confirmation.html')
@@ -163,7 +167,23 @@ def track():
     username = 'jjsalama'
 
     if request.method == 'POST':
-        itemid = request.form['itemid']
+        
+        if (request.form.get('delete') is not None):
+            delete_bid_itemid = request.form.get('delete')
+            database = Database()
+            database.connect()
+            database.remove_bid(delete_bid_itemid, username)
+
+            netid_results = database.get_all_items_from_netid(username)
+            bidder_results = database.get_all_items_from_maxbidder(username)
+
+            database.disconnect()
+
+            html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
+            response = make_response(html)
+            return response
+
+        itemid = request.form['accept']
         selldate = datetime.date.today()
 
         database = Database()
@@ -172,6 +192,7 @@ def track():
         max_bid_user = entry[7]
         database.copy_to_purchased(itemid, selldate, max_bid_user)
         database.delete_from_db(itemid)
+        database.delete_from_bids(itemid)
 
         netid_results = database.get_all_items_from_netid(username)
         bidder_results = database.get_all_items_from_maxbidder(username)
@@ -187,7 +208,6 @@ def track():
         database.connect()
         netid_results = database.get_all_items_from_netid(username)
         bidder_results = database.get_all_items_from_maxbidder(username)
-        database.disconnect()
 
         html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
         response = make_response(html)
