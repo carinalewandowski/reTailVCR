@@ -274,21 +274,21 @@ class Database:
 #---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     #get_image(13)
     #add_pic_db()
     #add_to_db()
     #delete_from_db(19)
     #database1 = Database()
     #database1.connect()
-    database = Database()
-    database.connect()
-    entry = database.get_item('14')
-    max_bid_user = (entry[0])[7]
-    print(max_bid_user)
+    # database = Database()
+    # database.connect()
+    # entry = database.get_item('14')
+    # max_bid_user = (entry[0])[7]
+    # print(max_bid_user)
 
-    database.copy_to_purchased('14', '2019-11-19', max_bid_user)
-    print(database.get_boughtitems_from_netid('carinal'))
+    # database.copy_to_purchased('14', '2019-11-19', max_bid_user)
+    # print(database.get_boughtitems_from_netid('carinal'))
     #database1.add_to_db(1162, "2019-11-15", "jjsalama", 9999, None, "unbelievably cool thing", "Cool water bottle")
     #database1.delete_from_db(1162)
 
