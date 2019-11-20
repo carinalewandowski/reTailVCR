@@ -112,7 +112,7 @@ class Database:
 
         return results
 
-     def get_boughtitems_from_netid(self, netid):
+    def get_boughtitems_from_netid(self, netid):
         cursor = self._connection.cursor()
         
         # NOTE: Shouldn't this be a prepared statement?
@@ -202,6 +202,7 @@ if __name__ == '__main__':
     print(max_bid_user)
 
     database.copy_to_purchased('14', '2019-11-19', max_bid_user)
+    print(database.get_boughtitems_from_netid('carinal'))
     #database1.add_to_db(1162, "2019-11-15", "jjsalama", 9999, None, "unbelievably cool thing", "Cool water bottle")
     #database1.delete_from_db(1162)
 
