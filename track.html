@@ -61,7 +61,13 @@
                             <th><a href=../item?itemid={{entry[0]}}>{{entry[6]}}</a></th>
                         </tr>
                         <tr>
-                            <td>${{entry[3]}}</td>
+                            <td>
+                              {% if entry[7] is not none %}
+                                ${{entry[3]}}
+                              {% else %}
+                                No Bids. Price: ${{entry[3]}}
+                              {% endif %}
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -69,10 +75,12 @@
                         <table align="right">
                         <tr>
                             <td>
-                              <form action="track" method="post">
-                                <input type="hidden" name="itemid" value={{entry[0]}}>
-                                <button type="submit" class="btn btn-primary">Accept Bid</button>
-                              </form>
+                              {% if entry[7] is not none %}
+                                <form action="track" method="post">
+                                  <input type="hidden" name="itemid" value={{entry[0]}}>
+                                  <button type="submit" class="btn btn-primary">Accept Bid</button>
+                                </form>
+                              {% endif %}
                             </td>
                         </tr>
                     </table>
