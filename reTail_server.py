@@ -228,7 +228,7 @@ def history():
     database = Database()
     database.connect()
     netid_results = database.get_solditems_from_netid(username)
-    bought_results = database.get_solditems_from_netid(username)
+    bought_results = database.get_boughtitems_from_netid(username)
     database.disconnect()
 
     html = render_template('history.html', netid_results=netid_results, bought_results=bought_results)
