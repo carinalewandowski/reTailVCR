@@ -78,6 +78,27 @@ def item():
 
 #-----------------------------------------------------------------------
 
+@app.route('/itemsold')
+def itemsold():
+    # if 'username' not in session:
+    #     username = CASClient().authenticate().strip()
+    #     check_user(username)
+    # else:
+    #     username = session.get('username').strip()
+
+    username = 'jjsalama'
+    itemid = request.args.get('itemid')
+
+    database = Database()
+    database.connect()
+    entry = database.get_solditem(itemid)
+    database.disconnect()
+    html = render_template('itemsold.html', entry=entry[0])
+    response = make_response(html)
+    return response
+
+#-----------------------------------------------------------------------
+
 @app.route('/sell', methods=('GET', 'POST'))
 def sell():
     # if 'username' not in session:
@@ -225,25 +246,25 @@ def home_control():
     
 #-----------------------------------------------------------------------
 
-@app.route('/history_control')
-def history_control():
-    # if 'username' not in session:
-    #     username = CASClient().authenticate().strip()
-    #     check_user(username)
-    # else:
-    #     username = session.get('username').strip()
+# @app.route('/history_control')
+# def history_control():
+#     # if 'username' not in session:
+#     #     username = CASClient().authenticate().strip()
+#     #     check_user(username)
+#     # else:
+#     #     username = session.get('username').strip()
 
-    username = 'jjsalama'
+#     username = 'jjsalama'
 
-    try:
+#     try:
 
-        html = render_template('history_view.html')
-        response = make_response(html)
-        return response
+#         html = render_template('history_view.html')
+#         response = make_response(html)
+#         return response
 
-    except Exception as e:
-        print("error" + str(e), file=stderr)
-        exit(1) 
+#     except Exception as e:
+#         print("error" + str(e), file=stderr)
+#         exit(1) 
 
 #-----------------------------------------------------------------------
 

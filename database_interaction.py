@@ -75,6 +75,15 @@ class Database:
         entry = cursor.fetchall()
         
         return entry
+
+    def get_solditem(self, itemid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "purchased_items" WHERE item_id="""+itemid+";")
+        entry = cursor.fetchall()
+        
+        return entry
     
     def get_all_items_from_netid(self, netid):
         cursor = self._connection.cursor()
@@ -181,10 +190,19 @@ class Database:
 
     def bid(self, itemid, max_bid, max_bid_user):
         cursor = self._connection.cursor()
-        postgres_update_query = """UPDATE "available_items" SET price = %s, max_bid_user = %s WHERE ITEM_ID = %s;"""
-        record_to_update = (max_bid, max_bid_user, itemid)
-        cursor.execute(postgres_update_query, record_to_update)
-        self._connection.commit()
+
+        cursor.execute("""SELECT * from "available_items" WHERE item_id="""+itemid+";")
+        entry = cursor.fetchall()[0]
+        current_price = entry[3]
+        print(type(current_price))
+
+        current_bid = float(max_bid)
+
+        if (current_bid > current_price):
+            postgres_update_query = """UPDATE "available_items" SET price = %s, max_bid_user = %s WHERE ITEM_ID = %s;"""
+            record_to_update = (max_bid, max_bid_user, itemid)
+            cursor.execute(postgres_update_query, record_to_update)
+            self._connection.commit()
 
 #---------------------------------------------------------------------
 
