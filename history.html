@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>reTail // track</title>
+  <title>reTail // history</title>
 
   <!-- Bootstrap core CSS -->
   <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
@@ -36,12 +36,12 @@
             <a class="nav-link" href="sell">sell</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="track">track
-                <span class="sr-only">(current)</span>
-            </a>
+            <a class="nav-link" href="track">track</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="history" style="padding-right:0">history</a>
+            <a class="nav-link" href="history" style="padding-right:0">history
+                <span class="sr-only">(current)</span>
+            </a>
           </li>
         </ul>
       </div>
@@ -51,37 +51,17 @@
   <!-- Page Content -->
   <div class="container">
       <div class="row" style="padding-top: 5%">
-          <div class ="col"><center><strong><font size=6>I'm Selling:</font></strong></center>
+          <div class ="col"><center><strong><font size=6>I've Sold:</font></strong></center>
             {% for entry in netid_results: %}
             <!-- Entry Start -->
             <div class ="row" style="padding-top: 5%">
                 <div class="col" style="padding-left: 0">
                     <table>
                         <tr>
-                            <th><a href=../item?itemid={{entry[0]}}>{{entry[6]}}</a></th>
+                            <th><a href=../itemsold?itemid={{entry[0]}}>{{entry[6]}}</a></th>
                         </tr>
                         <tr>
-                            <td>
-                              {% if entry[7] is not none %}
-                                ${{entry[3]}}
-                              {% else %}
-                                No Bids. Price: ${{entry[3]}}
-                              {% endif %}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col">
-                        <table align="right">
-                        <tr>
-                            <td>
-                              {% if entry[7] is not none %}
-                                <form action="track" method="post">
-                                  <input type="hidden" name="accept" value={{entry[0]}}>
-                                  <button type="submit" class="btn btn-primary">Accept Bid</button>
-                                </form>
-                              {% endif %}
-                            </td>
+                            <td>${{entry[2]}}</td>
                         </tr>
                     </table>
                 </div>
@@ -89,31 +69,17 @@
             <!-- Entry End -->
             {% endfor %}
           </div>
-          <div class="col"><center><strong><font size=6>I'm Bidding On:</font></strong></center>
-            {% for entry in bidder_results: %}
+          
+          <div class="col"><center><strong><font size=6>I've Bought:</font></strong></center>
+            {% for entry in bought_results: %}
             <div class ="row" style="padding-top: 5%">
                     <div class="col">
                         <table>
                             <tr>
-                                <th><a href=../item?itemid={{entry[0]}}>{{entry[6]}}</a></th>
+                                <th><a href=../itemsold?itemid={{entry[0]}}>{{entry[6]}}</a></th>
                             </tr>
                             <tr>
-                                <td>${{entry[3]}}</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="col" style="padding-right: 0">
-                            <table align="right">
-                            <tr>
-                                <td>
-                                  <a href=../item?itemid={{entry[0]}} class="btn btn-primary" role="button">Update Bid</a>
-                                </td>
-                                <td>
-                                  <form action="track" method="post">
-                                    <input type="hidden" name="delete" value={{entry[0]}}>
-                                    <button type="submit" class="btn btn-primary">Remove Bid</button>
-                                  </form>
-                                </td>
+                                <td>${{entry[2]}}</td>
                             </tr>
                         </table>
                     </div>

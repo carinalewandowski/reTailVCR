@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>reTail // sell</title>
+  <title>reTail // item sold</title>
 
   <!-- Bootstrap core CSS -->
   <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
@@ -29,13 +29,13 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="..">buy</a>
-          </li>
           <li class="nav-item active">
-            <a class="nav-link" href="">sell
+            <a class="nav-link" href="..">buy
               <span class="sr-only">(current)</span>
             </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="sell">sell</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="track">track</a>
@@ -49,39 +49,31 @@
   </nav>
 
   <!-- Page Content -->
-  <div class="container" style="justify-content: center;padding-left:0;padding-right:0">
+  <div class="container">
 
     <div class="row">
 
-      <div class="col-lg-3"></div>
-      </div>
+      <!-- <div class="col-lg-3">
+        <h1 class="my-4">Shop Name</h1>
+        <div class="list-group">
+          <a href="#" class="list-group-item active">Category 1</a>
+          <a href="#" class="list-group-item">Category 2</a>
+          <a href="#" class="list-group-item">Category 3</a>
+        </div>
+      </div> -->
+      <!-- /.col-lg-3 -->
 
-      <div class="col" style="margin-bottom: 30px;padding-left:0;padding-right:0">
-
-        <h1 class="my-4">Sell an item</h1>
-        <body>Please enter a name, description, and starting price for your item.</body>
+      <div class="col-lg-9" style="margin-bottom: 30px">
 
         <div class="card mt-4">
-          <div class="input-group">
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" id="inputGroupFile01"
-                aria-describedby="inputGroupFileAddon01">
-              <label class="custom-file-label" for="inputGroupFile01">Upload image</label>
-            </div>
+          <img class="card-img-top img-fluid" src="https://scontent-mia3-1.xx.fbcdn.net/v/t1.0-9/40922951_1277130715762426_5817212407029694464_o.jpg?_nc_cat=109&_nc_oc=AQkUFez-ExZjg_nGAUtTsykYUYyiOWbPpVFsHJGBavFcCVcIGjC6SeiNGx06v508Jvk&_nc_ht=scontent-mia3-1.xx&oh=5ae91ba7868cdede7fc57b91fb3cfe08&oe=5E8AE30A" alt="">
+          <div class="card-body">
+            <h3 class="card-title">{{entry[6]}}</h3>
+            <h5>Sold on: {{entry[1]}}</h5>
+            <p class="card-text">Description: {{entry[7]}}</p>
+            <p class="card-text"><i>Sold by: {{entry[4]}}</i></p>
+            <p class="card-text"><i>Sold to: {{entry[5]}}</i></p>
           </div>
-          <br>
-          <form action="sell" method="post">
-              <div class="form-group">
-                <strong>Item Name:</strong><br>
-                <input type="text" class="form-control" id="bid" name="title" aria-describedby="emailHelp"><br>
-                <strong>Item Description:</strong><br>
-                <textarea type="text" class="form-control" id="bid" name="description" aria-describedby="emailHelp"></textarea><br>
-                <strong>Starting Price:</strong>
-                <input type="text" class="form-control" id="bid" name="price" aria-describedby="emailHelp"><br>
-              </div>
-              <input type="submit" class="btn btn-primary" value="Upload Listing">
-              <!--button type="submit" class="btn btn-primary">Upload Listing</button-->
-          </form>
         </div>
         <!-- /.card -->
 
@@ -104,6 +96,13 @@
         </div> -->
         <!-- /.card -->
 
+      </div>
+      <div class="col-sm" style="margin-bottom: 50px">
+          <div class="card mt-4">
+            <div class="card-body">
+            <p>Sold for:</p><h3>${{entry[2]}}</h3>
+            </div>
+          </div>
       </div>
       <!-- /.col-lg-9 -->
 

@@ -5,9 +5,6 @@ host = "ec2-174-129-253-180.compute-1.amazonaws.com"
 pwd = "9f9ace5a8c31729f9643ff953c5cde217ee7ccc9c9ad87e91fecad55eb2bb282"
 port = "5432"
 db = "d6om41i3v32f"
-# web: gunicorn reTail_server:app
-# release: python database_interaction.py
-
 # Host
 # ec2-174-129-253-180.compute-1.amazonaws.com
 # Database
@@ -41,6 +38,30 @@ class Database:
         if self._connection:
             self._connection.close()
     
+    def user_exists(self, netid):
+        cursor = self._connection.cursor()
+        cursor.execute("""SELECT * from "users" WHERE netid = %s;""", (netid, ))
+        user = cursor.fetchone()
+
+        if user is None:
+            return False
+        return True
+    
+    def add_user(self, netid):
+        cursor = self._connection.cursor()
+        cursor.execute(""" INSERT INTO "users" (NETID) VALUES (%s);""", (netid, ))
+        self._connection.commit()
+        
+    
+    #---------------------------------------------------------------------
+    # getting from db functions
+
+    def get_user(self, netid):
+        cursor = self._connection.cursor()
+        cursor.execute("""SELECT * from "users" WHERE netid = %s;""", (netid, ))
+
+        return cursor.fetchone()
+
     def get_available_db(self):
         cursor = self._connection.cursor()
 
@@ -57,7 +78,102 @@ class Database:
         entry = cursor.fetchall()
         
         return entry
+
+    def get_all_items_from_netid(self, netid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "available_items" WHERE SELLER_NETID=\'"""+netid+"\';")
+        results = cursor.fetchall()
+        
+        return results
+
+    def get_activeitems_from_netid(self, netid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "available_items" WHERE MAX_BID_USER IS NOT NULL AND SELLER_NETID=\'"""+netid+"\';")
+        results = cursor.fetchall()
+        
+        return results
     
+    def get_all_items_from_maxbidder(self, maxbidder):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "available_items" WHERE MAX_BID_USER=\'"""+maxbidder+"\';")
+        results = cursor.fetchall()
+        
+        return results
+
+    #---------------------------------------------------------------------
+    # functions for the purchase history 
+    def get_solditems_from_netid(self, netid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "purchased_items" WHERE SELLER_NETID=\'"""+netid+"\';")
+        results = cursor.fetchall()
+
+        return results
+    
+    def get_solditem(self, itemid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "purchased_items" WHERE item_id="""+itemid+";")
+        entry = cursor.fetchall()
+        
+        return entry
+
+    def get_boughtitems_from_netid(self, netid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "purchased_items" WHERE BUYER_NETID=\'"""+netid+"\';")
+        results = cursor.fetchall()
+        
+        return results
+
+    def add_to_purchased(self, itemid, selldate, price, image, seller_netid, buyer_netid, title, description):
+        cursor = self._connection.cursor()
+        entry = [itemid, selldate, price, image, seller_netid, buyer_netid, title, description]
+        postgres_insert_query = """ INSERT INTO "purchased_items" 
+        (ITEM_ID, SELL_DATE, PRICE, IMAGE, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7])
+        cursor.execute(postgres_insert_query, record_to_insert)
+        self._connection.commit()
+
+    def copy_to_purchased(self, itemid, selldate, buyer_netid):
+        cursor = self._connection.cursor()
+        cursor.execute("""SELECT * from "available_items" WHERE item_id="""+itemid+";")
+        entry_available = cursor.fetchone()
+
+        seller_netid = entry_available[2]
+        price = entry_available[3]
+        image = entry_available[4]
+        description = entry_available[5]
+        title = entry_available[6]
+        
+        entry = [itemid, selldate, price, image, seller_netid, buyer_netid, title, description]
+        postgres_insert_query = """ INSERT INTO "purchased_items" 
+        (ITEM_ID, SELL_DATE, PRICE, IMAGE, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7])
+        cursor.execute(postgres_insert_query, record_to_insert)
+        self._connection.commit()
+
+    #---------------------------------------------------------------------
+    # major db functions
+
+    def add_to_db(self, itemid, postdate, netid, price, image, description, title):
+        cursor = self._connection.cursor()
+        entry = [itemid, postdate, netid, price, image, description, title]
+        postgres_insert_query = """ INSERT INTO "available_items" 
+        (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMAGE, DESCRIPTION, TITLE, INITIAL_PRICE) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[3])
+        cursor.execute(postgres_insert_query, record_to_insert)
+        self._connection.commit()
+
     def delete_from_db(self, itemid):
         cursor = self._connection.cursor()
 
@@ -66,7 +182,7 @@ class Database:
         cursor.execute(postgres_delete_query, record_to_delete)
 
         self._connection.commit()
-    
+
     def search(self, string):
         cursor = self._connection.cursor()
 
@@ -79,247 +195,102 @@ class Database:
         results = cursor.fetchall()
         return results
 
-    def add_to_db(self, itemid, postdate, netid, price, image, description, title):
+    #---------------------------------------------------------------------
+    # bidding functions
+
+    def bid(self, itemid, max_bid, max_bid_user):
         cursor = self._connection.cursor()
-        entry = [itemid, postdate, netid, price, image, description, title]
-        postgres_insert_query = """ INSERT INTO "available_items" 
-        (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMAGE, DESCRIPTION, TITLE) VALUES (%s,%s,%s,%s,%s,%s,%s)"""
-        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6])
-        cursor.execute(postgres_insert_query, record_to_insert)
+        entry = [itemid, max_bid, max_bid_user]
+
+        postgres_select_query = """SELECT * from "available_items" WHERE item_id = %s"""
+        record_to_select = (entry[0], )
+        cursor.execute(postgres_select_query, record_to_select)
+        
+        entry = cursor.fetchall()[0]
+        current_price = entry[3]
+
+        current_bid = float(max_bid)
+
+        if (current_bid > current_price or max_bid_user is None):
+
+            postgres_insert_query = """ INSERT INTO "bids" (ITEM_ID, BIDDER_NETID, BID) VALUES (%s,%s,%s)"""
+            record_to_insert = (itemid, max_bid_user, max_bid)
+            cursor.execute(postgres_insert_query, record_to_insert)
+            
+            postgres_update_query = """UPDATE "available_items" SET price = %s, max_bid_user = %s WHERE ITEM_ID = %s;"""
+            record_to_update = (max_bid, max_bid_user, itemid)
+            cursor.execute(postgres_update_query, record_to_update)
+            self._connection.commit()
+
+    def remove_bid(self, itemid, max_bid_user):
+        cursor = self._connection.cursor()
+
+        postgres_delete_query = """ DELETE FROM "bids" WHERE ITEM_ID = %s AND BIDDER_NETID = %s"""
+        record_to_delete = (itemid, max_bid_user)
+        cursor.execute(postgres_delete_query, record_to_delete)
         self._connection.commit()
 
-#---------------------------------------------------------------------
-#---------------------------------------------------------------------
-#---------------------------------------------------------------------
+        cursor = self._connection.cursor()
+        postgres_select_query = """ SELECT * from "bids" WHERE ITEM_ID = %s ORDER BY BID DESC"""
+        record_to_select = (itemid, )
+        cursor.execute(postgres_select_query, record_to_select)
 
+        if (cursor.fetchone() is None):
+            cursor = self._connection.cursor()
+            postgres_update_query = """UPDATE "available_items" SET price = initial_price, max_bid_user = %s WHERE ITEM_ID = %s;"""
+            record_to_update = (None, itemid)
+            cursor.execute(postgres_update_query, record_to_update)
+            self._connection.commit()
+        else:
+            cursor = self._connection.cursor()
+            cursor.execute(postgres_select_query, record_to_select)
+            new_max_bid = cursor.fetchall()[0]
 
+            cursor = self._connection.cursor()
+            postgres_update_query = """UPDATE "available_items" SET price = %s, max_bid_user = %s WHERE ITEM_ID = %s;"""
+            record_to_update = (new_max_bid[2], new_max_bid[1], new_max_bid[0])
+            cursor.execute(postgres_update_query, record_to_update)
+            self._connection.commit()
+    
+    def delete_from_bids(self, itemid):
+        cursor = self._connection.cursor()
 
-
-
-
-
-
-
-
-#---------------------------------------------------------------------
-# in progress features
-#---------------------------------------------------------------------
-def get_image(item_id):
-    try:
-        entry = get_item(str(13))
-        #print(entry)
-        #img = open(r"C:\Users\paska\OneDrive\Documents\Princeton\Fall 2019\COS333\Final_Project\Repo\reTailVCR\dog_test_out.jpg", "wb")
-        # print(bytearray.fromhex(str(bytes(entry[0][4]))))
-
-        temp = bytes(entry[0][4])
-        print(temp[0:100])
-        #print(entry[0][4])
-        #img.write()
-        #img.close
-
-        # path_to_file = r"C:\Users\paska\OneDrive\Documents\Princeton\Fall 2019\COS333\Final_Project\Repo\reTailVCR\dog_test.jpg"
-        # drawing = open(path_to_file, 'rb').read()
-        # print(drawing)
-        # img = open(r"C:\Users\paska\OneDrive\Documents\Princeton\Fall 2019\COS333\Final_Project\Repo\reTailVCR\dog_test_out.jpg", "wb")
-        # img.write(drawing)
-        # img.close
-
-    except Exception as e:
-        print (e)
-
-
-def add_pic_db():
-    try:
-        path_to_file = r"C:\Users\paska\OneDrive\Documents\Princeton\Fall 2019\COS333\Final_Project\Repo\reTailVCR\dog_test.jpg"
-        drawing = open(path_to_file, 'rb').read()
-        blob = psycopg2.Binary(drawing)
-        print(blob)
-        connection = psycopg2.connect(user = user,
-                                      password = pwd,
-                                      host = host,
-                                      port = port,
-                                      database = db)
-
-        cursor = connection.cursor()
-       
-
-        entry = [14, '2019-11-12', 'ps21', 34, drawing, 'inserting dog image into db', 'dog image test']
-
-        postgres_insert_query = """ INSERT INTO "available_items" 
-            (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMAGE, DESCRIPTION, TITLE) VALUES (%s,%s,%s,%s,%s,%s,%s)"""
-        
-        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6])
-        cursor.execute(postgres_insert_query, record_to_insert)
-
-        connection.commit()
-
-        
-
-        # results = cursor.fetchall()
-
-        # return results   
-
-    except (Exception, psycopg2.Error) as error:
-        print ("Error while connecting to PostgreSQL", error)
-
-    finally:
-    #closing database connection.
-        if(connection):
-            cursor.close()
-            connection.close()
-            print("PostgreSQL connection is closed")
-
-# get all available items from Database
-def get_available_db():
-    try:
-        connection = psycopg2.connect(user = user,
-                                      password = pwd,
-                                      host = host,
-                                      port = port,
-                                      database = db)
-
-        cursor = connection.cursor()
-       
-        cursor.execute("""SELECT * from "available_items";""")
-        results = cursor.fetchall()
-
-        return results   
-
-    except (Exception, psycopg2.Error) as error:
-
-        print ("Error while connecting to PostgreSQL", error)
-
-    finally:
-    #closing database connection.
-        if(connection):
-            cursor.close()
-            connection.close()
-            print("PostgreSQL connection is closed")
-
-
-#---------------------------------------------------------------------
-
-# sample function showing logic for adding to database
-def add_to_db():
-    try:
-        connection = psycopg2.connect(user = user,
-                                      password =pwd,
-                                      host = host,
-                                      port = port,
-                                      database = db)
-
-        cursor = connection.cursor()
-        # Print PostgreSQL Connection properties
-        print (connection.get_dsn_parameters(),"\n")
-
-        # Print PostgreSQL version
-        cursor.execute("SELECT version();")
-        record = cursor.fetchone()
-        print("You are connected to - ", record,"\n")
-
-        # insert sample netids into table
-        user_data = ['ps21', 'pablob', 'carinal', 'jjsalama', 'ilenee']
-        # for netid in user_data:
-        #     postgres_insert_query = """ INSERT INTO "users" (NETID) VALUES (%s)"""
-        #     record_to_insert = (netid,)
-        #     cursor.execute(postgres_insert_query, record_to_insert)
-
-        #     connection.commit()
-        #     count = cursor.rowcount
-        #     print (count, "Record inserted successfully into mobile table")
-
-        # insert sample available items into table
-        item_data = [[1, '2019-11-04', 'ps21', 2, None, 'animal crackers', 'crackers'], 
-        [2, '2019-11-03', 'pablob', 341, None, 'live animal', 'elephant'], 
-        [3, '2019-11-02', 'carinal', 10, None, 'pet animal', 'animal'], 
-        [4, '2019-11-06', 'ilene', 100, None, 'black red blue', 'colors'], 
-        [5, '2019-11-02', 'jjsalama', 13, None, ' items for sale stuff words', 'toys'], 
-        [2, '2019-11-02', 'test', 13, None, ' duplicate id', 'bad']]
-        for entry in item_data:
-            postgres_insert_query = """ INSERT INTO "available_items" 
-            (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMAGE, DESCRIPTION, TITLE) VALUES (%s,%s,%s,%s,%s,%s,%s)"""
-            record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6])
-            cursor.execute(postgres_insert_query, record_to_insert)
-
-            connection.commit()
-            count = cursor.rowcount
-            print (count, "Record inserted successfully into mobile table")
-
-    except (Exception, psycopg2.Error) as error :
-        print ("Error while connecting to PostgreSQL", error)
-    finally:
-    #closing database connection.
-        if(connection):
-            cursor.close()
-            connection.close()
-            print("PostgreSQL connection is closed")
-
-#---------------------------------------------------------------------
-
-def delete_from_db(itemId):
-    try:
-        connection = psycopg2.connect(user = user,
-                                      password =pwd,
-                                      host = host,
-                                      port = port,
-                                      database = db)
-
-        cursor = connection.cursor()
-
-        postgres_delete_query = """ DELETE FROM "available_items" WHERE ITEM_ID = %s """
-        record_to_delete = (itemId, )
+        postgres_delete_query = """ DELETE FROM "bids" WHERE ITEM_ID = %s"""
+        record_to_delete = (itemid, )
         cursor.execute(postgres_delete_query, record_to_delete)
+        self._connection.commit()
 
-        connection.commit()
-        count = cursor.rowcount
-        print (count, "Record deleted successfully from table")
 
-    except (Exception, psycopg2.Error) as error :
-        print ("Error while connecting to PostgreSQL", error)
-    finally:
-    #closing database connection.
-        if(connection):
-            cursor.close()
-            connection.close()
-            print("PostgreSQL connection is closed")
+    def get_max_bid(self, itemid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        postgres_select_statement = """ SELECT * from "bids" WHERE ITEM_ID = %s ORDER BY = %s DESC"""
+        record_to_select = (itemid, 'BIDS')
+        result = cursor.fetchall()[0]
+        return result
 
 #---------------------------------------------------------------------
-
-def get_item(itemid):
-    try:
-        connection = psycopg2.connect(user = user,
-                                      password = pwd,
-                                      host = host,
-                                      port = port,
-                                      database = db)
-
-        cursor = connection.cursor()
-       
-       # NOTE: Shouldn't this be a prepared statement?
-        cursor.execute("""SELECT * from "available_items" WHERE item_id="""+itemid+";")
-        entry = cursor.fetchall()
-
-        return entry   
-
-    except (Exception, psycopg2.Error) as error:
-
-        print ("Error while connecting to PostgreSQL", error)
-
-    finally:
-    #closing database connection.
-        if(connection):
-            cursor.close()
-            connection.close()
-            print("PostgreSQL connection is closed")
+#---------------------------------------------------------------------
+#---------------------------------------------------------------------
 
 if __name__ == '__main__':
     #get_image(13)
     #add_pic_db()
     #add_to_db()
     #delete_from_db(19)
-    database1 = Database()
-    database1.connect()
-    #database1.add_to_db(1162, "2019-11-15", "jjsalama", 9999, None, "unbelievably cool thing", "Cool water bottle")
-    database1.delete_from_db(1162)
-    #get_available_db()
+    #database1 = Database()
+    #database1.connect()
+    database = Database()
+    database.connect()
+    entry = database.get_item('14')
+    max_bid_user = (entry[0])[7]
+    print(max_bid_user)
 
+    database.copy_to_purchased('14', '2019-11-19', max_bid_user)
+    print(database.get_boughtitems_from_netid('carinal'))
+    #database1.add_to_db(1162, "2019-11-15", "jjsalama", 9999, None, "unbelievably cool thing", "Cool water bottle")
+    #database1.delete_from_db(1162)
+
+    #print(database1.get_all_items_from_netid("carinal"))
+    #get_available_db()
