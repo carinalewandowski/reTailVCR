@@ -108,6 +108,7 @@ class Database:
 
     #---------------------------------------------------------------------
     # functions for the purchase history 
+    
     def get_solditems_from_netid(self, netid):
         cursor = self._connection.cursor()
         
@@ -210,8 +211,9 @@ class Database:
         current_price = entry[3]
 
         current_bid = float(max_bid)
+        seller_netid = entry[2]
 
-        if (current_bid > current_price or max_bid_user is None):
+        if ( (seller_netid != max_bid_user) and (current_bid > current_price or max_bid_user is None) ):
 
             postgres_insert_query = """ INSERT INTO "bids" (ITEM_ID, BIDDER_NETID, BID) VALUES (%s,%s,%s)"""
             record_to_insert = (itemid, max_bid_user, max_bid)
