@@ -44,6 +44,25 @@ def item():
 
     #username = 'jjsalama'
     itemid = request.args.get('itemid')
+    
+    database = Database()
+    database.connect()
+
+    # check if item still exists in available database
+    # if not, check if it was sold
+    if not(database.check_exists_item(itemid)):
+        if not(database.check_exists_solditem(itemid)):
+            errormsg = 'Sorry, this item does not exist.'
+            html = render_template('error.html', errormsg=errormsg)
+            response = make_response(html)
+            return response
+        else:   
+            entry = database.get_solditem(itemid)
+            database.disconnect()
+            errormsg = 'Sorry, this item has already been sold. Looks like you suck.'
+            html = render_template('itemsold.html', entry=entry[0], errormsg=errormsg)
+            response = make_response(html)
+            return response
 
     if request.method == 'POST':
         bid = request.form['bid']
@@ -57,28 +76,19 @@ def item():
         database = Database()
         database.connect()
 
-        # check if item still exists in available database
-        if not(database.check_exists_item(itemid)):
-            entry = database.get_solditem(itemid)
-            database.disconnect()
-            errormsg = 'Sorry, this item has already been sold.'
-            html = render_template('itemsold.html', entry=entry[0], errormsg=errormsg)
-            response = make_response(html)
-            return response
-
         # add bid to database
-        entry = database.get_item(itemid)
-        seller_id = (entry[0])[2]
-        print(seller_id)
-        if (seller_id == netid):
-            database.disconnect()
-            msg = 'Sorry, you may not bid on an item you are selling.'
-            html = render_template('item.html', entry=entry[0], msg=msg)
-            response = make_response(html)
-            return response
+        # entry = database.get_item(itemid)
+        # seller_id = (entry[0])[2]
+        # print(seller_id)
+        # if (seller_id == netid):
+        #     database.disconnect()
+        #     msg = 'Sorry, you may not bid on an item you are selling.'
+        #     html = render_template('item.html', entry=entry[0], msg=msg)
+        #     response = make_response(html)
+        #     return response
 
         database.bid(itemid, bid, netid)
-        
+        entry = database.get_item(itemid)
         database.disconnect()
         msg = 'Your bid has been processed. Thank you!'
         html = render_template('item.html', entry=entry[0], msg=msg)

@@ -136,6 +136,14 @@ class Database:
         
         return entry
 
+    def check_exists_solditem(self, itemid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT EXISTS(SELECT 1 from "purchased_items" WHERE item_id="""+itemid+");")
+        exists = cursor.fetchone()[0]
+        return exists
+
     def get_boughtitems_from_netid(self, netid):
         cursor = self._connection.cursor()
         
