@@ -189,8 +189,8 @@ def track():
 
     if request.method == 'POST':
         
-        if (request.form.get('delete') is not None):
-            delete_bid_itemid = request.form.get('delete')
+        if (request.form.get('deletebid') is not None):
+            delete_bid_itemid = request.form.get('deletebid')
             database = Database()
             database.connect()
             database.remove_bid(delete_bid_itemid, username)
@@ -204,34 +204,51 @@ def track():
             response = make_response(html)
             return response
 
-        itemid = request.form['accept']
-        selldate = datetime.date.today()
+        elif (request.form.get('deleteitem') is not None):
+            delete_item_itemid = request.form.get('deleteitem')
+            database = Database()
+            database.connect()
+            database.delete_from_db(delete_item_itemid)
+            database.delete_from_bids(delete_item_itemid)
 
-        database = Database()
-        database.connect()
-        entry = database.get_item(itemid)[0]
-        max_bid_user = entry[7]
-        print("itemid: " + str(itemid))
-        current_max_bid = database.get_max_bid(itemid)
-        print("current max bid: " + str(current_max_bid))
-        current_max_bidder = current_max_bid[1]
-        print("max bid user: " + str(max_bid_user))
-        print("current max bidder: " + str(current_max_bidder))
+            netid_results = database.get_all_items_from_netid(username)
+            bidder_results = database.get_all_items_from_maxbidder(username)
 
-        if (max_bid_user == current_max_bidder):
-            print("yes")
-            database.copy_to_purchased(itemid, selldate, max_bid_user)
-            database.delete_from_db(itemid)
-            database.delete_from_bids(itemid)
+            database.disconnect()
 
-        netid_results = database.get_all_items_from_netid(username)
-        bidder_results = database.get_all_items_from_maxbidder(username)
+            html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
+            response = make_response(html)
+            return response
 
-        database.disconnect()
+        else:
+            itemid = request.form['accept']
+            selldate = datetime.date.today()
 
-        html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
-        response = make_response(html)
-        return response
+            database = Database()
+            database.connect()
+            entry = database.get_item(itemid)[0]
+            max_bid_user = entry[7]
+            print("itemid: " + str(itemid))
+            current_max_bid = database.get_max_bid(itemid)
+            print("current max bid: " + str(current_max_bid))
+            current_max_bidder = current_max_bid[1]
+            print("max bid user: " + str(max_bid_user))
+            print("current max bidder: " + str(current_max_bidder))
+
+            if (max_bid_user == current_max_bidder):
+                print("yes")
+                database.copy_to_purchased(itemid, selldate, max_bid_user)
+                database.delete_from_db(itemid)
+                database.delete_from_bids(itemid)
+
+            netid_results = database.get_all_items_from_netid(username)
+            bidder_results = database.get_all_items_from_maxbidder(username)
+
+            database.disconnect()
+
+            html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
+            response = make_response(html)
+            return response
 
     else:
         database = Database()
