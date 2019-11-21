@@ -190,9 +190,12 @@ def track():
         database.connect()
         entry = database.get_item(itemid)[0]
         max_bid_user = entry[7]
-        database.copy_to_purchased(itemid, selldate, max_bid_user)
-        database.delete_from_db(itemid)
-        database.delete_from_bids(itemid)
+        current_max_bid = database.get_max_bid(itemid)
+        current_max_bidder = current_max_bid[2]
+        if (max_bid_user = current_max_bidder)
+            database.copy_to_purchased(itemid, selldate, max_bid_user)
+            database.delete_from_db(itemid)
+            database.delete_from_bids(itemid)
 
         netid_results = database.get_all_items_from_netid(username)
         bidder_results = database.get_all_items_from_maxbidder(username)
