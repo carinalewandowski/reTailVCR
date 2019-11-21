@@ -82,6 +82,12 @@
                                 </form>
                               {% endif %}
                             </td>
+                            <td>
+                              <form action="track" method="post">
+                                <input type="hidden" name="deleteitem" value={{entry[0]}}>
+                                <button type="submit" class="btn btn-primary">Delete Item</button>
+                              </form>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -110,7 +116,7 @@
                                 </td>
                                 <td>
                                   <form action="track" method="post">
-                                    <input type="hidden" name="delete" value={{entry[0]}}>
+                                    <input type="hidden" name="deletebid" value={{entry[0]}}>
                                     <button type="submit" class="btn btn-primary">Remove Bid</button>
                                   </form>
                                 </td>
