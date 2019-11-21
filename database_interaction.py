@@ -70,6 +70,15 @@ class Database:
         
         return results
     
+    def check_exists_item(self, itemid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT EXISTS(SELECT 1 from "available_items" WHERE item_id="""+itemid+");")
+        exists = cursor.fetchone()[0]
+        
+        return exists
+
     def get_item(self, itemid):
         cursor = self._connection.cursor()
         
@@ -201,19 +210,26 @@ class Database:
 
     def bid(self, itemid, max_bid, max_bid_user):
         cursor = self._connection.cursor()
-        entry = [itemid, max_bid, max_bid_user]
+        bid_entry = [itemid, max_bid, max_bid_user]
 
         postgres_select_query = """SELECT * from "available_items" WHERE item_id = %s"""
-        record_to_select = (entry[0], )
+        record_to_select = (bid_entry[0], )
         cursor.execute(postgres_select_query, record_to_select)
         
+        if (cursor.fetchone() is None):
+            print("none")
+            return
+
+        cursor = self._connection.cursor()
+        cursor.execute(postgres_select_query, record_to_select)
         entry = cursor.fetchall()[0]
         current_price = entry[3]
 
         current_bid = float(max_bid)
         seller_netid = entry[2]
 
-        if ( (seller_netid != max_bid_user) and (current_bid > current_price or max_bid_user is None) ):
+        #if ( (seller_netid != max_bid_user) and 
+        if (current_bid > current_price or max_bid_user is None) :
 
             postgres_insert_query = """ INSERT INTO "bids" (ITEM_ID, BIDDER_NETID, BID) VALUES (%s,%s,%s)"""
             record_to_insert = (itemid, max_bid_user, max_bid)
@@ -227,23 +243,27 @@ class Database:
     def remove_bid(self, itemid, max_bid_user):
         cursor = self._connection.cursor()
 
+        # delete from bids database
         postgres_delete_query = """ DELETE FROM "bids" WHERE ITEM_ID = %s AND BIDDER_NETID = %s"""
         record_to_delete = (itemid, max_bid_user)
         cursor.execute(postgres_delete_query, record_to_delete)
+        print("deleting")
         self._connection.commit()
 
+        # select in descending order the remaining bids
         cursor = self._connection.cursor()
         postgres_select_query = """ SELECT * from "bids" WHERE ITEM_ID = %s ORDER BY BID DESC"""
         record_to_select = (itemid, )
         cursor.execute(postgres_select_query, record_to_select)
 
-        if (cursor.fetchone() is None):
-            cursor = self._connection.cursor()
-            postgres_update_query = """UPDATE "available_items" SET price = initial_price, max_bid_user = %s WHERE ITEM_ID = %s;"""
-            record_to_update = (None, itemid)
-            cursor.execute(postgres_update_query, record_to_update)
-            self._connection.commit()
-        else:
+        # if (cursor.fetchone() is None):
+        #     print("none left")
+        #     cursor = self._connection.cursor()
+        #     postgres_update_query = """UPDATE "available_items" SET price = initial_price, max_bid_user = %s WHERE ITEM_ID = %s;"""
+        #     record_to_update = (None, itemid)
+        #     cursor.execute(postgres_update_query, record_to_update)
+        #     self._connection.commit()
+        if (cursor.fetchone() is not None):
             cursor = self._connection.cursor()
             cursor.execute(postgres_select_query, record_to_select)
             new_max_bid = cursor.fetchall()[0]
@@ -267,8 +287,9 @@ class Database:
         cursor = self._connection.cursor()
         
         # NOTE: Shouldn't this be a prepared statement?
-        postgres_select_statement = """ SELECT * from "bids" WHERE ITEM_ID = %s ORDER BY = %s DESC"""
-        record_to_select = (itemid, 'BIDS')
+        postgres_select_query = """ SELECT * from "bids" WHERE ITEM_ID = %s ORDER BY BID DESC"""
+        record_to_select = (itemid, )
+        cursor.execute(postgres_select_query, record_to_select)
         result = cursor.fetchall()[0]
         return result
 
