@@ -53,14 +53,35 @@ def item():
         #if netid is None:
         netid = username
 
-        # add listing to database
+        
         database = Database()
         database.connect()
-        database.bid(itemid, bid, netid)
-        entry = database.get_item(itemid)
-        database.disconnect()
 
-        html = render_template('item.html', entry=entry[0])
+        # check if item still exists in available database
+        if not(database.check_exists_item(itemid)):
+            entry = database.get_solditem(itemid)
+            database.disconnect()
+            errormsg = 'Sorry, this item has already been sold.'
+            html = render_template('itemsold.html', entry=entry[0], errormsg=errormsg)
+            response = make_response(html)
+            return response
+
+        # add bid to database
+        entry = database.get_item(itemid)
+        seller_id = (entry[0])[2]
+        print(seller_id)
+        if (seller_id == netid):
+            database.disconnect()
+            msg = 'Sorry, you may not bid on an item you are selling.'
+            html = render_template('item.html', entry=entry[0], msg=msg)
+            response = make_response(html)
+            return response
+
+        database.bid(itemid, bid, netid)
+        
+        database.disconnect()
+        msg = 'Your bid has been processed. Thank you!'
+        html = render_template('item.html', entry=entry[0], msg=msg)
         response = make_response(html)
         return response
     else:
@@ -93,7 +114,7 @@ def itemsold():
     database.connect()
     entry = database.get_solditem(itemid)
     database.disconnect()
-    html = render_template('itemsold.html', entry=entry[0])
+    html = render_template('itemsold.html', entry=entry[0], errormsg='')
     response = make_response(html)
     return response
 
@@ -190,9 +211,15 @@ def track():
         database.connect()
         entry = database.get_item(itemid)[0]
         max_bid_user = entry[7]
+        print("itemid: " + str(itemid))
         current_max_bid = database.get_max_bid(itemid)
-        current_max_bidder = current_max_bid[2]
-        if (max_bid_user = current_max_bidder)
+        print("current max bid: " + str(current_max_bid))
+        current_max_bidder = current_max_bid[1]
+        print("max bid user: " + str(max_bid_user))
+        print("current max bidder: " + str(current_max_bidder))
+
+        if (max_bid_user == current_max_bidder):
+            print("yes")
             database.copy_to_purchased(itemid, selldate, max_bid_user)
             database.delete_from_db(itemid)
             database.delete_from_bids(itemid)
