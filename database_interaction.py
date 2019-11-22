@@ -155,6 +155,7 @@ class Database:
 
     def add_to_purchased(self, itemid, selldate, price, image, seller_netid, buyer_netid, title, description):
         cursor = self._connection.cursor()
+        image = psycopg2.Binary(image)
         entry = [itemid, selldate, price, image, seller_netid, buyer_netid, title, description]
         postgres_insert_query = """ INSERT INTO "purchased_items" 
         (ITEM_ID, SELL_DATE, PRICE, IMAGE, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
@@ -185,6 +186,7 @@ class Database:
 
     def add_to_db(self, itemid, postdate, netid, price, image, description, title):
         cursor = self._connection.cursor()
+        image = psycopg2.Binary(image)
         entry = [itemid, postdate, netid, price, image, description, title]
         postgres_insert_query = """ INSERT INTO "available_items" 
         (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMAGE, DESCRIPTION, TITLE, INITIAL_PRICE) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
@@ -212,6 +214,16 @@ class Database:
 
         results = cursor.fetchall()
         return results
+
+    def add_image(self, itemid, image_data):
+        cursor = self._connection.cursor()
+        binary_image = psycopg2.Binary(image_data)
+
+        postgres_insert_query = """ INSERT INTO "images" (ITEM_ID, IMG_DATA) VALUES (%s,%s)"""
+        
+        record_to_insert = (itemid, binary_image)
+        cursor.execute(postgres_insert_query, record_to_insert)
+        self._connection.commit()
 
     #---------------------------------------------------------------------
     # bidding functions
