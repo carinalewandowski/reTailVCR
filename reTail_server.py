@@ -105,12 +105,12 @@ def item():
         entry = database.get_item(itemid)
         seller_id = (entry[0])[2]
         print(seller_id)
-        # if (seller_id == netid):
-        #     database.disconnect()
-        #     msg = 'Sorry, you may not bid on an item you are selling.'
-        #     html = render_template('item.html', entry=entry[0], msg=msg)
-        #     response = make_response(html)
-        #     return response
+        if (seller_id == netid):
+            database.disconnect()
+            msg = 'Sorry, you may not bid on an item you are selling.'
+            html = render_template('item.html', entry=entry[0], msg=msg)
+            response = make_response(html)
+            return response
 
         entry = database.get_item(itemid)
         current_price = (entry[0])[3]
