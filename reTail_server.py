@@ -11,6 +11,8 @@ from flask import render_template, session
 from database_interaction import Database
 from werkzeug.utils import secure_filename
 from CASClient import CASClient
+from PIL import Image
+import io
 import random
 import string
 import datetime
@@ -25,6 +27,17 @@ app = Flask(__name__, template_folder='.')
 app.secret_key = b'\rb\x98G`\xaa\xb5\xa6i$\xe0TWk\x0b\x1e'
 IMAGE_DIR_AVAILABLE = 'static/images/available'
 IMAGE_DIR_PURCHASED = 'static/images/purchased'
+
+
+database = Database()
+database.connect()
+stored_images = database.get_available_images()
+for entry in stored_images:
+    image_data = entry[1]
+    im = Image.open(io.BytesIO(image_data))
+    imgpath = '{}/{}'.format(IMAGE_DIR_AVAILABLE, entry[2])
+    im.save(imgpath)
+
 
 #-----------------------------------------------------------------------
 
@@ -211,8 +224,10 @@ def sell():
             safefilename = secure_filename(randstr() + '-' + image.filename)
             imgpath = '{}/{}'.format(IMAGE_DIR_AVAILABLE, safefilename)
             image.save(imgpath)
+            image.seek(0)
             image_read = image.read()
             database.add_image(itemid, image_read, safefilename)
+            print(database.image_table_size())
 
         database.add_to_db(itemid, postdate, netid, price, safefilename, description, title)
 
