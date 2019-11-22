@@ -66,10 +66,11 @@
       <div class="col-lg-9" style="margin-bottom: 30px">
 
         <div class="card mt-4">
-          <picture>
-            <source src="{{url_for('get_image_from_db', item_id=entry[0])}}">
-          <img class="card-img-top img-fluid" src="{{url_for('get_image_from_db', item_id=entry[0])}}" alt="">
-          </picture>
+          {% if entry[4] != '' %}
+            <img class="card-img-top" src="/static/images/{{entry[4]}}" alt="">
+          {% else %}
+            <img class="card-img-top" src="/static/images/default.png" alt="">
+          {% endif %}
           <div class="card-body">
             <h3 class="card-title">{{entry[6]}}</h3>
             <h5>{{entry[1]}}</h5>
