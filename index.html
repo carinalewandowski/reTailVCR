@@ -112,7 +112,7 @@
             <div class="col-lg-4 col-md-6 mb-4">
               <div class="card h-100">
                 <a href="item?itemid={{entry[0]}}">
-                  <img class="card-img-top" src="https://scontent-mia3-1.xx.fbcdn.net/v/t1.0-9/28575996_2298131606879819_2180284515848857584_n.jpg?_nc_cat=105&_nc_oc=AQnk_GzSfBQtyIcjIJ3soqdwQElNxxAmFjTxJA8Gz2pKtpcEsIhb10DYwIOkKdGcFgE&_nc_ht=scontent-mia3-1.xx&oh=53d6a5269bc883bae049250a644018db&oe=5E41E7BC" alt="">
+                  <img class="card-img-top" src="{{url_for('get_image_from_db', item_id=entry[0])}}" alt="">
                 </a>
                 <div class="card-body">
                   <h4 class="card-title">

@@ -165,6 +165,9 @@ def sell():
     # parse user input for item upload details
     # ***** need to handle other info still *****
     if request.method == 'POST':
+        if 'image' not in request.files:
+            print("err")
+        image = request.files['image']
         title = request.form['title']
         description = request.form['description']
         price = request.form['price']
@@ -182,12 +185,15 @@ def sell():
         #if netid is None:
         netid = username
         #if image is None:
-        image = ''
+        #image = ''
     
         # add listing to database
         database = Database()
         database.connect()
-        database.add_to_db(itemid, postdate, netid, price, image, description, title)
+
+        image_read = image.read()
+        # database.add_image(itemid, image_read)
+        database.add_to_db(itemid, postdate, netid, price, image_read, description, title)
 
         # add to bid database with null bidder netid
         database.bid(itemid, price, None)
@@ -344,6 +350,26 @@ def home_control():
         exit(1)
     
 #-----------------------------------------------------------------------
+
+@app.route('/<int:item_id>', methods=['GET'])
+def get_image_from_db(item_id):
+    database = Database()
+    database.connect()
+    itemid = str(item_id)
+    entry = database.get_item(itemid)
+    item = entry[0]
+    database.disconnect()
+    print("image loaded")
+    return app.response_class(item[4], mimetype='application/octet-stream')
+
+@app.route('/images/db/', methods=['GET'])
+def get_images_from_db():
+    database = Database()
+    database.connect()
+    results = database.get_available_db()
+    database.disconnect()
+    images = list(filter(lambda entry: entry[4] != None, results))
+    return render_template('show_images.html', images=images, target='db')
 
 # @app.route('/history_control')
 # def history_control():
