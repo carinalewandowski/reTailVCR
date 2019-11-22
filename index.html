@@ -112,7 +112,10 @@
             <div class="col-lg-4 col-md-6 mb-4">
               <div class="card h-100">
                 <a href="item?itemid={{entry[0]}}">
+                  <picture>
+                    <source src="{{url_for('get_image_from_db', item_id=entry[0])}}">
                   <img class="card-img-top" src="{{url_for('get_image_from_db', item_id=entry[0])}}" alt="">
+                  </picture>
                 </a>
                 <div class="card-body">
                   <h4 class="card-title">
