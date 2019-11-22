@@ -153,12 +153,12 @@ class Database:
         
         return results
 
-    def add_to_purchased(self, itemid, selldate, price, image, seller_netid, buyer_netid, title, description):
+    def add_to_purchased(self, itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description):
         cursor = self._connection.cursor()
-        image = psycopg2.Binary(image)
-        entry = [itemid, selldate, price, image, seller_netid, buyer_netid, title, description]
+        #image = psycopg2.Binary(image)
+        entry = [itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description]
         postgres_insert_query = """ INSERT INTO "purchased_items" 
-        (ITEM_ID, SELL_DATE, PRICE, IMAGE, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+        (ITEM_ID, SELL_DATE, PRICE, IMG_FILENAME, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
         record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7])
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
@@ -170,13 +170,13 @@ class Database:
 
         seller_netid = entry_available[2]
         price = entry_available[3]
-        image = entry_available[4]
+        img_filename = entry_available[4]
         description = entry_available[5]
         title = entry_available[6]
         
-        entry = [itemid, selldate, price, image, seller_netid, buyer_netid, title, description]
+        entry = [itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description]
         postgres_insert_query = """ INSERT INTO "purchased_items" 
-        (ITEM_ID, SELL_DATE, PRICE, IMAGE, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+        (ITEM_ID, SELL_DATE, PRICE, IMG_FILENAME, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
         record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7])
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
@@ -184,12 +184,12 @@ class Database:
     #---------------------------------------------------------------------
     # major db functions
 
-    def add_to_db(self, itemid, postdate, netid, price, image, description, title):
+    def add_to_db(self, itemid, postdate, netid, price, img_filename, description, title):
         cursor = self._connection.cursor()
-        image = psycopg2.Binary(image)
-        entry = [itemid, postdate, netid, price, image, description, title]
+        #image = psycopg2.Binary(image)
+        entry = [itemid, postdate, netid, price, img_filename, description, title]
         postgres_insert_query = """ INSERT INTO "available_items" 
-        (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMAGE, DESCRIPTION, TITLE, INITIAL_PRICE) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+        (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMG_FILENAME, DESCRIPTION, TITLE, INITIAL_PRICE) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
         record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[3])
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
@@ -215,14 +215,23 @@ class Database:
         results = cursor.fetchall()
         return results
 
-    def add_image(self, itemid, image_data):
+    def add_image(self, itemid, image_data, img_filename):
         cursor = self._connection.cursor()
         binary_image = psycopg2.Binary(image_data)
 
-        postgres_insert_query = """ INSERT INTO "images" (ITEM_ID, IMG_DATA) VALUES (%s,%s)"""
+        postgres_insert_query = """ INSERT INTO "images" (ITEM_ID, IMG_DATA, IMG_FILENAME) VALUES (%s,%s,%s)"""
         
-        record_to_insert = (itemid, binary_image)
+        record_to_insert = (itemid, binary_image, img_filename)
         cursor.execute(postgres_insert_query, record_to_insert)
+        self._connection.commit()
+
+    def delete_image(self, itemid):
+        cursor = self._connection.cursor()
+
+        postgres_delete_query = """ DELETE FROM "images" WHERE ITEM_ID = %s """
+        record_to_delete = (itemid, )
+        cursor.execute(postgres_delete_query, record_to_delete)
+
         self._connection.commit()
 
     #---------------------------------------------------------------------

@@ -64,7 +64,11 @@
       <div class="col-lg-9" style="margin-bottom: 30px">
 
         <div class="card mt-4">
-          <img class="card-img-top img-fluid" src="https://scontent-mia3-1.xx.fbcdn.net/v/t1.0-9/40922951_1277130715762426_5817212407029694464_o.jpg?_nc_cat=109&_nc_oc=AQkUFez-ExZjg_nGAUtTsykYUYyiOWbPpVFsHJGBavFcCVcIGjC6SeiNGx06v508Jvk&_nc_ht=scontent-mia3-1.xx&oh=5ae91ba7868cdede7fc57b91fb3cfe08&oe=5E8AE30A" alt="">
+          {% if entry[3] != '' %}
+            <img class="card-img-top" src="/static/images/{{entry[3]}}" alt="">
+          {% else %}
+            <img class="card-img-top" src="/static/images/default.png" alt="">
+          {% endif %}
           <div class="card-body">
             <h3 class="card-title">{{entry[6]}}</h3>
             <h5>Sold on: {{entry[1]}}</h5>
