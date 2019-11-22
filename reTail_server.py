@@ -66,12 +66,25 @@ def item():
 
     if request.method == 'POST':
         bid = request.form['bid']
-        print(bid)
-        if bid is None:
-            bid = ''
+
+        # check if bid is numeric
+        try:
+            bid = float(bid)
+        except Exception as e:
+            database = Database()
+            database.connect()
+            entry = database.get_item(itemid)
+            database.disconnect()
+            msg = 'Please enter a valid bid.'
+            html = render_template('item.html', entry=entry[0], msg=msg)
+            response = make_response(html)
+            return response
+
+        # round bid to nearest 0.5
+        bid = round( (float(bid) * 2) / 2 )
+
         #if netid is None:
         netid = username
-
         
         database = Database()
         database.connect()
@@ -87,6 +100,15 @@ def item():
             response = make_response(html)
             return response
 
+        entry = database.get_item(itemid)
+        current_price = (entry[0])[3]
+        if (float(bid) <= current_price):
+            database.disconnect()
+            msg = 'Please enter a bid higher than the current price.'
+            html = render_template('item.html', entry=entry[0], msg=msg)
+            response = make_response(html)
+            return response
+    
         database.bid(itemid, bid, netid)
         entry = database.get_item(itemid)
         database.disconnect()

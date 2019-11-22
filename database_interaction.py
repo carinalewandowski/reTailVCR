@@ -236,17 +236,14 @@ class Database:
         current_bid = float(max_bid)
         seller_netid = entry[2]
 
-        #if ( (seller_netid != max_bid_user) and 
-        if (current_bid > current_price or max_bid_user is None) :
-
-            postgres_insert_query = """ INSERT INTO "bids" (ITEM_ID, BIDDER_NETID, BID) VALUES (%s,%s,%s)"""
-            record_to_insert = (itemid, max_bid_user, max_bid)
-            cursor.execute(postgres_insert_query, record_to_insert)
-            
-            postgres_update_query = """UPDATE "available_items" SET price = %s, max_bid_user = %s WHERE ITEM_ID = %s;"""
-            record_to_update = (max_bid, max_bid_user, itemid)
-            cursor.execute(postgres_update_query, record_to_update)
-            self._connection.commit()
+        postgres_insert_query = """ INSERT INTO "bids" (ITEM_ID, BIDDER_NETID, BID) VALUES (%s,%s,%s)"""
+        record_to_insert = (itemid, max_bid_user, max_bid)
+        cursor.execute(postgres_insert_query, record_to_insert)
+        
+        postgres_update_query = """UPDATE "available_items" SET price = %s, max_bid_user = %s WHERE ITEM_ID = %s;"""
+        record_to_update = (max_bid, max_bid_user, itemid)
+        cursor.execute(postgres_update_query, record_to_update)
+        self._connection.commit()
 
     def remove_bid(self, itemid, max_bid_user):
         cursor = self._connection.cursor()
