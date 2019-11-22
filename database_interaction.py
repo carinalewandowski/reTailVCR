@@ -115,6 +115,33 @@ class Database:
         
         return results
 
+    def get_available_images(self):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "images" """)
+        results = cursor.fetchall()
+        return results
+
+    def get_image(self, itemid):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "images" WHERE item_id="""+itemid+";")
+        entry = cursor.fetchall()
+        imaga_data = entry[1]
+        
+        return imaga_data
+
+    def image_table_size(self):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT pg_size_pretty( pg_total_relation_size('images') )""")
+        entry = cursor.fetchall()
+        size = entry[0]
+        return size
+
     #---------------------------------------------------------------------
     # functions for the purchase history 
     
@@ -218,10 +245,15 @@ class Database:
     def add_image(self, itemid, image_data, img_filename):
         cursor = self._connection.cursor()
         binary_image = psycopg2.Binary(image_data)
+        print("start")
+        print(type(image_data))
+        print("done")
+        print(type(binary_image))
+        print("done2")
 
         postgres_insert_query = """ INSERT INTO "images" (ITEM_ID, IMG_DATA, IMG_FILENAME) VALUES (%s,%s,%s)"""
         
-        record_to_insert = (itemid, binary_image, img_filename)
+        record_to_insert = (itemid, image_data, img_filename)
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
