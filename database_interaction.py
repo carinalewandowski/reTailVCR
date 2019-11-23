@@ -123,6 +123,14 @@ class Database:
         results = cursor.fetchall()
         return results
 
+    def get_purchased_images(self):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "purchased_images" """)
+        results = cursor.fetchall()
+        return results
+
     def get_image(self, itemid):
         cursor = self._connection.cursor()
         
@@ -208,6 +216,22 @@ class Database:
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
+    def copy_image_to_purchased_images(self, itemid):
+        cursor = self._connection.cursor()
+        cursor.execute("""SELECT * from "images" WHERE item_id="""+itemid+";")
+        entry = cursor.fetchone()
+
+        image_data = entry[1]
+        img_filename = entry[2]
+
+        purchased_entry = [itemid, image_data, img_filename]
+        
+        postgres_insert_query = """ INSERT INTO "purchased_images" (ITEM_ID, IMG_DATA, IMG_FILENAME) VALUES (%s,%s,%s)"""
+        
+        record_to_insert = (itemid, image_data, img_filename)
+        cursor.execute(postgres_insert_query, record_to_insert)
+        self._connection.commit()
+
     #---------------------------------------------------------------------
     # major db functions
 
@@ -244,12 +268,7 @@ class Database:
 
     def add_image(self, itemid, image_data, img_filename):
         cursor = self._connection.cursor()
-        binary_image = psycopg2.Binary(image_data)
-        print("start")
-        print(type(image_data))
-        print("done")
-        print(type(binary_image))
-        print("done2")
+        #binary_image = psycopg2.Binary(image_data)
 
         postgres_insert_query = """ INSERT INTO "images" (ITEM_ID, IMG_DATA, IMG_FILENAME) VALUES (%s,%s,%s)"""
         
