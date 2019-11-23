@@ -28,15 +28,28 @@ app.secret_key = b'\rb\x98G`\xaa\xb5\xa6i$\xe0TWk\x0b\x1e'
 IMAGE_DIR_AVAILABLE = 'static/images/available'
 IMAGE_DIR_PURCHASED = 'static/images/purchased'
 
-
 database = Database()
 database.connect()
+
 stored_images = database.get_available_images()
+purchased_images = database.get_purchased_images()
+
+print("Retrieving available images...")
 for entry in stored_images:
     image_data = entry[1]
     im = Image.open(io.BytesIO(image_data))
     imgpath = '{}/{}'.format(IMAGE_DIR_AVAILABLE, entry[2])
     im.save(imgpath)
+
+print("Retrieving purchased images...")
+for soldentry in purchased_images:
+    image_data = soldentry[1]
+    im = Image.open(io.BytesIO(image_data))
+    imgpath = '{}/{}'.format(IMAGE_DIR_PURCHASED, soldentry[2])
+    im.save(imgpath)
+
+print("All Images Retrieved")
+database.disconnect()
 
 
 #-----------------------------------------------------------------------
@@ -326,6 +339,7 @@ def track():
                 database.delete_from_bids(itemid)
                 if (delete_item_filename != ''):
                     os.rename(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename), os.path.join(IMAGE_DIR_PURCHASED, delete_item_filename))
+                    database.copy_image_to_purchased_images(itemid)
                     database.delete_image(itemid)
 
             netid_results = database.get_all_items_from_netid(username)
