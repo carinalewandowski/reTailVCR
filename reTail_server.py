@@ -405,7 +405,7 @@ def home_control():
         database.disconnect()
 
         # html = render_template('index.html', results=results, lastSearch='')
-        html = render_template(index.html)
+        html = render_template('index.html')
         response = make_response(html)
         #response.set_cookie('lastSearch', '')
         return response
