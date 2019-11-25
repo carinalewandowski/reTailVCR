@@ -454,7 +454,7 @@ def prep_results(results):
 
     html = ''
     for entry in results:
-        html += '<div class="col-lg-4 col-md-6 mb-4">'
+        html += '<div class="col-lg-6 col-md-6 mb-4">'
         html += '<div class="card h-100">'
         html += '<a href="item?itemid={}">'.format(entry[0])
         if entry[4] != '':
