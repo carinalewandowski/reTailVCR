@@ -134,10 +134,10 @@
       // $('#inputGroupFile01').focus();
       $("#inputGroupFile01").change(file_display);
       // $("#start_price").on('input', price_check)
-      $("#form").submit(form_check);
+      $("#form").submit(form_check(e));
     }
 
-    function form_check() {
+    function form_check(e) {
       console.log('checking');
       let errormsg = "";
       let value = $('#start_price').val();
@@ -168,7 +168,7 @@
       }
       else {
         $('#error_display').html(errormsg);
-        // event.preventDefault();
+        e.preventDefault();
       }
     }
 
