@@ -134,10 +134,10 @@
       // $('#inputGroupFile01').focus();
       $("#inputGroupFile01").change(file_display);
       // $("#start_price").on('input', price_check)
-      $("#form").submit(form_check(event));
+      $("#form").submit(form_check);
     }
 
-    function form_check(event) {
+    function form_check() {
       console.log('checking');
       let errormsg = "";
       let value = $('#start_price').val();
@@ -164,11 +164,11 @@
       }
       // if image is not uploaded
       if (errormsg.length === 0) {
-        // $('#form').submit();
+        $('#form').submit();
       }
       else {
         $('#error_display').html(errormsg);
-        event.preventDefault();
+        // event.preventDefault();
       }
     }
 
