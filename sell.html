@@ -83,7 +83,7 @@
                 <strong>Starting Price:</strong>
                 <input type="text" class="form-control" id="start_price" name="price" aria-describedby="emailHelp"><br>
               </div>
-              <input type="submit" class="btn btn-primary" id="submit" value="Upload Listing">
+              <input type="submit" class="btn btn-primary" id="submit_button" value="Upload Listing">
               <!--button type="submit" class="btn btn-primary">Upload Listing</button-->
           </form>
         </div>
@@ -134,7 +134,7 @@
       // $('#inputGroupFile01').focus();
       $("#inputGroupFile01").change(file_display);
       // $("#start_price").on('input', price_check)
-      $('#submit').on("click", form_check);
+      $("#form").submit(form_check);
     }
 
     function form_check() {
