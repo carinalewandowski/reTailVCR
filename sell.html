@@ -137,7 +137,7 @@
       //$("#form").submit(form_check;
       //$('#submit_button').on('click', form_check)
       $("#form").submit(function(event) {
-          console.log('checking');
+          console.log('checking input');
           let errormsg = "";
           let value = $('#start_price').val();
           if ($('#item_name').val() === "") {
@@ -163,25 +163,17 @@
           }
           // if image is not uploaded
           if (errormsg.length === 0) {
-            console.log("if")
+            // console.log("if")
             // $('#form').submit();
             return 
           }
           else {
-            console.log("else")
-            $('#error_display').html(errormsg);
+            // console.log("else")
+            $('#error_display').text(errormsg);
             event.preventDefault();
           }
       });
     }
-
-    // function form_check() {
-      
-    // }
-
-    // function price_check() {
-    //   // if price is not integer, error
-    // }
 
     function file_display() {
       $("#upload_label").html($("#inputGroupFile01").val())
