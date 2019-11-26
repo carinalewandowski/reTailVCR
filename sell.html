@@ -134,43 +134,49 @@
       // $('#inputGroupFile01').focus();
       $("#inputGroupFile01").change(file_display);
       // $("#start_price").on('input', price_check)
-      $("#form").submit(form_check(e));
+      //$("#form").submit(form_check;
+      //$('#submit_button').on('click', form_check)
+      $("#form").submit(function(event) {
+          console.log('checking');
+          let errormsg = "";
+          let value = $('#start_price').val();
+          if ($('#item_name').val() === "") {
+              errormsg += "Item title cannot be empty.\n"
+          }
+          else if ($('#item_name').val().length > 30) {
+              errormsg += "Item title cannot be longer than 30 characters.\n";
+          }
+          if ($('#item_desc').val() === "") {
+            errormsg += "Item description cannot be empty.\n";
+          }
+          else if ($('#item_desc').val().length > 100) {
+            errormsg += "Item description must be shorter than 100 characters.\n";
+          }
+          if (value === "") {
+              errormsg += "Starting price cannot be empty.\n";
+          }
+          else if (!$.isNumeric(value)) {
+              errormsg += "Starting price must be a number.\n";
+          }
+          else if (Math.floor(value) != value) {
+              errormsg += "Starting price must be an integer.";
+          }
+          // if image is not uploaded
+          if (errormsg.length === 0) {
+            console.log("if")
+            $('#form').submit();
+          }
+          else {
+            console.log("else")
+            $('#error_display').html(errormsg);
+            event.preventDefault();
+          }
+      });
     }
 
-    function form_check(e) {
-      console.log('checking');
-      let errormsg = "";
-      let value = $('#start_price').val();
-      if ($('#item_name').val() === "") {
-          errormsg += "Item title cannot be empty.\n"
-      }
-      else if ($('#item_name').val().length > 30) {
-          errormsg += "Item title cannot be longer than 30 characters.\n";
-      }
-      if ($('#item_desc').val() === "") {
-        errormsg += "Item description cannot be empty.\n";
-      }
-      else if ($('#item_desc').val().length > 100) {
-        errormsg += "Item description must be shorter than 100 characters.\n";
-      }
-      if (value === "") {
-          errormsg += "Starting price cannot be empty.\n";
-      }
-      else if (!$.isNumeric(value)) {
-          errormsg += "Starting price must be a number.\n";
-      }
-      else if (Math.floor(value) != value) {
-          errormsg += "Starting price must be an integer.";
-      }
-      // if image is not uploaded
-      if (errormsg.length === 0) {
-        $('#form').submit();
-      }
-      else {
-        $('#error_display').html(errormsg);
-        e.preventDefault();
-      }
-    }
+    // function form_check() {
+      
+    // }
 
     // function price_check() {
     //   // if price is not integer, error
