@@ -454,7 +454,7 @@ def prep_results(results):
 
     html = ''
     for entry in results:
-        # html += '<div class="col-lg-4 col-md-6 mb-4">'
+        html += '<div class="col-lg-4 col-md-6 mb-4">'
         html += '<div class="card h-100">'
         html += '<a href="item?itemid={}">'.format(entry[0])
         if entry[4] != '':
@@ -468,7 +468,7 @@ def prep_results(results):
         html += '</h4>'
         html += '<h5>${}</h5> <p><i>{}</i></p> <p class="card-text">{}</p>'.format(entry[3], entry[1], entry[5])
         # html += '</div> <div class="card-footer"> <p><i>{}</i></p> </div> </div> </div>'.format(entry[2])
-        html += '</div> <div class="card-footer"> <p><i>{}</i></p> </div> </div>'.format(entry[2])
+        html += '</div> <div class="card-footer"> <p><i>{}</i></p> </div> </div> </div>'.format(entry[2])
     return html
     # {% for entry in results: %}
     #     <div class="col-lg-4 col-md-6 mb-4">
