@@ -63,13 +63,13 @@
 
         <div class="card mt-4">
           
-          <form action="sell" method="post" enctype=multipart/form-data>
+          <form action="sell" id="form" method="post" enctype=multipart/form-data>
 
               <div class="input-group">
                   <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="inputGroupFile01" name="image"
+                    <input type="file" class="custom-file-input" id="inputGroupFile01" name="image" value=""
                       aria-describedby="inputGroupFileAddon01">
-                    <label class="custom-file-label" for="inputGroupFile01">Upload image</label>
+                    <label class="custom-file-label" id="upload_label" for="inputGroupFile01">Upload image</label>
                   </div>
                 </div>
                 
@@ -77,16 +77,17 @@
 
               <div class="form-group">
                 <strong>Item Name:</strong><br>
-                <input type="text" class="form-control" id="bid" name="title" aria-describedby="emailHelp"><br>
+                <input type="text" class="form-control" id="item_name" name="title" aria-describedby="emailHelp"><br>
                 <strong>Item Description:</strong><br>
-                <textarea type="text" class="form-control" id="bid" name="description" aria-describedby="emailHelp"></textarea><br>
+                <textarea type="text" class="form-control" id="item_desc" name="description" aria-describedby="emailHelp"></textarea><br>
                 <strong>Starting Price:</strong>
-                <input type="text" class="form-control" id="bid" name="price" aria-describedby="emailHelp"><br>
+                <input type="text" class="form-control" id="start_price" name="price" aria-describedby="emailHelp"><br>
               </div>
-              <input type="submit" class="btn btn-primary" value="Upload Listing">
+              <input type="submit" class="btn btn-primary" id="submit_button" value="Upload Listing">
               <!--button type="submit" class="btn btn-primary">Upload Listing</button-->
           </form>
         </div>
+        <p id="error_display"></p>
         <!-- /.card -->
 
         <!-- <div class="card card-outline-secondary my-4">
@@ -127,6 +128,58 @@
   <!-- Bootstrap core JavaScript -->
   <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+  <script>
+    function setup() {
+      // $('#inputGroupFile01').focus();
+      $("#inputGroupFile01").change(file_display);
+      // $("#start_price").on('input', price_check)
+      //$("#form").submit(form_check;
+      //$('#submit_button').on('click', form_check)
+      $("#form").submit(function(event) {
+          console.log('checking input');
+          let errormsg = "";
+          let value = $('#start_price').val();
+          if ($('#item_name').val() === "") {
+              errormsg += "Item title cannot be empty.\n"
+          }
+          else if ($('#item_name').val().length > 30) {
+              errormsg += "Item title cannot be longer than 30 characters.\n";
+          }
+          if ($('#item_desc').val() === "") {
+            errormsg += "Item description cannot be empty.\n";
+          }
+          else if ($('#item_desc').val().length > 100) {
+            errormsg += "Item description must be shorter than 100 characters.\n";
+          }
+          if (value === "") {
+              errormsg += "Starting price cannot be empty.\n";
+          }
+          else if (!$.isNumeric(value)) {
+              errormsg += "Starting price must be a number.\n";
+          }
+          else if (Math.floor(value) != value) {
+              errormsg += "Starting price must be an integer.";
+          }
+          // if image is not uploaded
+          if (errormsg.length === 0) {
+            // console.log("if")
+            // $('#form').submit();
+            return 
+          }
+          else {
+            // console.log("else")
+            $('#error_display').text(errormsg);
+            event.preventDefault();
+          }
+      });
+    }
+
+    function file_display() {
+      $("#upload_label").html($("#inputGroupFile01").val())
+    }
+    $("document").ready(setup);
+  </script>
 
 </body>
 

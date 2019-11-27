@@ -385,6 +385,7 @@ def history():
 
 #-----------------------------------------------------------------------
 
+
 @app.route('/redirect_home_control')
 @app.route('/index')
 @app.route('/')
@@ -403,9 +404,10 @@ def home_control():
         results = database.get_available_db()
         database.disconnect()
 
-        html = render_template('index.html', results=results, lastSearch='')
+        # html = render_template('index.html', results=results, lastSearch='')
+        html = render_template('index.html')
         response = make_response(html)
-        response.set_cookie('lastSearch', '')
+        #response.set_cookie('lastSearch', '')
         return response
 
     except Exception as e:
@@ -447,6 +449,55 @@ def home_control():
 
 #-----------------------------------------------------------------------
 
+
+def prep_results(results):
+
+    html = ''
+    for entry in results:
+        html += '<div class="col-lg-4 col-md-6 mb-4">'
+        html += '<div class="card h-100">'
+        html += '<a href="item?itemid={}">'.format(entry[0])
+        if entry[4] != '':
+            html += '<img class="card-img-top" src="/static/images/available/{}" alt="">'.format(entry[4])
+        else:
+            html += '<img class="card-img-top" src="/static/images/default.png" alt="">'
+        html += '</a>'
+        html += '<div class="card-body">'
+        html += '<h4 class="card-title">'
+        html += '<a href="item?itemid={}">{}</a>'.format(entry[0], entry[6])
+        html += '</h4>'
+        html += '<h5>${}</h5> <p><i>{}</i></p> <p class="card-text">{}</p>'.format(entry[3], entry[1], entry[5])
+        # html += '</div> <div class="card-footer"> <p><i>{}</i></p> </div> </div> </div>'.format(entry[2])
+        html += '</div> <div class="card-footer"> <p><i>{}</i></p> </div> </div> </div>'.format(entry[2])
+    return html
+    # {% for entry in results: %}
+    #     <div class="col-lg-4 col-md-6 mb-4">
+    #       <div class="card h-100">
+    #         <a href="item?itemid={{entry[0]}}">
+    #           {% if entry[4] != '' %}
+    #             <img class="card-img-top" src="/static/images/available/{{entry[4]}}" alt="">
+    #           {% else %}
+    #             <img class="card-img-top" src="/static/images/default.png" alt="">
+    #           {% endif %}
+    #         </a>
+    #         <div class="card-body">
+    #           <h4 class="card-title">
+    #             <a href="item?itemid={{entry[0]}}">{{entry[6]}}</a>
+    #           </h4>
+    #           <h5>${{entry[3]}}</h5>
+    #           <p><i>{{entry[1]}}</i></p>
+    #           <p class="card-text">{{entry[5]}}</p>
+    #         </div>
+    #         <div class="card-footer">
+    #           <p><i>{{entry[2]}}</i></p>
+    #         </div>
+    #       </div>
+    #     </div>
+    # {% endfor %} 
+
+
+
+
 @app.route('/search')
 def search():
     if 'username' not in session:
@@ -467,13 +518,14 @@ def search():
         results = database.search(string)
         database.disconnect()
 
-        html = render_template('index.html', results=results, lastSearch=string)
+        # html = render_template('index.html', results=results, lastSearch=string)
+        html = prep_results(results)
         response = make_response(html)
-        response.set_cookie('lastSearch', string)
+        #response.set_cookie('lastSearch', string)
         return response
         
     except Exception as e:
-        print('error' + str(e), file=stderr)
+        print('error-search(): ' + str(e), file=stderr)
         exit(1)
 
 #-----------------------------------------------------------------------
