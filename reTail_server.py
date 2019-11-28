@@ -30,10 +30,9 @@ mail = Mail()
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 465
 app.config["MAIL_USE_SSL"] = True
-# app.config["MAIL_USERNAME"] = 'retail.cos333@gmail.com'
-app.config["MAIL_USERNAME"] = 'passpi32@gmail.com'
-# app.config["MAIL_PASSWORD"] = 'NZ_~m;9t'4k&^VGRF
-app.config["MAIL_PASSWORD"] = 'Super123'
+app.config["MAIL_USERNAME"] = 'retail.cos333@gmail.com'
+app.config["MAIL_PASSWORD"] = 'NZ_~m;9t'   
+# retail333app@gmail.com '4k&^VGRF'
 
 mail.init_app(app)
 
