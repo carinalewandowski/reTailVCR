@@ -19,6 +19,7 @@ import datetime
 import os
 
 from flask_mail import Mail
+from flask_mail import Message
 #import psycopg2
 
 #-----------------------------------------------------------------------
