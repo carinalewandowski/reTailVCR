@@ -25,14 +25,7 @@ from flask_mail import Message
 #-----------------------------------------------------------------------
 
 app = Flask(__name__, template_folder='.')
-# mail = Mail()
 
-# app.config["MAIL_SERVER"] = "smtp.gmail.com"
-# app.config["MAIL_PORT"] = 465
-# app.config["MAIL_USE_SSL"] = True
-# app.config["MAIL_USERNAME"] = 'retail.cos333@gmail.com'
-# app.config["MAIL_PASSWORD"] = 'NZ_~m;9t'   
-# # retail333app@gmail.com '4k&^VGRF'
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
@@ -77,12 +70,19 @@ for soldentry in purchased_images:
 print("All Images Retrieved")
 database.disconnect()
 
+#-----------------------------------------------------------------------
 
-def send_mail(netid):
-    netid = netid.strip()
-    print(netid)
-    sendee = netid + "@princeton.edu"
-    msg = Message(subject="Hello", sender=app.config.get("MAIL_USERNAME"), recipients=[sendee], body="test!")
+def send_mail(buyer, seller, item, price):
+    buyer_netid = buyer.strip()
+    print(buyer_netid)
+
+    seller_netid = seller.strip()
+    print(seller_netid)
+
+    sendee1 = buyer_netid + "@gmail.com"
+    sendee2 = seller_netid + "@princeton.edu"
+    msg = Message(subject="reTail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
+        recipients=[sendee1, sendee2], body='{} has purhcased "{}" for {} from {}'.format(buyer_netid, item, price, seller_netid))
     mail.send(msg)
 
 
@@ -371,6 +371,7 @@ def track():
                 delete_item_filename = (database.get_item(itemid)[0])[4]
                 database.delete_from_db(itemid)
                 database.delete_from_bids(itemid)
+                # send_mail(current_max_bidder, username, entry[6], str(current_max_bid[2])) where, it will go, will test when back
                 if (delete_item_filename != ''):
                     os.rename(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename), os.path.join(IMAGE_DIR_PURCHASED, delete_item_filename))
                     database.copy_image_to_purchased_images(itemid)
@@ -427,7 +428,7 @@ def home_control():
     if 'username' not in session:
         username = CASClient().authenticate().strip()
         check_user(username)
-        send_mail(username)
+        send_mail('passpi32', username, "an item", str(34))
     else:
         username = session.get('username').strip()
 
