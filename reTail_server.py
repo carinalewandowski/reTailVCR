@@ -73,17 +73,32 @@ database.disconnect()
 #-----------------------------------------------------------------------
 
 def send_mail(buyer, seller, item, price):
-    buyer_netid = buyer.strip()
-    print(buyer_netid)
+    try: 
+        # buyer_netid = buyer.strip()
+        # print(buyer_netid)
 
-    seller_netid = seller.strip()
-    print(seller_netid)
+        # seller_netid = seller.strip()
+        # print(seller_netid)
 
-    sendee1 = buyer_netid + "@gmail.com"
-    sendee2 = seller_netid + "@princeton.edu"
-    msg = Message(subject="reTail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
-        recipients=[sendee1, sendee2], body='{} has purhcased "{}" for {} from {}'.format(buyer_netid, item, price, seller_netid))
-    mail.send(msg)
+        # # send to seller
+        # sendee = seller_netid + "@princeton.edu"
+        msg = Message(subject="re-Tail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
+            recipients=[seller], body='Your item, "{}", has been purhcased for ${}. The buyer e-mail is {}. \
+            Thanks for using re-Tail!'.format(item, price, buyer))
+
+        mail.send(msg)
+
+        # send to buyer
+        # sendee = buyer_netid + "@princeton.edu"
+        msg = Message(subject="re-Tail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
+            recipients=[buyer], body='You have purhcased the item, "{}", for ${}. The seller e-mail is {}. \
+            Thanks for using re-Tail!'.format(item, price, seller))
+
+        mail.send(msg)
+    except Exception as e:
+        print("send_mail error: + str(e)")
+        # do some other stuff so the people are informed.
+        return
 
 
 #-----------------------------------------------------------------------
@@ -371,7 +386,7 @@ def track():
                 delete_item_filename = (database.get_item(itemid)[0])[4]
                 database.delete_from_db(itemid)
                 database.delete_from_bids(itemid)
-                # send_mail(current_max_bidder, username, entry[6], str(current_max_bid[2])) where, it will go, will test when back
+                # send_mail(current_max_bidder.strip() + '@princeton.edu', username.strip() + '@princeton.edu', entry[6], str(current_max_bid[2])) where, it will go, can't test yet
                 if (delete_item_filename != ''):
                     os.rename(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename), os.path.join(IMAGE_DIR_PURCHASED, delete_item_filename))
                     database.copy_image_to_purchased_images(itemid)
@@ -428,7 +443,7 @@ def home_control():
     if 'username' not in session:
         username = CASClient().authenticate().strip()
         check_user(username)
-        send_mail('passpi32', username, "an item", str(34))
+        send_mail("passpi32@gmail.com", "ps21@princeton.edu", "an item", str(235))
     else:
         username = session.get('username').strip()
 
