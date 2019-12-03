@@ -33,7 +33,7 @@ mail_settings = {
     "MAIL_USE_TLS": False,
     "MAIL_USE_SSL": True,
     "MAIL_USERNAME": 'retail.cos333@gmail.com',
-    "MAIL_PASSWORD": '***'
+    "MAIL_PASSWORD": 'NZ_~m;9t'
 }
 
 app.config.update(mail_settings)
