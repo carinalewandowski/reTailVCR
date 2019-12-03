@@ -96,7 +96,7 @@ def send_mail(buyer, seller, item, price):
 
         mail.send(msg)
     except Exception as e:
-        print("send_mail error: + str(e)")
+        print("send_mail error: " + str(e))
         # do some other stuff so the people are informed.
         return
 
