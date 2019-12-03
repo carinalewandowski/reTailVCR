@@ -366,6 +366,7 @@ def track():
             return response
 
         else:
+            print("accepted bid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
             itemid = request.form['accept']
             selldate = datetime.date.today()
 
@@ -381,12 +382,13 @@ def track():
             print("current max bidder: " + str(current_max_bidder))
 
             if (max_bid_user == current_max_bidder):
-                print("yes")
+                print("yes!!!!----------------------------------------------")
                 database.copy_to_purchased(itemid, selldate, max_bid_user)
                 delete_item_filename = (database.get_item(itemid)[0])[4]
                 database.delete_from_db(itemid)
                 database.delete_from_bids(itemid)
-                send_mail(current_max_bidder.strip() + '@princeton.edu', username.strip() + '@princeton.edu', entry[6], str(current_max_bid[2]))
+                print("222222222222222222222222222222222222222!!!!----------------------------------------------")
+                send_mail(str(current_max_bidder).strip() + '@princeton.edu', str(username).strip() + '@princeton.edu', str(entry[6]), str(current_max_bid[2]))
                 if (delete_item_filename != ''):
                     os.rename(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename), os.path.join(IMAGE_DIR_PURCHASED, delete_item_filename))
                     database.copy_image_to_purchased_images(itemid)
