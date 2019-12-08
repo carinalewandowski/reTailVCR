@@ -33,7 +33,7 @@ mail_settings = {
     "MAIL_USE_TLS": False,
     "MAIL_USE_SSL": True,
     "MAIL_USERNAME": 'retail.cos333@gmail.com',
-    "MAIL_PASSWORD": '***'
+    "MAIL_PASSWORD": 'NZ_~m;9t'
 }
 
 app.config.update(mail_settings)
@@ -96,7 +96,7 @@ def send_mail(buyer, seller, item, price):
 
         mail.send(msg)
     except Exception as e:
-        print("send_mail error: + str(e)")
+        print("send_mail error: " + str(e))
         # do some other stuff so the people are informed.
         return
 
@@ -366,6 +366,7 @@ def track():
             return response
 
         else:
+            print("accepted bid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
             itemid = request.form['accept']
             selldate = datetime.date.today()
 
@@ -381,12 +382,13 @@ def track():
             print("current max bidder: " + str(current_max_bidder))
 
             if (max_bid_user == current_max_bidder):
-                print("yes")
+                print("yes!!!!----------------------------------------------")
                 database.copy_to_purchased(itemid, selldate, max_bid_user)
                 delete_item_filename = (database.get_item(itemid)[0])[4]
                 database.delete_from_db(itemid)
                 database.delete_from_bids(itemid)
-                # send_mail(current_max_bidder.strip() + '@princeton.edu', username.strip() + '@princeton.edu', entry[6], str(current_max_bid[2])) where, it will go, can't test yet
+                print("222222222222222222222222222222222222222!!!!----------------------------------------------")
+                send_mail(str(current_max_bidder).strip() + '@princeton.edu', str(username).strip() + '@princeton.edu', str(entry[6]), str(current_max_bid[2]))
                 if (delete_item_filename != ''):
                     os.rename(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename), os.path.join(IMAGE_DIR_PURCHASED, delete_item_filename))
                     database.copy_image_to_purchased_images(itemid)
@@ -443,7 +445,7 @@ def home_control():
     if 'username' not in session:
         username = CASClient().authenticate().strip()
         check_user(username)
-        send_mail("passpi32@gmail.com", "ps21@princeton.edu", "an item", str(235))
+        # send_mail("passpi32@gmail.com", "ps21@princeton.edu", "an item", str(235))
     else:
         username = session.get('username').strip()
 
