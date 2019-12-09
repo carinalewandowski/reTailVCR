@@ -158,7 +158,10 @@
           else if (!$.isNumeric(value)) {
               errormsg += "Starting price must be a number.\n";
           }
-          else if (Math.floor(value) != value) {
+          else if (Number(value) < 0) {
+              errormsg += "Starting price must be a positive integer.\n";
+          }
+          else if (Math.floor(value) !== Number(value)) {
               errormsg += "Starting price must be an integer.";
           }
           // if image is not uploaded
