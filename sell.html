@@ -179,7 +179,19 @@
     }
 
     function file_display() {
-      $("#upload_label").html($("#inputGroupFile01").val())
+      let f_name = String($("#inputGroupFile01").val())
+      let endings = ['.jpeg', '.jpg', '.png', '.bmp', '.gif', '.tif']
+      if (f_name.length == 0) { $("#upload_label").html(f_name)}
+      else {
+        for (var i = 0; i < endings.length; i++) {
+          if ((f_name.toLowerCase()).endsWith([endings[i]])) {
+            $("#upload_label").html(f_name)
+            return
+          }
+        }
+        $("#upload_label").html("image file must be a .jpeg, .jpg, .bmp, .gif, or .tif")
+      }
+      
     }
     $("document").ready(setup);
   </script>
