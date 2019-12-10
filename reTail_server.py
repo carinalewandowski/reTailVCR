@@ -346,17 +346,16 @@ def track():
             database = Database()
             database.connect()
 
-            print("***************************", database.get_item(delete_item_itemid))
-            database_result = database.get_item(delete_item_itemid)
-            if (len(database_result) > 0):
-                delete_item_filename = (database_result[0])[4]
-                if (delete_item_filename != ''):
-                    os.remove(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename))
-                    database.delete_image(delete_item_itemid)
+            delete_item_filename = (database.get_item(delete_item_itemid)[0])[4]
 
             database.delete_from_db(delete_item_itemid)
             database.delete_from_bids(delete_item_itemid)
-            
+
+            if (delete_item_filename != ''):
+
+                os.remove(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename))
+                database.delete_image(delete_item_itemid)
+
             netid_results = database.get_all_items_from_netid(username)
             bidder_results = database.get_all_items_from_maxbidder(username)
 
@@ -522,7 +521,7 @@ def prep_results(results):
         html += '</h4>'
         html += '<h5>${}</h5> <p><i>{}</i></p> <p class="card-text">{}</p>'.format(entry[3], entry[1], entry[5])
         # html += '</div> <div class="card-footer"> <p><i>{}</i></p> </div> </div> </div>'.format(entry[2])
-        html += '</div> <div class="card-footer"> <p><i>Seller: {}</i></p> </div> </div> </div>'.format(entry[2])
+        html += '</div> <div class="card-footer"> <p><i>{}</i></p> </div> </div> </div>'.format(entry[2])
     return html
     # {% for entry in results: %}
     #     <div class="col-lg-4 col-md-6 mb-4">
