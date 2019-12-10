@@ -131,6 +131,10 @@ def item():
 
     #username = 'jjsalama'
     itemid = request.args.get('itemid')
+
+    string = request.cookies.get('lastSearch')
+    if string is None:
+        string = ''
     
     database = Database()
     database.connect()
@@ -146,7 +150,7 @@ def item():
         else:   
             entry = database.get_solditem(itemid)
             database.disconnect()
-            errormsg = 'Sorry, this item has already been sold. Looks like you suck.'
+            errormsg = 'Sorry, this item has already been sold.'
             html = render_template('itemsold.html', entry=entry[0], errormsg=errormsg)
             response = make_response(html)
             return response
@@ -163,7 +167,7 @@ def item():
             entry = database.get_item(itemid)
             database.disconnect()
             msg = 'Please enter a valid bid.'
-            html = render_template('item.html', entry=entry[0], msg=msg)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
             response = make_response(html)
             return response
 
@@ -183,7 +187,7 @@ def item():
         if (seller_id == netid):
             database.disconnect()
             msg = 'Sorry, you may not bid on an item you are selling.'
-            html = render_template('item.html', entry=entry[0], msg=msg)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
             response = make_response(html)
             return response
 
@@ -192,7 +196,7 @@ def item():
         if (float(bid) <= current_price):
             database.disconnect()
             msg = 'Please enter a bid higher than the current price.'
-            html = render_template('item.html', entry=entry[0], msg=msg)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
             response = make_response(html)
             return response
     
@@ -200,7 +204,7 @@ def item():
         entry = database.get_item(itemid)
         database.disconnect()
         msg = 'Your bid has been processed. Thank you!'
-        html = render_template('item.html', entry=entry[0], msg=msg)
+        html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
         response = make_response(html)
         return response
     else:
@@ -209,7 +213,7 @@ def item():
             database.connect()
             entry = database.get_item(itemid)
             database.disconnect()
-            html = render_template('item.html', entry=entry[0])
+            html = render_template('item.html', entry=entry[0], lastSearch=string)
             response = make_response(html)
             return response
         except Exception as e:
