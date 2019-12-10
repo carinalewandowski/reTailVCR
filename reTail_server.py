@@ -356,7 +356,7 @@ def track():
 
             database.delete_from_db(delete_item_itemid)
             database.delete_from_bids(delete_item_itemid)
-
+            
             netid_results = database.get_all_items_from_netid(username)
             bidder_results = database.get_all_items_from_maxbidder(username)
 
