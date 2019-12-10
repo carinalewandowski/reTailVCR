@@ -112,7 +112,12 @@
               <p>current highest bid:</p><h3>${{entry[3]}}</h3>
                 <form action="" method="post">
                   <div class="form-group">
-                    <input type="text" class="form-control" id="bid" name="bid" aria-describedby="emailHelp" maxlength="10" placeholder="bid amount...">
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text" id="basic-addon1">$</span>
+                        </div>
+                        <input type="text" class="form-control" id="bid" name="bid" aria-describedby="emailHelp" maxlength="10" placeholder="bid amount...">
+                      </div>
                   </div>
                   <button type="submit" class="btn btn-primary">place bid</button>
                 </form>
