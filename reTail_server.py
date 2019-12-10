@@ -457,10 +457,12 @@ def home_control():
         results = database.get_available_db()
         database.disconnect()
 
-        # html = render_template('index.html', results=results, lastSearch='')
-        html = render_template('index.html')
+        html = render_template('index.html', results=results, lastSearch='')
+        # html = render_template('index.html')
         response = make_response(html)
-        #response.set_cookie('lastSearch', '')
+
+        # NOTE: deal with cookies
+        response.set_cookie('lastSearch', '')
         return response
 
     except Exception as e:
@@ -571,10 +573,12 @@ def search():
         results = database.search(string)
         database.disconnect()
 
-        # html = render_template('index.html', results=results, lastSearch=string)
-        html = prep_results(results)
+        html = render_template('index.html', results=results, lastSearch=string)
+        # html = prep_results(results)
         response = make_response(html)
-        #response.set_cookie('lastSearch', string)
+
+        # NOTE: deal with cookies
+        response.set_cookie('lastSearch', string)
         return response
         
     except Exception as e:
