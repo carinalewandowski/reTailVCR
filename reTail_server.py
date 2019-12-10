@@ -522,7 +522,7 @@ def prep_results(results):
         html += '</h4>'
         html += '<h5>${}</h5> <p><i>{}</i></p> <p class="card-text">{}</p>'.format(entry[3], entry[1], entry[5])
         # html += '</div> <div class="card-footer"> <p><i>{}</i></p> </div> </div> </div>'.format(entry[2])
-        html += '</div> <div class="card-footer"> <p><i>{}</i></p> </div> </div> </div>'.format(entry[2])
+        html += '</div> <div class="card-footer"> <p><i>Seller: {}</i></p> </div> </div> </div>'.format(entry[2])
     return html
     # {% for entry in results: %}
     #     <div class="col-lg-4 col-md-6 mb-4">
