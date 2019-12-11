@@ -348,15 +348,15 @@ def track():
             database = Database()
             database.connect()
 
-            delete_item_filename = (database.get_item(delete_item_itemid)[0])[4]
+            if (len(database.get_item(delete_item_itemid)) > 0):
+                delete_item_filename = (database.get_item(delete_item_itemid)[0])[4]
+                if (delete_item_filename != ''):
+
+                    os.remove(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename))
+                    database.delete_image(delete_item_itemid)
 
             database.delete_from_db(delete_item_itemid)
             database.delete_from_bids(delete_item_itemid)
-
-            if (delete_item_filename != ''):
-
-                os.remove(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename))
-                database.delete_image(delete_item_itemid)
 
             netid_results = database.get_all_items_from_netid(username)
             bidder_results = database.get_all_items_from_maxbidder(username)
