@@ -82,17 +82,15 @@ def send_mail(buyer, seller, item, price):
 
         # # send to seller
         # sendee = seller_netid + "@princeton.edu"
-        msg = Message(subject="re-Tail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
-            recipients=[seller], body='Your item, "{}", has been purhcased for ${}. The buyer e-mail is {}. \
-            Thanks for using re-Tail!'.format(item, price, buyer))
+        msg = Message(subject="reTail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
+            recipients=[seller], body='Your item, "{}", has been purchased for ${}. The buyer e-mail is {}. Please contact the buyer via e-mail to arrange a payment method and pick-up/drop-off details.\n\nThanks for using reTail!'.format(item, price, buyer))
 
         mail.send(msg)
 
         # send to buyer
         # sendee = buyer_netid + "@princeton.edu"
-        msg = Message(subject="re-Tail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
-            recipients=[buyer], body='You have purhcased the item, "{}", for ${}. The seller e-mail is {}. \
-            Thanks for using re-Tail!'.format(item, price, seller))
+        msg = Message(subject="reTail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
+            recipients=[buyer], body='You have purhcased the item, "{}", for ${}. The seller e-mail is {}. Please contact the seller via e-mail to arrange a payment method and pick-up/drop-off details.\n\nThanks for using reTail!'.format(item, price, seller))
 
         mail.send(msg)
     except Exception as e:
