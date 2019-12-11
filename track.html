@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>reTail // track</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{{ url_for('static', filename='css/retail.css') }}" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="container" style="padding-right:0;padding-left:0">
+      <a class="navbar-brand" href="..">reTail</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="..">buy</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="sell">sell</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="track">track
+                <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="history" style="padding-right:0">history</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+      <div class="row" style="padding-top: 5%">
+          <div class ="col"><center><strong><font size=6>I'm Selling:</font></strong></center>
+            {% for entry in netid_results: %}
+            <!-- Entry Start -->
+            <div class ="row" style="padding-top: 5%">
+                <div class="col" style="padding-left: 0">
+                    <table>
+                        <tr>
+                            <th><a href=../item?itemid={{entry[0]}}>{{entry[6]}}</a></th>
+                        </tr>
+                        <tr>
+                            <td>
+                              {% if entry[7] is not none %}
+                                ${{entry[3]}}
+                              {% else %}
+                                No Bids. Price: ${{entry[3]}}
+                              {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col">
+                        <table align="right">
+                        <tr>
+                            <td>
+                              {% if entry[7] is not none %}
+                                <form action="track" method="post">
+                                  <input type="hidden" name="accept" value={{entry[0]}}>
+                                  <button type="submit" class="btn btn-primary">Accept Bid</button>
+                                </form>
+                              {% endif %}
+                            </td>
+                            <td>
+                              <form action="track" method="post">
+                                <input type="hidden" name="deleteitem" value={{entry[0]}}>
+                                <button type="submit" class="btn btn-primary">Delete Item</button>
+                              </form>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <!-- Entry End -->
+            {% endfor %}
+          </div>
+          <div class="col"><center><strong><font size=6>I'm Bidding On:</font></strong></center>
+            {% for entry in bidder_results: %}
+            <div class ="row" style="padding-top: 5%">
+                    <div class="col">
+                        <table>
+                            <tr>
+                                <th><a href=../item?itemid={{entry[0]}}>{{entry[6]}}</a></th>
+                            </tr>
+                            <tr>
+                                <td>${{entry[3]}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col" style="padding-right: 0">
+                            <table align="right">
+                            <tr>
+                                <td>
+                                  <a href=../item?itemid={{entry[0]}} class="btn btn-primary" role="button">Update Bid</a>
+                                </td>
+                                <td>
+                                  <form action="track" method="post">
+                                    <input type="hidden" name="deletebid" value={{entry[0]}}>
+                                    <button type="submit" class="btn btn-primary">Remove Bid</button>
+                                  </form>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+  </div>
+  <br>
+  <br>
+  
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-0 bg-white fixed-bottom">
+    <div class="container">
+      <p class="m-0 text-center text-dark"><small>copyright &copy; reTail 2019</small></p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+  <script>
+    setTimeout(function() {location.reload();} , 5000);      // copied from https://stackoverflow.com/questions/33778384/how-to-refresh-a-page-after-some-seconds-with-jquery
+  </script>
+
+</body>
+
+</html>

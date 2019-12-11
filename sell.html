@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>reTail // sell</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{{ url_for('static', filename='css/retail.css') }}" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="container" style="padding-right:0;padding-left:0">
+      <a class="navbar-brand" href="..">reTail</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="..">buy</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="">sell
+              <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="track">track</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="history" style="padding-right:0">history</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container" style="justify-content: center;padding-left:0;padding-right:0">
+
+    <div class="row">
+
+      <div class="col-lg-3"></div>
+      </div>
+
+      <div class="col" style="margin-bottom: 30px;padding-left:0;padding-right:0">
+
+        <h1 class="my-4">Sell an item</h1>
+        <body>Please enter a name, description, and starting price for your item.</body>
+
+        <div class="card mt-4">
+          
+          <form action="sell" id="form" method="post" enctype=multipart/form-data>
+
+              <div class="input-group">
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="inputGroupFile01" name="image" value=""
+                      aria-describedby="inputGroupFileAddon01">
+                    <label class="custom-file-label" id="upload_label" for="inputGroupFile01">Upload image</label>
+                  </div>
+                </div>
+                
+                <br>
+
+              <div class="form-group">
+                <strong>Item Name:</strong><br>
+                <input type="text" class="form-control" id="item_name" name="title" aria-describedby="emailHelp"><br>
+                <strong>Item Description:</strong><br>
+                <textarea type="text" class="form-control" id="item_desc" name="description" aria-describedby="emailHelp"></textarea><br>
+                <strong>Starting Price:</strong>
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">$</span>
+                  </div>
+                  <input type="text" class="form-control" id="start_price" name="price" maxlength="10" aria-describedby="emailHelp"><br>
+                </div>
+              </div>
+              <input type="submit" class="btn btn-primary" id="submit_button" value="Upload Listing">
+              <!--button type="submit" class="btn btn-primary">Upload Listing</button-->
+          </form>
+        </div>
+        <p id="error_display"></p>
+        <!-- /.card -->
+
+        <!-- <div class="card card-outline-secondary my-4">
+          <div class="card-header">
+            Product Reviews
+          </div>
+          <div class="card-body">
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
+            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+            <hr>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
+            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+            <hr>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
+            <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+            <hr>
+            <a href="#" class="btn btn-success">Leave a Review</a>
+          </div>
+        </div> -->
+        <!-- /.card -->
+
+      </div>
+      <!-- /.col-lg-9 -->
+
+    </div>
+
+  </div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-0 bg-white fixed-bottom">
+    <div class="container">
+      <p class="m-0 text-center text-dark"><small>copyright &copy; reTail 2019</small></p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+  <script>
+    function setup() {
+      // $('#inputGroupFile01').focus();
+      $("#inputGroupFile01").change(file_display);
+      // $("#start_price").on('input', price_check)
+      //$("#form").submit(form_check;
+      //$('#submit_button').on('click', form_check)
+      $("#form").submit(function(event) {
+          console.log('checking input');
+          let errormsg = "";
+          let value = $('#start_price').val();
+          if ($('#item_name').val() === "") {
+              errormsg += "Item title cannot be empty.\n"
+          }
+          else if ($('#item_name').val().length > 30) {
+              errormsg += "Item title cannot be longer than 30 characters.\n";
+          }
+          if ($('#item_desc').val() === "") {
+            errormsg += "Item description cannot be empty.\n";
+          }
+          else if ($('#item_desc').val().length > 100) {
+            errormsg += "Item description must be shorter than 100 characters.\n";
+          }
+          if (value === "") {
+              errormsg += "Starting price cannot be empty.\n";
+          }
+          else if (!$.isNumeric(value)) {
+              errormsg += "Starting price must be a number.\n";
+          }
+          else if (Number(value) < 0) {
+              errormsg += "Starting price must be a positive integer.\n";
+          }
+          else if (Math.floor(value) !== Number(value)) {
+              errormsg += "Starting price must be an integer.";
+          }
+          // if image is not uploaded
+          if (errormsg.length === 0) {
+            // console.log("if")
+            // $('#form').submit();
+            return 
+          }
+          else {
+            // console.log("else")
+            $('#error_display').text(errormsg);
+            event.preventDefault();
+          }
+      });
+    }
+
+    function file_display() {
+      let f_name = String($("#inputGroupFile01").val())
+      let endings = ['.jpeg', '.jpg', '.png', '.bmp', '.gif', '.tif']
+      if (f_name.length == 0) { $("#upload_label").html(f_name)}
+      else {
+        for (var i = 0; i < endings.length; i++) {
+          if ((f_name.toLowerCase()).endsWith([endings[i]])) {
+            $("#upload_label").html(f_name)
+            return
+          }
+        }
+        $("#upload_label").html("image file must be a .jpeg, .jpg, .bmp, .gif, or .tif")
+        // $("#upload_label").val('')
+        document.getElementById("inputGroupFile01").value = "";
+
+        
+      }
+      
+    }
+    $("document").ready(setup);
+  </script>
+
+</body>
+
+</html>
