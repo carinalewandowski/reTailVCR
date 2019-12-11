@@ -52,6 +52,12 @@
   <div class="container">
 
     <div class="row">
+      <form action='search' method="get">
+        <input type="hidden" name="string" value="{{lastSearch}}">
+        <button class="btn btn-primary">Back to Browse</button>
+      </form>
+    </div>
+    <div class="row">
 
       <!-- <div class="col-lg-3">
         <h1 class="my-4">Shop Name</h1>
@@ -63,7 +69,7 @@
       </div> -->
       <!-- /.col-lg-3 -->
 
-      <div class="col-lg-9" style="margin-bottom: 30px">
+      <div class="col-lg-6">
 
         <div class="card mt-4">
           {% if entry[4] != '' %}
@@ -71,13 +77,46 @@
           {% else %}
             <img class="card-img-top" src="/static/images/default.png" alt="">
           {% endif %}
-          <div class="card-body">
-            <h3 class="card-title">{{entry[6]}}</h3>
-            <h5>{{entry[1]}}</h5>
-            <p class="card-text">{{entry[5]}}</p>
-            <p class="card-text"><i>{{entry[2]}}</i></p>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+
+        <div class="row">
+          <div class="card mt-4">
+            <div class="card-body">
+              <h3 class="card-title">{{entry[6]}}</h3>
+              <h5>{{entry[1]}}</h5>
+              <p class="card-text">{{entry[5]}}</p>
+              <p class="card-text">seller: <i>{{entry[2]}}</i></p>
+            </div>
           </div>
         </div>
+        <br>
+        <hr>
+        <div class="row">
+          <div class="card mt-4">
+            <div class="card-body">
+              <p>current highest bid:</p><h3>${{entry[3]}}</h3><br>
+                  <form action="" method="post">
+                    <div class="form-group">
+                        <div class="input-group">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">$</span>
+                          </div>
+                          <input type="text" class="form-control" id="bid" name="bid" aria-describedby="emailHelp" maxlength="10" placeholder="place bid...">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">place bid</button>
+                  </form>
+                <p>
+                  <strong>{{msg}}</strong>
+                </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
         <!-- /.card -->
 
         <!-- <div class="card card-outline-secondary my-4">
@@ -99,23 +138,7 @@
         </div> -->
         <!-- /.card -->
 
-      </div>
-      <div class="col-sm" style="margin-bottom: 50px">
-          <div class="card mt-4">
-            <div class="card-body">
-              <p>current highest bid:</p><h3>${{entry[3]}}</h3>
-                <form action="" method="post">
-                  <div class="form-group">
-                    <input type="text" class="form-control" id="bid" name="bid" aria-describedby="emailHelp" maxlength="10" placeholder="bid amount...">
-                  </div>
-                  <button type="submit" class="btn btn-primary">place bid</button>
-                </form>
-              <p>
-                <strong>{{msg}}</strong>
-              </p>
-            </div>
-          </div>
-      </div>
+      
       <!-- /.col-lg-9 -->
 
     </div>

@@ -82,17 +82,15 @@ def send_mail(buyer, seller, item, price):
 
         # # send to seller
         # sendee = seller_netid + "@princeton.edu"
-        msg = Message(subject="re-Tail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
-            recipients=[seller], body='Your item, "{}", has been purhcased for ${}. The buyer e-mail is {}. \
-            Thanks for using re-Tail!'.format(item, price, buyer))
+        msg = Message(subject="reTail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
+            recipients=[seller], body='Your item, "{}", has been purchased for ${}. The buyer e-mail is {}. Please contact the buyer via e-mail to arrange a payment method and pick-up/drop-off details.\n\nThanks for using reTail!'.format(item, price, buyer))
 
         mail.send(msg)
 
         # send to buyer
         # sendee = buyer_netid + "@princeton.edu"
-        msg = Message(subject="re-Tail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
-            recipients=[buyer], body='You have purhcased the item, "{}", for ${}. The seller e-mail is {}. \
-            Thanks for using re-Tail!'.format(item, price, seller))
+        msg = Message(subject="reTail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
+            recipients=[buyer], body='You have purhcased the item, "{}", for ${}. The seller e-mail is {}. Please contact the seller via e-mail to arrange a payment method and pick-up/drop-off details.\n\nThanks for using reTail!'.format(item, price, seller))
 
         mail.send(msg)
     except Exception as e:
@@ -131,6 +129,10 @@ def item():
 
     #username = 'jjsalama'
     itemid = request.args.get('itemid')
+
+    string = request.cookies.get('lastSearch')
+    if string is None:
+        string = ''
     
     database = Database()
     database.connect()
@@ -146,7 +148,7 @@ def item():
         else:   
             entry = database.get_solditem(itemid)
             database.disconnect()
-            errormsg = 'Sorry, this item has already been sold. Looks like you suck.'
+            errormsg = 'Sorry, this item has already been sold.'
             html = render_template('itemsold.html', entry=entry[0], errormsg=errormsg)
             response = make_response(html)
             return response
@@ -163,7 +165,7 @@ def item():
             entry = database.get_item(itemid)
             database.disconnect()
             msg = 'Please enter a valid bid.'
-            html = render_template('item.html', entry=entry[0], msg=msg)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
             response = make_response(html)
             return response
 
@@ -183,7 +185,7 @@ def item():
         if (seller_id == netid):
             database.disconnect()
             msg = 'Sorry, you may not bid on an item you are selling.'
-            html = render_template('item.html', entry=entry[0], msg=msg)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
             response = make_response(html)
             return response
 
@@ -192,7 +194,7 @@ def item():
         if (float(bid) <= current_price):
             database.disconnect()
             msg = 'Please enter a bid higher than the current price.'
-            html = render_template('item.html', entry=entry[0], msg=msg)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
             response = make_response(html)
             return response
     
@@ -200,7 +202,7 @@ def item():
         entry = database.get_item(itemid)
         database.disconnect()
         msg = 'Your bid has been processed. Thank you!'
-        html = render_template('item.html', entry=entry[0], msg=msg)
+        html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
         response = make_response(html)
         return response
     else:
@@ -209,7 +211,7 @@ def item():
             database.connect()
             entry = database.get_item(itemid)
             database.disconnect()
-            html = render_template('item.html', entry=entry[0])
+            html = render_template('item.html', entry=entry[0], lastSearch=string)
             response = make_response(html)
             return response
         except Exception as e:
@@ -457,10 +459,12 @@ def home_control():
         results = database.get_available_db()
         database.disconnect()
 
-        # html = render_template('index.html', results=results, lastSearch='')
-        html = render_template('index.html')
+        html = render_template('index.html', results=results, lastSearch='')
+        # html = render_template('index.html')
         response = make_response(html)
-        #response.set_cookie('lastSearch', '')
+
+        # NOTE: deal with cookies
+        response.set_cookie('lastSearch', '')
         return response
 
     except Exception as e:
@@ -571,10 +575,12 @@ def search():
         results = database.search(string)
         database.disconnect()
 
-        # html = render_template('index.html', results=results, lastSearch=string)
-        html = prep_results(results)
+        html = render_template('index.html', results=results, lastSearch=string)
+        # html = prep_results(results)
         response = make_response(html)
-        #response.set_cookie('lastSearch', string)
+
+        # NOTE: deal with cookies
+        response.set_cookie('lastSearch', string)
         return response
         
     except Exception as e:
