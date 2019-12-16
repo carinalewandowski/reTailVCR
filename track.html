@@ -18,6 +18,20 @@
 
 </head>
 
+<style>
+    table {
+        width: 100%;
+        border-spacing: 20px; 
+        /*border: 1px solid black;*/
+    }
+
+    td {
+      word-wrap:break-word;
+      /*padding: 15px;*/
+      /*border: 1px solid black;*/
+    }
+</style>
+
 <body>
 
   <!-- Navigation -->
@@ -51,80 +65,13 @@
   <!-- Page Content -->
   <div class="container">
       <div class="row" style="padding-top: 5%">
-          <div class ="col"><center><strong><font size=6>I'm Selling:</font></strong></center>
-            {% for entry in netid_results: %}
+            <div class="col-sm-6">
             <!-- Entry Start -->
-            <div class ="row" style="padding-top: 5%">
-                <div class="col" style="padding-left: 0">
-                    <table>
-                        <tr>
-                            <th><a href=../item?itemid={{entry[0]}}>{{entry[6]}}</a></th>
-                        </tr>
-                        <tr>
-                            <td>
-                              {% if entry[7] is not none %}
-                                ${{entry[3]}}
-                              {% else %}
-                                No Bids. Price: ${{entry[3]}}
-                              {% endif %}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col">
-                        <table align="right">
-                        <tr>
-                            <td>
-                              {% if entry[7] is not none %}
-                                <form action="track" method="post">
-                                  <input type="hidden" name="accept" value={{entry[0]}}>
-                                  <button type="submit" class="btn btn-primary">Accept Bid</button>
-                                </form>
-                              {% endif %}
-                            </td>
-                            <td>
-                              <form action="track" method="post">
-                                <input type="hidden" name="deleteitem" value={{entry[0]}}>
-                                <button type="submit" class="btn btn-primary">Delete Item</button>
-                              </form>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+                <p id="sell_results"></p>   
             </div>
             <!-- Entry End -->
-            {% endfor %}
-          </div>
-          <div class="col"><center><strong><font size=6>I'm Bidding On:</font></strong></center>
-            {% for entry in bidder_results: %}
-            <div class ="row" style="padding-top: 5%">
-                    <div class="col">
-                        <table>
-                            <tr>
-                                <th><a href=../item?itemid={{entry[0]}}>{{entry[6]}}</a></th>
-                            </tr>
-                            <tr>
-                                <td>${{entry[3]}}</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="col" style="padding-right: 0">
-                            <table align="right">
-                            <tr>
-                                <td>
-                                  <a href=../item?itemid={{entry[0]}} class="btn btn-primary" role="button">Update Bid</a>
-                                </td>
-                                <td>
-                                  <form action="track" method="post">
-                                    <input type="hidden" name="deletebid" value={{entry[0]}}>
-                                    <button type="submit" class="btn btn-primary">Remove Bid</button>
-                                  </form>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-                {% endfor %}
+            <div class="col-sm-6">
+                <p id="bid_results"></p> 
             </div>
         </div>
   </div>
@@ -145,7 +92,134 @@
   <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
   <script>
-    setTimeout(function() {location.reload();} , 5000);      // copied from https://stackoverflow.com/questions/33778384/how-to-refresh-a-page-after-some-seconds-with-jquery
+
+      function setup()
+         {
+            refresh_page()
+         }
+
+     let request = null;
+     function make_request() {
+            let url = '/track?action=refresh'
+            // ?action=' + action + "&item_id="
+            
+            if (request != null)
+               request.abort();
+            request = $.ajax(
+               {
+                  type: "GET",
+                  url: url,
+                  dataType: "json",
+                  success: action_handler
+               }
+            );
+
+     }
+     function refresh_page()
+         { 
+            // let a = 'refresh'
+            make_request()
+            setTimeout(refresh_page, 5000);      
+         }
+         
+     function action_handler(response)
+         { 
+            // return structure [[{entry1}, {entryN}], [{e1}, {eN}]]
+            let res = response
+            // console.log(res)
+            sell_data = res[0]
+            // console.log(sell_data)
+            bid_data = res[1]
+            
+            results_html = ''
+            results_html += "<table><tr><th colspan='2'>I'm Selling:</th></tr><th style='width:60%'></th><th style='width:40%'></th>"
+            for (e in sell_data) {
+                let entry = sell_data[e]
+                results_html += "<tr>\
+                <td> <a href=../item?itemid=@@z1@@>@@z2@@</a> <br> @@z3@@</td> \
+                <td align='left'> \
+                    @@z4@@ \
+                    <form action='track' method='post'>\
+                      <input type='hidden' name='deleteitem'\ value=@@z5@@>\
+                      <button type='submit' class='btn btn-\primary' style='width:100%'>Delete Item</button>\
+                    </form>\
+                    <form action='modify_item' method='get'>\
+                      <input type='hidden' name='modify'\ value=@@z6@@>\
+                      <button type='submit' class='btn btn-primary' style='width:100%'>Modify Item</button>\
+                    </form>\
+                </td>\
+                </tr>"
+
+                // console.log(t)
+                results_html = results_html.replace("@@z1@@", entry['item_id'])
+                results_html = results_html.replace("@@z5@@", entry['item_id'])
+                results_html = results_html.replace("@@z6@@", entry['item_id'])
+                if (entry['max_bidder'] !== "None") {
+                    results_html = results_html.replace("@@z3@@", "bid")
+                }
+                else {
+                    results_html = results_html.replace("@@z3@@", "No Bids. Price $" + entry['price'])
+                }
+                console.log('max_bidder: ')
+                console.log(entry['max_bidder'])
+                            
+
+                if (entry['max_bidder'] !== "None") {
+                    var temp = '<form action="track" method="post">\
+                                <input type="hidden" name="accept" value=@@z7@@>\
+                                <button type="submit" class="btn\ btn-primary" style="width:100%">Accept Bid</button>\
+                              </form>'
+                    temp = temp.replace("@@z7@@", entry['item_id'])
+                    results_html = results_html.replace("@@z4@@", temp)
+                }
+                else {
+                    results_html = results_html.replace("@@z4@@", "")
+                }
+                results_html = results_html.replace("@@z2@@", entry['item_title'])
+                // console.log(e + ": " + results_html)
+            }
+            results_html += "</table>"
+            // console.log("results1: ")
+            // console.log(results_html)
+            $('#sell_results').html(results_html);
+
+
+            results_html = ''
+            results_html += "<table><tr><th colspan='2'>I'm Bidding:</th></tr><th style='width:60%'></th><th style='width:40%'></th>"
+            for (e in bid_data) {
+                // console.log(e)
+                let entry = bid_data[e]
+                results_html += "<tr>"
+                results_html += "<td> <a href=../item?itemid=@@x1@@>@@x2@@</a><br>$@@x3@@</td>"
+                results_html += "<td align='left'>\
+                     <a href=../item?itemid=@@x4@@ id='update' class='btn btn-primary' role='button' style='width:100%'>Update Bid</a>\
+                    <form action='track' method='post'>\
+                        <input type='hidden' name='deletebid' value=@@x5@@>\
+                        <button type='submit' class='btn btn-primary' style='width:100%'>Remove Bid</button>\
+                    </form>\
+                </td>\
+                </tr>"
+
+                results_html = results_html.replace("@@x1@@", entry['item_id'])
+                results_html = results_html.replace("@@x3@@", entry['price'])
+                results_html = results_html.replace("@@x4@@", entry['item_id'])
+                results_html = results_html.replace("@@x5@@", entry['item_id'])
+
+                results_html = results_html.replace("@@x2@@", entry['item_title'])
+
+                // console.log(e + ": " + results_html)
+
+            }
+            results_html += "</table>"
+            // console.log("results2: ")
+            // console.log(results_html)
+            $('#bid_results').html(results_html);
+         }
+
+
+     $('document').ready(setup);
+
+
   </script>
 
 </body>

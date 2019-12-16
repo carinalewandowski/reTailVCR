@@ -359,6 +359,15 @@ class Database:
         cursor.execute(postgres_delete_query, record_to_delete)
         self._connection.commit()
 
+    def get_item_bids(self, itemid):
+        cursor = self._connection.cursor()
+
+        postgres_select_query = """ SELECT * FROM "bids" WHERE ITEM_ID = %s"""
+        item_to_find = (itemid, )
+        cursor.execute(postgres_select_query, item_to_find)
+        bids = cursor.fetchall()
+        return bids
+
 
     def get_max_bid(self, itemid):
         cursor = self._connection.cursor()

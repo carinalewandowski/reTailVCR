@@ -17,6 +17,7 @@ import random
 import string
 import datetime
 import os
+from json import dumps
 
 from flask_mail import Mail
 from flask_mail import Message
@@ -72,13 +73,8 @@ database.disconnect()
 
 #-----------------------------------------------------------------------
 
-def send_mail(buyer, seller, item, price):
+def send_purchase_mail(buyer, seller, item, price):
     try: 
-        # buyer_netid = buyer.strip()
-        # print(buyer_netid)
-
-        # seller_netid = seller.strip()
-        # print(seller_netid)
 
         # # send to seller
         # sendee = seller_netid + "@princeton.edu"
@@ -94,13 +90,30 @@ def send_mail(buyer, seller, item, price):
 
         mail.send(msg)
     except Exception as e:
-        print("send_mail error: " + str(e))
+        print("send_purchase_mail error: " + str(e))
         # do some other stuff so the people are informed.
         return
 
 
 #-----------------------------------------------------------------------
 
+def send_modify_mail(bidders, item, itemid):
+    try:
+        bidder_emails = []
+        for bid in bidders:
+            if (bid[1] != None):
+                bidder_emails.append("{}@princeton.edu".format(bid[1].rstrip()))
+
+        msg = Message(subject="reTail: Item Change Notification!", sender=app.config.get("MAIL_USERNAME"), 
+            recipients=bidder_emails, body='The listing for the item, "{}", has been modified, so we removed your bid on it.\n\n\
+            If you want to take a look at the modified listing, here\'s a link: https://re-tail.herokuapp.com/item&itemid={}\n\n\
+            Thanks for using reTail!'.format(item, itemid))
+        mail.send(msg)
+    except Exception as e:
+        print("send_modify_mail error: " + str(e))
+        # do some other stuff so the people are informed.
+        return
+#-----------------------------------------------------------------------
 def check_user(netid):
     database = Database()
     database.connect()
@@ -118,6 +131,85 @@ def randstr():
                 for _ in range(30))
 
 #-----------------------------------------------------------------------
+
+
+@app.route('/modify_item', methods=('GET', 'POST'))
+def modify_item():
+    print("server reached")
+    print(request)
+    if 'username' not in session:
+        username = CASClient().authenticate().strip()
+        check_user(username)
+    else:
+        username = session.get('username').strip()
+
+
+    database = Database()
+    database.connect()
+    itemid = None
+
+    if (request.method == "GET" and request.args.get('modify') != None):
+        print("get reached")
+        itemid = request.args.get('modify')
+        print("itemid: " + str(itemid))
+        print(request)
+        entry = (database.get_item(itemid))[0]
+        html = render_template('modify_item.html', entry=entry)
+        response = make_response(html)
+        return response
+        # a confirm_change button (let them know it will reset bids), a cancel button (redirect to track page)
+            # confirm_change redirects back here, with a get_request
+    elif (request.method == "POST" and request.form['item_id'] != None):
+        print("post reached")
+        title = request.form['title']
+        print("title")
+        image = request.files['image']
+        print("img")
+        description = request.form['description']
+        print("desc")
+        price = request.form['price']
+        print("pr")
+        postdate = datetime.date.today()
+        netid = username
+        old_item_id = request.form['item_id']
+        print("id")
+        new_item_id = int(random.uniform(100, 1000000))
+        # error handling on the above in case it comes from a non web browser source
+        print("getting stuff reached")
+
+
+        item_bids = database.get_item_bids(old_item_id) 
+        send_modify_mail(item_bids, title, new_item_id)
+
+        database.delete_from_bids(old_item_id)
+        database.delete_image(old_item_id)
+        database.delete_from_db(old_item_id)
+
+        print("db stuff")
+        if (image.filename == ''):
+            # print("none")
+            image = ''
+            image_read = None
+            safefilename = ''
+        else:
+            # print(image)
+            safefilename = secure_filename(randstr() + '-' + image.filename)
+            imgpath = '{}/{}'.format(IMAGE_DIR_AVAILABLE, safefilename)
+            image.save(imgpath)
+            image.seek(0)
+            image_read = image.read()
+            database.add_image(new_item_id, image_read, safefilename)
+            # print(database.image_table_size())
+
+        database.add_to_db(new_item_id, postdate, netid, price, safefilename, description, title)
+
+        # add to bid database with null bidder netid
+        database.bid(new_item_id, price, None)
+        print("work done")
+        return redirect("/item?itemid={}".format(new_item_id))
+            
+    else:
+        return redirect('/index')
 
 @app.route('/item', methods=('GET', 'POST'))
 def item():
@@ -254,6 +346,7 @@ def sell():
     # parse user input for item upload details
     # ***** need to handle other info still *****
     if request.method == 'POST':
+        print("sell: " + str(request))
         if 'image' not in request.files:
             print("err")
         image = request.files['image']
@@ -318,6 +411,7 @@ def sell():
 
 @app.route('/track', methods=('GET', 'POST'))
 def track():
+    print("arriveddddddddddddddddddd!!!!!!!!!!!!!!!!!!!")
     if 'username' not in session:
         username = CASClient().authenticate().strip()
         check_user(username)
@@ -325,28 +419,18 @@ def track():
         username = session.get('username').strip()
 
     #username = 'jjsalama'
+    database = Database()
+    database.connect()
 
     if request.method == 'POST':
-        
+        print("arrived at POSTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         if (request.form.get('deletebid') is not None):
             delete_bid_itemid = request.form.get('deletebid')
-            database = Database()
-            database.connect()
-            database.remove_bid(delete_bid_itemid, username)
-
-            netid_results = database.get_all_items_from_netid(username)
-            bidder_results = database.get_all_items_from_maxbidder(username)
-
-            database.disconnect()
-
-            html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
-            response = make_response(html)
-            return response
+            
+            database.remove_bid(delete_bid_itemid, username)            
 
         elif (request.form.get('deleteitem') is not None):
-            delete_item_itemid = request.form.get('deleteitem')
-            database = Database()
-            database.connect()
+            delete_item_itemid = request.form.get('deleteitem')           
 
             if (len(database.get_item(delete_item_itemid)) > 0):
                 delete_item_filename = (database.get_item(delete_item_itemid)[0])[4]
@@ -358,22 +442,12 @@ def track():
             database.delete_from_db(delete_item_itemid)
             database.delete_from_bids(delete_item_itemid)
 
-            netid_results = database.get_all_items_from_netid(username)
-            bidder_results = database.get_all_items_from_maxbidder(username)
-
-            database.disconnect()
-
-            html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
-            response = make_response(html)
-            return response
-
         else:
-            print("accepted bid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
+            # print("accepted bid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
             itemid = request.form['accept']
             selldate = datetime.date.today()
 
-            database = Database()
-            database.connect()
+            
             entry = database.get_item(itemid)[0]
             max_bid_user = entry[7]
             print("itemid: " + str(itemid))
@@ -384,35 +458,49 @@ def track():
             print("current max bidder: " + str(current_max_bidder))
 
             if (max_bid_user == current_max_bidder):
-                print("yes!!!!----------------------------------------------")
+                # print("yes!!!!----------------------------------------------")
                 database.copy_to_purchased(itemid, selldate, max_bid_user)
                 delete_item_filename = (database.get_item(itemid)[0])[4]
                 database.delete_from_db(itemid)
                 database.delete_from_bids(itemid)
-                print("222222222222222222222222222222222222222!!!!----------------------------------------------")
-                send_mail(str(current_max_bidder).strip() + '@princeton.edu', str(username).strip() + '@princeton.edu', str(entry[6]), str(current_max_bid[2]))
+                # print("222222222222222222222222222222222222222!!!!----------------------------------------------")
+                send_purchase_mail(str(current_max_bidder).strip() + '@princeton.edu', str(username).strip() + '@princeton.edu', str(entry[6]), str(current_max_bid[2]))
                 if (delete_item_filename != ''):
                     os.rename(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename), os.path.join(IMAGE_DIR_PURCHASED, delete_item_filename))
                     database.copy_image_to_purchased_images(itemid)
                     database.delete_image(itemid)
 
-            netid_results = database.get_all_items_from_netid(username)
-            bidder_results = database.get_all_items_from_maxbidder(username)
-
-            database.disconnect()
-
-            html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
-            response = make_response(html)
-            return response
-
+    if request.args.get('action') == None:
+        print("first arrivalllllllllll")
+        html = render_template('track.html')
+        response = make_response(html)
+        return response
     else:
-        database = Database()
-        database.connect()
+
         netid_results = database.get_all_items_from_netid(username)
         bidder_results = database.get_all_items_from_maxbidder(username)
 
-        html = render_template('track.html', netid_results=netid_results, bidder_results=bidder_results)
-        response = make_response(html)
+        database.disconnect()
+
+        results = []
+        sell_list = []
+        for item in netid_results:
+            item_dict = {"item_id":str(item[0]), "price":str(item[3]), 
+            "item_title":str(item[6]), "max_bidder":str(item[7])}
+            sell_list.append(item_dict)
+        results.append(sell_list)
+
+        bid_list = []
+        for item in bidder_results:
+            item_dict = {"item_id":str(item[0]), "price":str(item[3]),
+             "item_title":str(item[6])}
+            bid_list.append(item_dict)
+        results.append(bid_list)
+        print("results: " + str(results))
+
+        jsonStr = dumps(results)
+        response = make_response(jsonStr)
+        response.headers['Content-Type'] = 'application/json'
         return response
 
 #-----------------------------------------------------------------------
@@ -447,7 +535,7 @@ def home_control():
     if 'username' not in session:
         username = CASClient().authenticate().strip()
         check_user(username)
-        # send_mail("passpi32@gmail.com", "ps21@princeton.edu", "an item", str(235))
+        # send_purchase_mail("passpi32@gmail.com", "ps21@princeton.edu", "an item", str(235))
     else:
         username = session.get('username').strip()
 
