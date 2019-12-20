@@ -164,6 +164,7 @@ def modify_item():
         title = request.form['title']
         print("title")
         image = request.files['image']
+        print(image)
         print("img")
         description = request.form['description']
         print("desc")
@@ -173,40 +174,57 @@ def modify_item():
         netid = username
         old_item_id = request.form['item_id']
         print("id")
-        new_item_id = int(random.uniform(100, 1000000))
+        # new_item_id = int(random.uniform(100, 1000000))
         # error handling on the above in case it comes from a non web browser source
         print("getting stuff reached")
 
 
-        item_bids = database.get_item_bids(old_item_id) 
-        send_modify_mail(item_bids, title, new_item_id)
+        prev_info = (database.get_item(old_item_id))[0]
 
+        # send e-mail to bidders before deleting the bids
+        item_bids = database.get_item_bids(old_item_id) 
+        send_modify_mail(item_bids, prev_info[6], old_item_id)
         database.delete_from_bids(old_item_id)
-        database.delete_image(old_item_id)
+
+        # delete the old item entry data
         database.delete_from_db(old_item_id)
 
+        new_img_bool = True
+        # if new image is null and previous image is not null
+        if image.filename == '' and prev_info[4] != '': 
+        	safefilename = prev_info[4]
+        	new_img_bool = False
+        	# retain old image
+
         print("db stuff")
-        if (image.filename == ''):
-            # print("none")
-            image = ''
-            image_read = None
-            safefilename = ''
-        else:
-            # print(image)
-            safefilename = secure_filename(randstr() + '-' + image.filename)
-            imgpath = '{}/{}'.format(IMAGE_DIR_AVAILABLE, safefilename)
-            image.save(imgpath)
-            image.seek(0)
-            image_read = image.read()
-            database.add_image(new_item_id, image_read, safefilename)
+        # insert the new image into the db
+        if new_img_bool == True:
+        	# delete the old image
+        	os.remove(os.path.join(IMAGE_DIR_AVAILABLE, prev_info[4]))
+        	database.delete_image(old_item_id)
+
+	        if (image.filename == ''):
+	            # print("none")
+	            image = ''
+	            image_read = None
+	            safefilename = ''
+	        else:
+	            # print(image)
+	            safefilename = secure_filename(randstr() + '-' + image.filename)
+	            imgpath = '{}/{}'.format(IMAGE_DIR_AVAILABLE, safefilename)
+	            image.save(imgpath)
+	            image.seek(0)
+	            image_read = image.read()
+	            database.add_image(old_item_id, image_read, safefilename)
             # print(database.image_table_size())
 
-        database.add_to_db(new_item_id, postdate, netid, price, safefilename, description, title)
+        # add new db info for the item
+        database.add_to_db(old_item_id, postdate, netid, price, safefilename, description, title)
 
         # add to bid database with null bidder netid
-        database.bid(new_item_id, price, None)
+        database.bid(old_item_id, price, None)
         print("work done")
-        return redirect("/item?itemid={}".format(new_item_id))
+        return redirect("/item?itemid={}".format(old_item_id))
             
     else:
         return redirect('/index')

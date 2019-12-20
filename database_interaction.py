@@ -275,6 +275,17 @@ class Database:
         record_to_insert = (itemid, image_data, img_filename)
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
+        
+    # function to change the item_id associated with a picture in the database
+    def change_image_id(self, old_item_id, new_item_id):
+        cursor = self._connection.cursor()
+        
+        statement = """UPDATE images SET item_id= %s WHERE item_id= %s"""
+        cursor.execute(statement, (new_item_id, old_item_id))
+        updated_rows = cursor.rowcount
+        print("updated rows: " + str(updated_rows))
+        self._connection.commit()
+        cursor.close()
 
     def delete_image(self, itemid):
         cursor = self._connection.cursor()

@@ -155,10 +155,11 @@
                 results_html = results_html.replace("@@z5@@", entry['item_id'])
                 results_html = results_html.replace("@@z6@@", entry['item_id'])
                 if (entry['max_bidder'] !== "None") {
-                    results_html = results_html.replace("@@z3@@", "bid")
+                    var temp = "Max bid: $" + entry['price']
+                    results_html = results_html.replace("@@z3@@", temp)
                 }
                 else {
-                    results_html = results_html.replace("@@z3@@", "No Bids. Price $" + entry['price'])
+                    results_html = results_html.replace("@@z3@@", "No Bids. Price: $" + entry['price'])
                 }
                 console.log('max_bidder: ')
                 console.log(entry['max_bidder'])
