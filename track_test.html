@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>reTail // track</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="{{ url_for('static', filename='css/retail.css') }}" rel="stylesheet">
+
+</head>
+
+
+<style>
+    table {
+        width: 100%;
+        /*margin: 12px 12px 12px 12px;*/
+        /*border-spacing: 5px;*/
+        white-space: nowrap;
+        border-collapse:separate; 
+        border-spacing: 20px; 
+        /*border-collapse: collapse;*/
+        /*border: 1px solid black;*/
+    }
+    /*td {
+      white-space: nowrap;
+      border-spacing: 10px;
+    }     
+    th {
+        font-size:30px;
+        white-space: nowrap;
+    }*/
+
+    /*#col_sp {
+        position: relative;
+    }*/
+
+</style>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <div class="container" style="padding-right:0;padding-left:0">
+      <a class="navbar-brand" href="..">reTail</a>  
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="..">buy</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="sell">sell</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="track">track
+                <span class="sr-only">(current)</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="history" style="padding-right:0">history</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Content -->
+  <div class="container">
+      <div class="row" style="padding-top: 5%">
+            <div class="col-sm-6">
+            <!-- Entry Start -->
+                <table>
+                    <tr>
+                        <th colspan="2">I'm Selling:</th>
+                    </tr>
+                    <th style="width:60%"></th>
+                    <!-- <th></th> -->
+                    <!-- <th></th> -->
+                    <th style="width:40%"></th>
+                    {% for i in range(5): %}
+                    <tr>
+                        <td> 
+                            <a href=../item?itemid=0>item_name</a> <br>
+                            {% if none is not none %}
+                                bid
+                            {% else %}
+                                No Bids. <br> Price: ${{i}}
+                            {% endif %}
+                        </td>
+                        
+                        <!-- <td align='right'>
+                          <pre>          </pre>
+                        </td> -->
+
+                        <td align='left'>
+                            {% if 1 is not none %}
+                              <form action="track" method="post">
+                                <input type="hidden" name="accept" value={{i}} >
+                                <button type="submit" class="btn btn-primary" style="width:100%">Accept Bid</button>
+                              </form>
+                            {% endif %}
+                            <form action="track" method="post">
+                              <input type="hidden" name="deleteitem" value={{i}} >
+                              <button type="submit" class="btn btn-primary" style="width:100%">Delete Item</button>
+                            </form>
+                            <form action='modify_item' method='get'>
+                              <input type='hidden' name='modify' value={{i}}>  
+                              <button type='submit' class='btn btn-primary' style='width:100%'>Modify Item</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}      
+                </table>
+            </div>
+            <!-- Entry End -->
+            <div class="col-sm-6">
+                    <table>
+                        <tr>
+                            <th colspan="2">I'm Bidding:</th>
+                        </tr>
+                            <th style="width:60%"></th>
+                            <!-- <th></th> -->
+                            <th style="width:40%"></th>
+                        {% for i in range(5): %}
+                            <tr>
+                                <td><a href=../item?itemid=34>test_href2</a> <br>
+                                    ${{i}}
+
+                                </td>
+
+                                <!-- <td align="right">
+                                    <pre>          </pre>
+                                </td> -->
+
+                                <td align="left">
+                                    <a href=../item?itemid=34 id="update" class="btn btn-primary" role="button" style="width:100%">Update Bid</a>
+                                    <form action="track" method="post">
+                                      <input type="hidden" name="deletebid" value={{i}}>
+                                      <button type="submit" class="btn btn-primary" style="width:100%">Remove Bid</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+            </div>
+        </div>
+  </div>
+  <br>
+  <br>
+  
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-0 bg-white fixed-bottom">
+    <div class="container">
+      <p class="m-0 text-center text-dark"><small>copyright &copy; reTail 2019</small></p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+
+</body>
+
+</html>
