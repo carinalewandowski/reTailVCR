@@ -110,7 +110,7 @@
         <div class="row" style="padding-top: 5%">
           {% for entry in results: %}
           <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card h-100">
+            <div class="card2 h-100">
               <a href="item?itemid={{entry[0]}}">
                 {% if entry[4] != '' %}
                   <img class="card-img-top" src="/static/images/available/{{entry[4]}}" alt="">
@@ -127,7 +127,7 @@
                 <p class="card-text">{{entry[5]}}</p>
               </div>
               <div class="card-footer">
-                <p>seller: <i>{{entry[2]}}</i></p>
+                <p>seller: <h7><i>{{entry[2]}}</i></h7></p>
               </div>
             </div>
           </div>
