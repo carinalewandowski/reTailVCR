@@ -431,7 +431,7 @@ hr {
   margin-top: 1rem;
   margin-bottom: 1rem;
   border: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid #ff9b5d;
 }
 
 small,
@@ -9950,7 +9950,8 @@ a.text-light:hover, a.text-light:focus {
 }
 
 .text-dark {
-  color: #343a40 !important;
+  font-family: 'Courier New', Courier, monospace;
+  color: #484560 !important;
 }
 
 a.text-dark:hover, a.text-dark:focus {
