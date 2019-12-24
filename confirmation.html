@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>reTail // sell</title>
+  <title>reTail // confirmation</title>
 
   <!-- Bootstrap core CSS -->
   <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
@@ -51,11 +51,19 @@
   <!-- Page Content -->
   <div class="container">
 
-    <div class="row" style="padding-top: 20%">
-        <h1 class="my-4">Thank you!</h1>
+    <div class="text-center" style="padding-top: 20%">
+        <h1 class="m-0 text-center">Thank you!</h1>
     </div>
-    <div class="row">
-        <body><font size = 4 color = blue>&#10003;</font>  Your submission has been processed.</body>
+    <div class="text-center">
+      <br>
+      <h5 class="m-0 text-center">Your submission has been processed.</h5>
+    </div>
+    <br>
+    <br>
+    <div class="text-center">
+      <form action='track' method="get">
+        <button class="btn btn-primary">Track Item</button>
+      </form>
     </div>
 
   </div>

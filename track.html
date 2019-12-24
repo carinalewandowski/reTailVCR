@@ -132,11 +132,11 @@
             bid_data = res[1]
             
             results_html = ''
-            results_html += "<table><tr><th colspan='2'>I'm Selling:</th></tr><th style='width:60%'></th><th style='width:40%'></th>"
+            results_html += "<table><tr><th colspan='2'><h1>I'm Selling:</h1></th></tr><th style='width:60%'></th><th style='width:40%'></th>"
             for (e in sell_data) {
                 let entry = sell_data[e]
                 results_html += "<tr>\
-                <td> <a href=../item?itemid=@@z1@@>@@z2@@</a> <br> @@z3@@</td> \
+                <td style='vertical-align:top'> <a href=../item?itemid=@@z1@@>@@z2@@</a> <br> @@z3@@</td> \
                 <td align='left'> \
                     @@z4@@ \
                     <form action='track' method='post'>\
@@ -146,7 +146,7 @@
                     <form action='modify_item' method='get'>\
                       <input type='hidden' name='modify'\ value=@@z6@@>\
                       <button type='submit' class='btn btn-primary' style='width:100%'>Modify Item</button>\
-                    </form>\
+                    </form><br>\
                 </td>\
                 </tr>"
 
@@ -186,18 +186,18 @@
 
 
             results_html = ''
-            results_html += "<table><tr><th colspan='2'>I'm Bidding:</th></tr><th style='width:60%'></th><th style='width:40%'></th>"
+            results_html += "<table><tr><th colspan='2'><h1>I'm Bidding:</h1></th></tr><th style='width:60%'></th><th style='width:40%'></th>"
             for (e in bid_data) {
                 // console.log(e)
                 let entry = bid_data[e]
                 results_html += "<tr>"
-                results_html += "<td> <a href=../item?itemid=@@x1@@>@@x2@@</a><br>$@@x3@@</td>"
+                results_html += "<td style='vertical-align:top'> <a href=../item?itemid=@@x1@@>@@x2@@</a><br>$@@x3@@</td>"
                 results_html += "<td align='left'>\
                      <a href=../item?itemid=@@x4@@ id='update' class='btn btn-primary' role='button' style='width:100%'>Update Bid</a>\
                     <form action='track' method='post'>\
                         <input type='hidden' name='deletebid' value=@@x5@@>\
                         <button type='submit' class='btn btn-primary' style='width:100%'>Remove Bid</button>\
-                    </form>\
+                    </form><br>\
                 </td>\
                 </tr>"
 
