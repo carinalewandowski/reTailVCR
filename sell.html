@@ -83,13 +83,13 @@
                 <strong>Category:</strong><br>
                 <!-- NOTE: need to make sure this is not left empty! -->
                 <div>
-                  <input type="radio" name="tag" value="Clothing">Clothing
-                  <input type="radio" name="tag" value="Furniture">Furniture
-                  <input type="radio" name="tag" value="Technology">Technology
-                  <input type="radio" name="tag" value="Books">Books
-                  <input type="radio" name="tag" value="Art">Art
-                  <input type="radio" name="tag" value="Food & Drink">Food & Drink
-                  <input type="radio" name="tag" value="Miscellaneous">Miscellaneous
+                  <input type="radio" name="tag" id = "Clothing" value="Clothing">Clothing
+                  <input type="radio" name="tag" id = "Furniture" value="Furniture">Furniture
+                  <input type="radio" name="tag" id = "Technology" value="Technology">Technology
+                  <input type="radio" name="tag" id = "Books" value="Books">Books
+                  <input type="radio" name="tag" id = "Art" value="Art">Art
+                  <input type="radio" name="tag" id = "Food & Drink" value="Food & Drink">Food & Drink
+                  <input type="radio" name="tag" id = "Miscellaneous" value="Miscellaneous">Miscellaneous
                 </div><br>
                 <strong>Starting Price:</strong>
                 <div class="input-group">
@@ -156,18 +156,25 @@
           console.log('checking input');
           let errormsg = "";
           let value = $('#start_price').val();
+
           if ($('#item_name').val() === "") {
               errormsg += "Item title cannot be empty.\n"
           }
           else if ($('#item_name').val().length > 30) {
               errormsg += "Item title cannot be longer than 30 characters.\n";
           }
+
           if ($('#item_desc').val() === "") {
             errormsg += "Item description cannot be empty.\n";
           }
           else if ($('#item_desc').val().length > 100) {
             errormsg += "Item description must be shorter than 100 characters.\n";
           }
+
+          if(document.querySelector('input[name="tag"]:checked') == null) {
+            errormsg += "Must select one category.\n";
+          }
+
           if (value === "") {
               errormsg += "Starting price cannot be empty.\n";
           }
@@ -178,8 +185,9 @@
               errormsg += "Starting price must be a positive integer.\n";
           }
           else if (Math.floor(value) !== Number(value)) {
-              errormsg += "Starting price must be an integer.";
+              errormsg += "Starting price must be an integer.\n";
           }
+
           // if image is not uploaded
           if (errormsg.length === 0) {
             // console.log("if")
