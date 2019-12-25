@@ -47,6 +47,7 @@ mail = Mail(app)
 app.secret_key = b'\rb\x98G`\xaa\xb5\xa6i$\xe0TWk\x0b\x1e'
 IMAGE_DIR_AVAILABLE = 'static/images/available'
 IMAGE_DIR_PURCHASED = 'static/images/purchased'
+itemid_hashset = []
 
 database = Database()
 database.connect()
@@ -243,6 +244,12 @@ def item():
     string = request.cookies.get('lastSearch')
     if string is None:
         string = ''
+    maxP = request.cookies.get('maxPrice')
+    if maxP is None:
+        maxP = ''
+    minP = request.cookies.get('minPrice')
+    if minP is None:
+        minP = ''
     
     database = Database()
     database.connect()
@@ -275,7 +282,7 @@ def item():
             entry = database.get_item(itemid)
             database.disconnect()
             msg = 'Please enter a valid bid.'
-            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP)
             response = make_response(html)
             return response
 
@@ -295,7 +302,7 @@ def item():
         if (seller_id == netid):
             database.disconnect()
             msg = 'Sorry, you may not bid on an item you are selling.'
-            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP)
             response = make_response(html)
             return response
 
@@ -304,7 +311,7 @@ def item():
         if (float(bid) <= current_price):
             database.disconnect()
             msg = 'Please enter a bid higher than the current price.'
-            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP)
             response = make_response(html)
             return response
     
@@ -312,7 +319,7 @@ def item():
         entry = database.get_item(itemid)
         database.disconnect()
         msg = 'Your bid has been processed. Thank you!'
-        html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
+        html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP)
         response = make_response(html)
         return response
     else:
@@ -321,7 +328,7 @@ def item():
             database.connect()
             entry = database.get_item(itemid)
             database.disconnect()
-            html = render_template('item.html', entry=entry[0], lastSearch=string)
+            html = render_template('item.html', entry=entry[0], lastSearch=string, maxPrice=maxP, minPrice=minP)
             response = make_response(html)
             return response
         except Exception as e:
@@ -378,8 +385,12 @@ def sell():
             description = ''
         if price is None:
             price = ''
+
         #if itemid is None:
         itemid = int(random.uniform(100, 1000000))
+        while str(itemid) in itemid_hashset:
+            itemid = int(random.uniform(100, 1000000))
+
         #if postdate is None:
         postdate = datetime.date.today()
         #if netid is None:
@@ -459,6 +470,7 @@ def track():
 
             database.delete_from_db(delete_item_itemid)
             database.delete_from_bids(delete_item_itemid)
+            itemid_hashset.remove(str(delete_item_itemid))
 
         else:
             # print("accepted bid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
@@ -487,6 +499,8 @@ def track():
                     os.rename(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename), os.path.join(IMAGE_DIR_PURCHASED, delete_item_filename))
                     database.copy_image_to_purchased_images(itemid)
                     database.delete_image(itemid)
+
+                itemid_hashset.remove(str(itemid))
 
     if request.args.get('action') == None:
         print("first arrivalllllllllll")
@@ -565,12 +579,14 @@ def home_control():
         results = database.get_available_db()
         database.disconnect()
 
-        html = render_template('index.html', results=results, lastSearch='')
+        html = render_template('index.html', results=results, lastSearch='', maxPrice='', minPrice='')
         # html = render_template('index.html')
         response = make_response(html)
 
         # NOTE: deal with cookies
         response.set_cookie('lastSearch', '')
+        response.set_cookie('maxPrice', '')
+        response.set_cookie('minPrice', '')
         return response
 
     except Exception as e:
@@ -672,21 +688,36 @@ def search():
     #username = 'jjsalama'
 
     try:
-        string = request.args.get('string')
-        if (string is None) or (string.strip() == ''):
-            string = ''
-        
+        query = request.args.get('query')
+        maxP = request.args.get('maxprice')
+        minP = request.args.get('minprice')
+        if (query is None) or (query.strip() == ''):
+            query = ''
+        # setting it to a number larger than all possible entries on the site
+        if (maxP is None) or (maxP.strip() == ''):
+            maxP = '99999999999'
+        # setting it to lowest possible entry
+        if (minP is None) or (minP.strip() == ''):
+            minP = '0'
+
         database = Database()
         database.connect()
-        results = database.search(string)
+        print('pre search')
+        results = database.search(query, maxP, minP)
         database.disconnect()
+        print('post search')
 
-        html = render_template('index.html', results=results, lastSearch=string)
+
+        html = render_template('index.html', results=results, lastSearch=query, maxPrice=maxP, minPrice=minP)
         # html = prep_results(results)
         response = make_response(html)
+        print('post response')
+
 
         # NOTE: deal with cookies
-        response.set_cookie('lastSearch', string)
+        response.set_cookie('lastSearch', query)
+        response.set_cookie('maxPrice', maxP)
+        response.set_cookie('minPrice', minP)
         return response
         
     except Exception as e:

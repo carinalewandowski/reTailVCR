@@ -53,7 +53,9 @@
 
     <div class="row">
       <form action='search' method="get">
-        <input type="hidden" name="string" value="{{lastSearch}}">
+        <input type="hidden" name="query" value="{{lastSearch}}">
+        <input type="hidden" name="maxprice" value="{{maxPrice}}">
+        <input type="hidden" name="minprice" value="{{minPrice}}">
         <button class="btn btn-primary">Back to Browse</button>
       </form>
     </div>

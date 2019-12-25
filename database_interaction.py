@@ -254,13 +254,26 @@ class Database:
 
         self._connection.commit()
 
-    def search(self, string):
+    # def search(self, string):
+    #     cursor = self._connection.cursor()
+
+    #     query_string = '%' + string + '%'
+
+    #     postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s) OR (title ILIKE %s);"""
+    #     string_to_search = (query_string, query_string)
+    #     cursor.execute(postgres_search_string, string_to_search)
+
+    #     results = cursor.fetchall()
+    #     return results
+
+    def search(self, query, maxP, minP):
         cursor = self._connection.cursor()
 
-        query_string = '%' + string + '%'
+        query_string = '%' + query + '%'
 
-        postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s) OR (title ILIKE %s);"""
-        string_to_search = (query_string, query_string)
+        print("executing query")
+        postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s OR title ILIKE %s) AND (price BETWEEN %s AND %s);"""
+        string_to_search = (query_string, query_string, minP, maxP)
         cursor.execute(postgres_search_string, string_to_search)
 
         results = cursor.fetchall()
