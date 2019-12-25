@@ -628,6 +628,66 @@ def home_control():
 
 #-----------------------------------------------------------------------
 
+@app.route('/search')
+def search():
+    if 'username' not in session:
+        username = CASClient().authenticate().strip()
+        check_user(username)
+    else:
+        username = session.get('username').strip()
+
+    #username = 'jjsalama'
+
+    try:
+        query = request.args.get('query')
+        maxP = request.args.get('maxprice')
+        minP = request.args.get('minprice')
+
+        set_max_cookie = True
+        set_min_cookie = True
+
+        if (query is None) or (query.strip() == ''):
+            query = ''
+
+        # setting it to a number larger than all possible entries on the site
+        if (maxP is None) or (maxP.strip() == ''):
+            maxP = '99999999999'
+            set_max_cookie = False
+        # setting it to lowest possible entry
+        if (minP is None) or (minP.strip() == ''):
+            minP = '0'
+            set_min_cookie = False
+
+        database = Database()
+        database.connect()
+        print('pre search')
+        results = database.search(query, maxP, minP)
+        database.disconnect()
+        print('post search')
+
+        if not set_max_cookie:
+            maxP = ''
+        
+        if not set_min_cookie:
+            minP = ''
+
+        html = render_template('index.html', results=results, lastSearch=query, maxPrice=maxP, minPrice=minP)
+        # html = prep_results(results)
+        response = make_response(html)
+        print('post response')
+
+
+        # NOTE: deal with cookies
+        response.set_cookie('lastSearch', query)
+        response.set_cookie('maxPrice', maxP)
+        response.set_cookie('minPrice', minP)
+        return response
+        
+    except Exception as e:
+        print('error-search(): ' + str(e), file=stderr)
+        exit(1)
+
+#-----------------------------------------------------------------------
 
 def prep_results(results):
 
@@ -673,59 +733,6 @@ def prep_results(results):
     #       </div>
     #     </div>
     # {% endfor %} 
-
-
-
-
-@app.route('/search')
-def search():
-    if 'username' not in session:
-        username = CASClient().authenticate().strip()
-        check_user(username)
-    else:
-        username = session.get('username').strip()
-
-    #username = 'jjsalama'
-
-    try:
-        query = request.args.get('query')
-        maxP = request.args.get('maxprice')
-        minP = request.args.get('minprice')
-        if (query is None) or (query.strip() == ''):
-            query = ''
-        # setting it to a number larger than all possible entries on the site
-        if (maxP is None) or (maxP.strip() == ''):
-            maxP = '99999999999'
-        # setting it to lowest possible entry
-        if (minP is None) or (minP.strip() == ''):
-            minP = '0'
-
-        database = Database()
-        database.connect()
-        print('pre search')
-        results = database.search(query, maxP, minP)
-        database.disconnect()
-        print('post search')
-
-
-        html = render_template('index.html', results=results, lastSearch=query, maxPrice=maxP, minPrice=minP)
-        # html = prep_results(results)
-        response = make_response(html)
-        print('post response')
-
-
-        # NOTE: deal with cookies
-        response.set_cookie('lastSearch', query)
-        response.set_cookie('maxPrice', maxP)
-        response.set_cookie('minPrice', minP)
-        return response
-        
-    except Exception as e:
-        print('error-search(): ' + str(e), file=stderr)
-        exit(1)
-
-#-----------------------------------------------------------------------
-
 
 if __name__ == '__main__':
     # if len(argv) != 2:
