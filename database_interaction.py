@@ -235,13 +235,13 @@ class Database:
     #---------------------------------------------------------------------
     # major db functions
 
-    def add_to_db(self, itemid, postdate, netid, price, img_filename, description, title):
+    def add_to_db(self, itemid, postdate, netid, price, img_filename, description, title, tag):
         cursor = self._connection.cursor()
         #image = psycopg2.Binary(image)
-        entry = [itemid, postdate, netid, price, img_filename, description, title]
+        entry = [itemid, postdate, netid, price, img_filename, description, title, tag]
         postgres_insert_query = """ INSERT INTO "available_items" 
-        (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMG_FILENAME, DESCRIPTION, TITLE, INITIAL_PRICE) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
-        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[3])
+        (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMG_FILENAME, DESCRIPTION, TITLE, INITIAL_PRICE, TAG) VALUES (%s,%s,%s,%s,%s,%s,%s,%s, %s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[3], entry[7])
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 

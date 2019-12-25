@@ -57,7 +57,7 @@
           <form action='search' id='form' method='get'>
               <div class="row">
                     <div class="col-lg-7" style="padding-top:2%">
-                        <h4>Welcome to reTail :)</h4>
+                        <h4>Welcome to reTail, Princeton's centralized platform for buying and selling items. Browse listings below.</h4>
                     </div>
                     <div class="col-lg-5" style="padding-top: 3%">
                         <div class="row">
@@ -69,8 +69,15 @@
                             <span style="float:left; width:calc(30%);"><input type="text" class="form-control" id='maxprice' maxlength="10" name="maxprice" value='{{maxPrice}}'></span>
                             <label for="string2" style="padding-left:1%; padding-top:1%; width:calc(40%);">Price Range</label>  <br>
                             <p id="error_display"></p>
-                            
                         </div>
+                        <!-- <div class="row" style="padding-top:2%">
+                          <input type="radio" name="tag" value="clothing">Clothing
+                          <input type="radio" name="tag" value="furniture">Furniture
+                          <input type="radio" name="tag" value="technology">Technology
+                          <input type="radio" name="tag" value="art">Art
+                          <input type="radio" name="tag" value="food&drink">Food & Drink
+                          <input type="radio" name="tag" value="misc">Miscellaneous
+                        </div> -->
                     </div>
               </div>
           </form>
@@ -93,6 +100,7 @@
                           <h5>${{entry[3]}}</h5>
                           <p><i>{{entry[1]}}</i></p>
                           <p class="card-text">{{entry[5]}}</p>
+                          <p class="card_tag">Category: {{entry[9]}}</p>
                       </div>
                       <div class="card-footer">
                           <p>seller: <h7><i>{{entry[2]}}</i></h7></p>

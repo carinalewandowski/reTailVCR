@@ -171,6 +171,8 @@ def modify_item():
         print("desc")
         price = request.form['price']
         print("pr")
+        tag = request.form['tag']
+        print("tag")
         postdate = datetime.date.today()
         netid = username
         old_item_id = request.form['item_id']
@@ -220,7 +222,7 @@ def modify_item():
             # print(database.image_table_size())
 
         # add new db info for the item
-        database.add_to_db(old_item_id, postdate, netid, price, safefilename, description, title)
+        database.add_to_db(old_item_id, postdate, netid, price, safefilename, description, title, tag)
 
         # add to bid database with null bidder netid
         database.bid(old_item_id, price, None)
@@ -378,6 +380,7 @@ def sell():
         title = request.form['title']
         description = request.form['description']
         price = request.form['price']
+        tag = request.form['tag']
 
         if title is None:
             title = ''
@@ -415,7 +418,7 @@ def sell():
             database.add_image(itemid, image_read, safefilename)
             print(database.image_table_size())
 
-        database.add_to_db(itemid, postdate, netid, price, safefilename, description, title)
+        database.add_to_db(itemid, postdate, netid, price, safefilename, description, title, tag)
 
 
         # add to bid database with null bidder netid

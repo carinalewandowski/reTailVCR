@@ -96,6 +96,17 @@
                 <input type="text" class="form-control" id="item_name" maxlength="25" name="title" aria-describedby="emailHelp" value="{{entry[6]}}"><br>
                 <strong>Item Description:</strong><br>
                 <textarea type="text" class="form-control" id="item_desc" maxlength="100" name="description" aria-describedby="emailHelp">{{entry[5]}}</textarea><br>
+                <strong>Category:</strong><br>
+                <!-- NOTE: need to make sure this is not left empty! and has previous category.-->
+                <div>
+                  <input type="radio" name="tag" value="Clothing">Clothing
+                  <input type="radio" name="tag" value="Furniture">Furniture
+                  <input type="radio" name="tag" value="Technology">Technology
+                  <input type="radio" name="tag" value="Books">Books
+                  <input type="radio" name="tag" value="Art">Art
+                  <input type="radio" name="tag" value="Food & Drink">Food & Drink
+                  <input type="radio" name="tag" value="Miscellaneous">Miscellaneous
+                </div><br>
                 <strong>Starting Price:</strong>
                 <div class="input-group">
                   <div class="input-group-prepend">

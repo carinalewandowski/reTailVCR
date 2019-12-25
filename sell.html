@@ -59,7 +59,7 @@
       <div class="col" style="margin-bottom: 30px;padding-left:0;padding-right:0">
 
         <h1 class="my-4">Sell an item</h1>
-        <body>Please enter a name, description, and starting price for your item.</body>
+        <body>Please enter a name, description, category, and starting price for your item.</body>
 
         <div class="card mt-4">
           
@@ -80,6 +80,17 @@
                 <input type="text" class="form-control" id="item_name" name="title" aria-describedby="emailHelp"><br>
                 <strong>Item Description:</strong><br>
                 <textarea type="text" class="form-control" id="item_desc" name="description" aria-describedby="emailHelp"></textarea><br>
+                <strong>Category:</strong><br>
+                <!-- NOTE: need to make sure this is not left empty! -->
+                <div>
+                  <input type="radio" name="tag" value="Clothing">Clothing
+                  <input type="radio" name="tag" value="Furniture">Furniture
+                  <input type="radio" name="tag" value="Technology">Technology
+                  <input type="radio" name="tag" value="Books">Books
+                  <input type="radio" name="tag" value="Art">Art
+                  <input type="radio" name="tag" value="Food & Drink">Food & Drink
+                  <input type="radio" name="tag" value="Miscellaneous">Miscellaneous
+                </div><br>
                 <strong>Starting Price:</strong>
                 <div class="input-group">
                   <div class="input-group-prepend">
