@@ -197,32 +197,32 @@ def modify_item():
         database.delete_from_db(old_item_id)
 
         new_img_bool = True
+        
         # if new image is null and previous image is not null
         if image.filename == '' and prev_info[4] != '': 
-        	safefilename = prev_info[4]
-        	new_img_bool = False
-        	# retain old image
+            safefilename = prev_info[4]
+            new_img_bool = False
 
         print("db stuff")
         # insert the new image into the db
         if new_img_bool == True:
-        	# delete the old image
-        	os.remove(os.path.join(IMAGE_DIR_AVAILABLE, prev_info[4]))
-        	database.delete_image(old_item_id)
+            # delete the old image if there was one
+            if (prev_info[4] != ''):
+                os.remove(os.path.join(IMAGE_DIR_AVAILABLE, prev_info[4]))
+                database.delete_image(old_item_id)
 
-	        if (image.filename == ''):
-	            # print("none")
-	            image = ''
-	            image_read = None
-	            safefilename = ''
-	        else:
-	            # print(image)
-	            safefilename = secure_filename(randstr() + '-' + image.filename)
-	            imgpath = '{}/{}'.format(IMAGE_DIR_AVAILABLE, safefilename)
-	            image.save(imgpath)
-	            image.seek(0)
-	            image_read = image.read()
-	            database.add_image(old_item_id, image_read, safefilename)
+            if (image.filename == ''):
+                image = ''
+                image_read = None
+                safefilename = ''
+            else:
+                # print(image)
+                safefilename = secure_filename(randstr() + '-' + image.filename)
+                imgpath = '{}/{}'.format(IMAGE_DIR_AVAILABLE, safefilename)
+                image.save(imgpath)
+                image.seek(0)
+                image_read = image.read()
+                database.add_image(old_item_id, image_read, safefilename)
             # print(database.image_table_size())
 
         # add new db info for the item
