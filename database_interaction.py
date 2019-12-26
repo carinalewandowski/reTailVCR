@@ -188,13 +188,13 @@ class Database:
         
         return results
 
-    def add_to_purchased(self, itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description):
+    def add_to_purchased(self, itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description, tag):
         cursor = self._connection.cursor()
         #image = psycopg2.Binary(image)
-        entry = [itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description]
+        entry = [itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description, tag]
         postgres_insert_query = """ INSERT INTO "purchased_items" 
-        (ITEM_ID, SELL_DATE, PRICE, IMG_FILENAME, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
-        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7])
+        (ITEM_ID, SELL_DATE, PRICE, IMG_FILENAME, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION, TAG) VALUES (%s,%s,%s,%s,%s,%s,%s,%s, %s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7], entry[8])
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
@@ -208,11 +208,12 @@ class Database:
         img_filename = entry_available[4]
         description = entry_available[5]
         title = entry_available[6]
+        tag = entry_available[9]
         
-        entry = [itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description]
+        entry = [itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description, tag]
         postgres_insert_query = """ INSERT INTO "purchased_items" 
-        (ITEM_ID, SELL_DATE, PRICE, IMG_FILENAME, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
-        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7])
+        (ITEM_ID, SELL_DATE, PRICE, IMG_FILENAME, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION, TAG) VALUES (%s,%s,%s,%s,%s,%s,%s,%s, %s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7], entry[8])
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
