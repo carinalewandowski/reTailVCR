@@ -473,7 +473,8 @@ def track():
 
             database.delete_from_db(delete_item_itemid)
             database.delete_from_bids(delete_item_itemid)
-            itemid_hashset.remove(str(delete_item_itemid))
+            if str(delete_item_itemid) in itemid_hashset:
+                itemid_hashset.remove(str(delete_item_itemid))
 
         else:
             # print("accepted bid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
@@ -503,7 +504,8 @@ def track():
                     database.copy_image_to_purchased_images(itemid)
                     database.delete_image(itemid)
 
-                itemid_hashset.remove(str(itemid))
+                if str(delete_item_itemid) in itemid_hashset:
+                    itemid_hashset.remove(str(delete_item_itemid))
 
     if request.args.get('action') == None:
         print("first arrivalllllllllll")
@@ -582,7 +584,7 @@ def home_control():
         results = database.get_available_db()
         database.disconnect()
 
-        html = render_template('index.html', results=results, lastSearch='', maxPrice='', minPrice='')
+        html = render_template('index.html', results=results, lastSearch='', maxPrice='', minPrice='', tags=[])
         # html = render_template('index.html')
         response = make_response(html)
 
@@ -645,6 +647,7 @@ def search():
         query = request.args.get('query')
         maxP = request.args.get('maxprice')
         minP = request.args.get('minprice')
+        tags = request.args.getlist('tag')
 
         set_max_cookie = True
         set_min_cookie = True
@@ -664,7 +667,7 @@ def search():
         database = Database()
         database.connect()
         print('pre search')
-        results = database.search(query, maxP, minP)
+        results = database.search(query, maxP, minP, tags)
         database.disconnect()
         print('post search')
 
@@ -674,7 +677,7 @@ def search():
         if not set_min_cookie:
             minP = ''
 
-        html = render_template('index.html', results=results, lastSearch=query, maxPrice=maxP, minPrice=minP)
+        html = render_template('index.html', results=results, lastSearch=query, maxPrice=maxP, minPrice=minP, tags=tags)
         # html = prep_results(results)
         response = make_response(html)
         print('post response')
@@ -684,6 +687,7 @@ def search():
         response.set_cookie('lastSearch', query)
         response.set_cookie('maxPrice', maxP)
         response.set_cookie('minPrice', minP)
+        # response.set_cookie('tags', tags)
         return response
         
     except Exception as e:

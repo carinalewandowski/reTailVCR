@@ -267,13 +267,20 @@ class Database:
     #     results = cursor.fetchall()
     #     return results
 
-    def search(self, query, maxP, minP):
+    def search(self, query, maxP, minP, tags):
         cursor = self._connection.cursor()
 
         query_string = '%' + query + '%'
 
         print("executing query")
-        postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s OR title ILIKE %s) AND (price BETWEEN %s AND %s);"""
+        postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s OR title ILIKE %s) AND (price BETWEEN %s AND %s"""
+        if len(tags) > 0:
+            postgres_search_string += ") AND ("
+            for tag in tags:
+                # CAREFUL here with SQL injection
+                postgres_search_string += f"""tag = '{tag}' OR """
+            postgres_search_string = postgres_search_string[:-4]
+        postgres_search_string += ");"
         string_to_search = (query_string, query_string, minP, maxP)
         cursor.execute(postgres_search_string, string_to_search)
 
