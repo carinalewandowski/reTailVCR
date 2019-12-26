@@ -47,6 +47,10 @@ mail = Mail(app)
 app.secret_key = b'\rb\x98G`\xaa\xb5\xa6i$\xe0TWk\x0b\x1e'
 IMAGE_DIR_AVAILABLE = 'static/images/available'
 IMAGE_DIR_PURCHASED = 'static/images/purchased'
+
+# a list used to store randomly generated itemids while they
+# are being used by listings in available_items
+# once listing is deleted or sold, the id is removed
 itemid_hashset = []
 
 database = Database()
@@ -389,10 +393,13 @@ def sell():
         if price is None:
             price = ''
 
-        #if itemid is None:
+        # generate a random itemid until you get one that isn't
+        # in the itemdid_hashet, meaning that it isn't already being
+        # used by an item in available_items 
         itemid = int(random.uniform(100, 1000000))
         while str(itemid) in itemid_hashset:
             itemid = int(random.uniform(100, 1000000))
+        itemid_hashset.append(str(itemid))
 
         #if postdate is None:
         postdate = datetime.date.today()
@@ -504,8 +511,8 @@ def track():
                     database.copy_image_to_purchased_images(itemid)
                     database.delete_image(itemid)
 
-                if str(delete_item_itemid) in itemid_hashset:
-                    itemid_hashset.remove(str(delete_item_itemid))
+                if str(itemid) in itemid_hashset:
+                    itemid_hashset.remove(str(itemid))
 
     if request.args.get('action') == None:
         print("first arrivalllllllllll")
