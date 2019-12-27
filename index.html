@@ -73,12 +73,19 @@
                         <div class="row" style="padding-top:2%">
                           <input type="checkbox" name="tag" id = "Clothing" value="Clothing">Clothing
                           <input type="checkbox" name="tag" id = "Furniture" value="Furniture">Furniture
-                          <input type="checkbox" name="tag" id = "Technology" value="Technology">Technology
+                          <input type="checkbox" name="tag" id = "Technology & Electronics" value="Technology & Electronics">Technology & Electronics
+                          <input type="checkbox" name="tag" id = "Sports Equipment" value="Sports Equipment">Sports Equipment
                           <input type="checkbox" name="tag" id = "Books" value="Books">Books
                           <input type="checkbox" name="tag" id = "Art" value="Art">Art
                           <input type="checkbox" name="tag" id = "Food & Drink" value="Food & Drink">Food & Drink
+                          <input type="checkbox" name="tag" id = "Tickets" value="Tickets">Tickets
                           <input type="checkbox" name="tag" id = "Miscellaneous" value="Miscellaneous">Miscellaneous
                         </div>
+                        {% for tag in tags: %}
+                          <script>
+                            document.getElementById("{{tag|safe}}").checked = true;
+                          </script>
+                        {% endfor %}
                     </div>
               </div>
           </form>

@@ -56,6 +56,9 @@
         <input type="hidden" name="query" value="{{lastSearch}}">
         <input type="hidden" name="maxprice" value="{{maxPrice}}">
         <input type="hidden" name="minprice" value="{{minPrice}}">
+        {% for tag in tags: %}
+        <input type="hidden" name="tag" value="{{tag}}">
+        {% endfor %}
         <button class="btn btn-primary">Back to Browse</button>
       </form>
     </div>

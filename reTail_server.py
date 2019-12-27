@@ -256,6 +256,11 @@ def item():
     minP = request.cookies.get('minPrice')
     if minP is None:
         minP = ''
+    ntags = request.cookies.get('ntags')
+
+    tags = []
+    for i in range(int(ntags)):
+        tags.append(request.cookies.get(f'tag{i + 1}'))
     
     database = Database()
     database.connect()
@@ -288,7 +293,7 @@ def item():
             entry = database.get_item(itemid)
             database.disconnect()
             msg = 'Please enter a valid bid.'
-            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP, tags=tags)
             response = make_response(html)
             return response
 
@@ -308,7 +313,7 @@ def item():
         if (seller_id == netid):
             database.disconnect()
             msg = 'Sorry, you may not bid on an item you are selling.'
-            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP, tags=tags)
             response = make_response(html)
             return response
 
@@ -317,7 +322,7 @@ def item():
         if (float(bid) <= current_price):
             database.disconnect()
             msg = 'Please enter a bid higher than the current price.'
-            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP, tags=tags)
             response = make_response(html)
             return response
     
@@ -325,7 +330,7 @@ def item():
         entry = database.get_item(itemid)
         database.disconnect()
         msg = 'Your bid has been processed. Thank you!'
-        html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP)
+        html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP, tags=tags)
         response = make_response(html)
         return response
     else:
@@ -334,7 +339,7 @@ def item():
             database.connect()
             entry = database.get_item(itemid)
             database.disconnect()
-            html = render_template('item.html', entry=entry[0], lastSearch=string, maxPrice=maxP, minPrice=minP)
+            html = render_template('item.html', entry=entry[0], lastSearch=string, maxPrice=maxP, minPrice=minP, tags=tags)
             response = make_response(html)
             return response
         except Exception as e:
@@ -694,7 +699,9 @@ def search():
         response.set_cookie('lastSearch', query)
         response.set_cookie('maxPrice', maxP)
         response.set_cookie('minPrice', minP)
-        # response.set_cookie('tags', tags)
+        response.set_cookie('ntags', str(len(tags)))
+        for i in range(len(tags)):
+            response.set_cookie(f'tag{i + 1}', tags[i])
         return response
         
     except Exception as e:
