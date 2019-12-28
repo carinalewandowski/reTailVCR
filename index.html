@@ -24,7 +24,8 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container" style="padding-right:0;padding-left:0">
       <a class="navbar-brand" href="..">reTail</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+        aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
@@ -52,9 +53,102 @@
   </nav>
 
   <!-- Page Content -->
-  <div class="container">
+  <div class="container" style="padding-top: 3%">
+    <form action='search' id='form' method='get'>
+      <div class="row">
+        <div class="col-lg-8">
+          <h4>Welcome to reTail, Princeton's centralized platform for buying and selling items. Browse listings below.</h4>
+        </div>
+        <div class="col-lg-4" style="padding-top: 1%">
+          <div class="row" style="padding-left:10px">
+            <span style="width:calc(100% - 90px);"><input type="text" id='search_box' class="form-control"
+                name='query' value='{{lastSearch}}'></span>
+            <span style="float:right"><button type="submit" class="btn btn-primary" style="border: 1px solid rgba(220, 235, 242, 0.7)">Search</button></span>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row" style="padding-top:2%">
+        <div class="col-lg-2">
+          <h5 style="color: #ff9b5d; padding-right:5px">filter by:</h5>
+          <hr>
+          <p><strong>price range:</strong></p>
+          <span style="float:left; width:48%"><input type="text" class="form-control" id='minprice' maxlength="10" name="minprice"
+              value='{{minPrice}}' placeholder="min"></span>
+          <span style="float:right; width:48%"><input type="text" class="form-control" id='maxprice' maxlength="10"
+              name="maxprice" value='{{maxPrice}}' placeholder="max"></span><br>
+          <p id="error_display"></p>
+          <br><hr>
+          <p><strong>category:</strong></p>
+          <label class="container" style="padding-left:0px; padding-right:5px">
+            <input type="checkbox" name="tag" id="Clothing" value="Clothing"> Clothing
+          </label>
+          <label class="container" style="padding-left:0px; padding-right:5px">
+            <input type="checkbox" name="tag" id="Furniture" value="Furniture"> Furniture
+          </label>
+          <label class="container" style="padding-left:0px; padding-right:5px">
+            <input type="checkbox" name="tag" id="Technology & Electronics" value="Technology & Electronics"> Technology
+          </label>
+          <label class="container" style="padding-left:0px; padding-right:5px">
+            <input type="checkbox" name="tag" id="Sports Equipment" value="Sports Equipment"> Sports Equipment
+          </label>
+          <label class="container" style="padding-left:0px; padding-right:5px">
+            <input type="checkbox" name="tag" id="Books" value="Books"> Books
+          </label>
+          <label class="container" style="padding-left:0px; padding-right:5px">
+            <input type="checkbox" name="tag" id="Art" value="Art"> Art
+          </label>
+          <label class="container" style="padding-left:0px; padding-right:5px">
+            <input type="checkbox" name="tag" id="Food & Drink" value="Food & Drink"> Food & Drink
+          </label>
+          <label class="container" style="padding-left:0px; padding-right:5px">
+            <input type="checkbox" name="tag" id="Tickets" value="Tickets"> Tickets
+          </label>
+          <label class="container" style="padding-left:0px; padding-right:5px">
+            <input type="checkbox" name="tag" id="Miscellaneous" value="Miscellaneous"> Miscellaneous
+          </label>
+          {% for tag in tags: %}
+          <script>
+            document.getElementById("{{tag|safe}}").checked = true;
+          </script>
+          {% endfor %}
+        </div>
+        <div class="col-lg-10">
+          <div class="row">
+            {% for entry in results: %}
+            <div class="col-lg-4 col-md-6 mb-4">
+              <div class="card2 h-100">
+                <a href="item?itemid={{entry[0]}}">
+                  {% if entry[4] != '' %}
+                  <img class="card-img-top" src="/static/images/available/{{entry[4]}}" alt="">
+                  {% else %}
+                  <img class="card-img-top" src="/static/images/reTail_sell_default.png" alt="">
+                  {% endif %}
+                </a>
+                <div class="card-body">
+                  <h4 class="card-title">
+                    <a href="item?itemid={{entry[0]}}">{{entry[6]}}</a>
+                  </h4>
+                  <h5>${{entry[3]}}</h5>
+                  <p><i>{{entry[1]}}</i></p>
+                  <p class="card-text">{{entry[5]}}</p>
+                  <p class="card_tag">Category: {{entry[9]}}</p>
+                </div>
+                <div class="card-footer">
+                  <p>seller: <h7><i>{{entry[2]}}</i></h7>
+                  </p>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  </div>
 
-          <form action='search' id='form' method='get'>
+  <!-- <form action='search' id='form' method='get'>
               <div class="row">
                     <div class="col-lg-7" style="padding-top:2%">
                         <h4>Welcome to reTail, Princeton's centralized platform for buying and selling items. Browse listings below.</h4>
@@ -116,8 +210,8 @@
                   </div>
               </div>
             {% endfor %}  
-        </div>
-        <!-- /.row -->
+        </div> -->
+  <!-- /.row -->
 
   </div>
   <!-- /.container -->
@@ -134,57 +228,56 @@
   <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
   <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
   <script>
-  	function setup() 
-	{
-		$('#search_box').focus();
-    $("#form").submit(function(event) {
+    function setup() {
+      $('#search_box').focus();
+      $("#form").submit(function (event) {
         console.log('checking input');
         let errormsg = "";
         let minp = $('#minprice').val();
         let maxp = $('#maxprice').val();
 
         if (minp.length > 0) {
-            if (!$.isNumeric(minp)) {
-                errormsg += "Min price must be a number or empty.\n";
-            }
-            else if (Number(minp) < 0) {
-                errormsg += "Min price must be greater than or equal to 0.\n";
-            }
-            else if (Math.floor(minp) !== Number(minp)) {
-              errormsg += "Min price must be an integer."
-            }
+          if (!$.isNumeric(minp)) {
+            errormsg += "Min price must be a number or empty.\n";
+          }
+          else if (Number(minp) < 0) {
+            errormsg += "Min price must be greater than or equal to 0.\n";
+          }
+          else if (Math.floor(minp) !== Number(minp)) {
+            errormsg += "Min price must be an integer."
+          }
         }
 
         if (maxp.length > 0) {
-            if (!$.isNumeric(maxp)) {
-                errormsg += "Max price must be a number or empty.\n";
-            }
-            else if (Number(maxp) < 0) {
-                errormsg += "Max price must be greater than or equal to 0.\n";
-            }
-            else if (Math.floor(maxp) !== Number(maxp)) {
-                errormsg += "Max price must be an integer."
-            }
+          if (!$.isNumeric(maxp)) {
+            errormsg += "Max price must be a number or empty.\n";
+          }
+          else if (Number(maxp) < 0) {
+            errormsg += "Max price must be greater than or equal to 0.\n";
+          }
+          else if (Math.floor(maxp) !== Number(maxp)) {
+            errormsg += "Max price must be an integer."
+          }
 
-            if (errormsg.length === 0 && minp.length > 0 && Number(maxp) < Number(minp)) {
-              errormsg += "Max price must be greater than or equal to min price."
-            }
+          if (errormsg.length === 0 && minp.length > 0 && Number(maxp) < Number(minp)) {
+            errormsg += "Max price must be greater than or equal to min price."
+          }
         }
 
 
         // if no error with the input
         if (errormsg.length === 0) {
-          return 
+          return
         }
         else {
           // console.log("else")
           $('#error_display').text(errormsg);
           event.preventDefault();
         }
-    });
-	}
+      });
+    }
 
-	$('document').ready(setup);
+    $('document').ready(setup);
   // function populate_results(response)
     // {
     //  $('#resultsArea').html(response)
@@ -195,7 +288,7 @@
     // {
     //  // send get request with 4 inputs to server to populate page
     //  let search_query = $('#search_box').val();
-      
+
    //        search_query = encodeURIComponent(search_query);
 
    //        let url = '/search?' + 'string=' + search_query
