@@ -59,8 +59,7 @@ s1 = requests.Session()
 s2 = requests.Session()
 
 # merriam webster api_key
-# replace before deploying
-key = "************"
+key = "9d189356-f47f-4545-b25c-63ed4d894d25"
 
 
 database = Database()
@@ -687,9 +686,12 @@ def search_helper(query):
             if len(defs) == 0:
                 continue
             elif type(defs[0]) is not dict:
+                # print("w: " + word)
                 query_words.append(defs[0])
+                if len(defs) > 1: 
+                    query_words.append(defs[1])
                 nouns.append(word) ## might not be a noun, but could be a common/colloquial word
-            elif defs[0]['fl'] == 'noun' or 'plural noun':
+            elif defs[0]['fl'] == 'noun' or defs[0]['fl'] == 'plural noun':
                 # nouns.append(defs[0]['meta']['id'])
                 nouns.append(word)
             else:
