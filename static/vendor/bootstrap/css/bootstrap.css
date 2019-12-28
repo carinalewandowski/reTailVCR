@@ -1892,9 +1892,9 @@ pre code {
 .form-control:focus {
   color: #495057;
   background-color: #fff;
-  border-color: #80bdff;
+  border-color: #968aa1;
   outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(220, 235, 242, 0.7);
 }
 
 .form-control::-webkit-input-placeholder {
@@ -4471,7 +4471,7 @@ input[type="button"].btn-block {
 }
 
 .navbar-light .navbar-brand:hover, .navbar-light .navbar-brand:focus {
-  color: #a995bb;
+  color: #968aa1;
 }
 
 .navbar-light .navbar-nav .nav-link {
