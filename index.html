@@ -61,8 +61,8 @@
         </div>
         <div class="col-lg-4" style="padding-top: 1%">
           <div class="row" style="padding-left:10px">
-            <span style="width:calc(100% - 90px);"><input type="text" id='search_box' class="form-control"
-                name='query' value='{{lastSearch}}'></span>
+            <span style="width:calc(100% - 90px);"><input type="text" id='search_box' class="form-control" name='query'
+                value='{{lastSearch}}'></span>
             <span style="float:right"><button type="submit" class="btn btn-primary" style="border: 1px solid rgba(220, 235, 242, 0.7)">Search</button></span>
           </div>
         </div>
@@ -73,12 +73,20 @@
           <h5 style="color: #ff9b5d; padding-right:5px">filter by:</h5>
           <hr>
           <p><strong>price range:</strong></p>
-          <span style="float:left; width:48%"><input type="text" class="form-control" id='minprice' maxlength="10" name="minprice"
-              value='{{minPrice}}' placeholder="min"></span>
-          <span style="float:right; width:48%"><input type="text" class="form-control" id='maxprice' maxlength="10"
+          <span style="float:left; width:60%">
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">$</span>
+              </div>
+              <input type="text" class="form-control" id='minprice' maxlength="10" name="minprice" value='{{minPrice}}'
+                placeholder="min">
+            </div>
+          </span>
+          <span style="float:right; width:37%"><input type="text" class="form-control" id='maxprice' maxlength="10"
               name="maxprice" value='{{maxPrice}}' placeholder="max"></span><br>
           <p id="error_display"></p>
-          <br><hr>
+          <br>
+          <hr>
           <p><strong>category:</strong></p>
           <label class="container" style="padding-left:0px; padding-right:5px">
             <input type="checkbox" name="tag" id="Clothing" value="Clothing"> Clothing
@@ -87,7 +95,8 @@
             <input type="checkbox" name="tag" id="Furniture" value="Furniture"> Furniture
           </label>
           <label class="container" style="padding-left:0px; padding-right:5px">
-            <input type="checkbox" name="tag" id="Technology & Electronics" value="Technology & Electronics"> Technology
+            <input type="checkbox" name="tag" id="Technology & Electronics" value="Technology & Electronics">
+            Technology
           </label>
           <label class="container" style="padding-left:0px; padding-right:5px">
             <input type="checkbox" name="tag" id="Sports Equipment" value="Sports Equipment"> Sports Equipment
