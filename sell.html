@@ -24,7 +24,8 @@
   <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container" style="padding-right:0;padding-left:0">
       <a class="navbar-brand" href="..">reTail</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+        aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
@@ -49,66 +50,91 @@
   </nav>
 
   <!-- Page Content -->
-  <div class="container" style="justify-content: center;padding-left:0;padding-right:0">
+  <div class="container" style="justify-content: center;padding-left:15px;padding-right:15px">
 
     <div class="row">
 
       <div class="col-lg-3"></div>
+    </div>
+
+    <div class="col" style="margin-bottom: 30px;padding-left:0;padding-right:0">
+
+      <h1 class="my-4">Sell an item</h1>
+
+      <body>Please enter a name, description, category, and starting price for your item.</body>
+
+      <div class="card mt-4">
+
+        <form action="sell" id="form" method="post" enctype=multipart/form-data> <div class="input-group">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" id="inputGroupFile01" name="image" value="" aria-describedby="inputGroupFileAddon01">
+            <label class="custom-file-label" id="upload_label" for="inputGroupFile01">Upload image</label>
+          </div>
       </div>
 
-      <div class="col" style="margin-bottom: 30px;padding-left:0;padding-right:0">
+      <br>
 
-        <h1 class="my-4">Sell an item</h1>
-        <body>Please enter a name, description, category, and starting price for your item.</body>
-
-        <div class="card mt-4">
-          
-          <form action="sell" id="form" method="post" enctype=multipart/form-data>
-
-              <div class="input-group">
-                  <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="inputGroupFile01" name="image" value=""
-                      aria-describedby="inputGroupFileAddon01">
-                    <label class="custom-file-label" id="upload_label" for="inputGroupFile01">Upload image</label>
-                  </div>
-                </div>
-                
-                <br>
-
-              <div class="form-group">
-                <strong>Item Name:</strong><br>
-                <input type="text" class="form-control" id="item_name" name="title" aria-describedby="emailHelp"><br>
-                <strong>Item Description:</strong><br>
-                <textarea type="text" class="form-control" id="item_desc" name="description" aria-describedby="emailHelp"></textarea><br>
-                <strong>Category:</strong><br>
-                <!-- NOTE: need to make sure this is not left empty! -->
-                <div>
-                  <input type="radio" name="tag" id = "Clothing" value="Clothing">Clothing
-                  <input type="radio" name="tag" id = "Furniture" value="Furniture">Furniture
-                  <input type="radio" name="tag" id = "Technology & Electronics" value="Technology & Electronics">Technology & Electronics
-                  <input type="radio" name="tag" id = "Sports Equipment" value="Sports Equipment">Sports Equipment
-                  <input type="radio" name="tag" id = "Books" value="Books">Books
-                  <input type="radio" name="tag" id = "Art" value="Art">Art
-                  <input type="radio" name="tag" id = "Food & Drink" value="Food & Drink">Food & Drink
-                  <input type="radio" name="tag" id = "Tickets" value="Tickets">Tickets
-                  <input type="radio" name="tag" id = "Miscellaneous" value="Miscellaneous">Miscellaneous
-                </div><br>
-                <strong>Starting Price:</strong>
-                <div class="input-group">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1">$</span>
-                  </div>
-                  <input type="text" class="form-control" id="start_price" name="price" maxlength="10" aria-describedby="emailHelp"><br>
-                </div>
-              </div>
-              <input type="submit" class="btn btn-primary" id="submit_button" value="Upload Listing">
-              <!--button type="submit" class="btn btn-primary">Upload Listing</button-->
-          </form>
+      <div class="form-group">
+        <strong>Item Name:</strong><br>
+        <input type="text" class="form-control" id="item_name" name="title" aria-describedby="emailHelp"><br>
+        <strong>Item Description:</strong><br>
+        <textarea type="text" class="form-control" id="item_desc" name="description" aria-describedby="emailHelp"></textarea><br>
+        <strong>Category:</strong><br>
+        <!-- NOTE: need to make sure this is not left empty! -->
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="container">
+              <input type="radio" name="tag" id="Clothing" value="Clothing"> Clothing
+            </div>
+            <div class="container">
+              <input type="radio" name="tag" id="Furniture" value="Furniture"> Furniture
+            </div>
+            <div class="container">
+              <input type="radio" name="tag" id="Technology & Electronics" value="Technology & Electronics">
+              Technology
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="container">
+              <input type="radio" name="tag" id="Sports Equipment" value="Sports Equipment"> Sports Equipment
+            </div>
+            <div class="container">
+              <input type="radio" name="tag" id="Books" value="Books"> Books
+            </div>
+            <div class="container">
+              <input type="radio" name="tag" id="Art" value="Art"> Art
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="container">
+              <input type="radio" name="tag" id="Food & Drink" value="Food & Drink"> Food & Drink
+            </div>
+            <div class="container">
+              <input type="radio" name="tag" id="Tickets" value="Tickets"> Tickets
+            </div>
+            <div class="container">
+              <input type="radio" name="tag" id="Miscellaneous" value="Miscellaneous"> Miscellaneous
+            </div>
+          </div>
         </div>
-        <p id="error_display"></p>
-        <!-- /.card -->
+      </div>
+      <strong>Starting Price:</strong>
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="basic-addon1">$</span>
+        </div>
+        <input type="text" class="form-control" id="start_price" name="price" maxlength="10" aria-describedby="emailHelp"><br>
+      </div>
+    </div>
+    <br>
+    <input type="submit" class="btn btn-primary" id="submit_button" value="Upload Listing">
+    <!--button type="submit" class="btn btn-primary">Upload Listing</button-->
+    </form>
+  </div>
+  <p id="error_display"></p>
+  <!-- /.card -->
 
-        <!-- <div class="card card-outline-secondary my-4">
+  <!-- <div class="card card-outline-secondary my-4">
           <div class="card-header">
             Product Reviews
           </div>
@@ -125,12 +151,12 @@
             <a href="#" class="btn btn-success">Leave a Review</a>
           </div>
         </div> -->
-        <!-- /.card -->
+  <!-- /.card -->
 
-      </div>
-      <!-- /.col-lg-9 -->
+  </div>
+  <!-- /.col-lg-9 -->
 
-    </div>
+  </div>
 
   </div>
   <!-- /.container -->
@@ -154,60 +180,60 @@
       // $("#start_price").on('input', price_check)
       //$("#form").submit(form_check;
       //$('#submit_button').on('click', form_check)
-      $("#form").submit(function(event) {
-          console.log('checking input');
-          let errormsg = "";
-          let value = $('#start_price').val();
+      $("#form").submit(function (event) {
+        console.log('checking input');
+        let errormsg = "";
+        let value = $('#start_price').val();
 
-          if ($('#item_name').val() === "") {
-              errormsg += "Item title cannot be empty.\n"
-          }
-          else if ($('#item_name').val().length > 30) {
-              errormsg += "Item title cannot be longer than 30 characters.\n";
-          }
+        if ($('#item_name').val() === "") {
+          errormsg += "Item title cannot be empty.\n"
+        }
+        else if ($('#item_name').val().length > 30) {
+          errormsg += "Item title cannot be longer than 30 characters.\n";
+        }
 
-          if ($('#item_desc').val() === "") {
-            errormsg += "Item description cannot be empty.\n";
-          }
-          else if ($('#item_desc').val().length > 100) {
-            errormsg += "Item description must be shorter than 100 characters.\n";
-          }
+        if ($('#item_desc').val() === "") {
+          errormsg += "Item description cannot be empty.\n";
+        }
+        else if ($('#item_desc').val().length > 100) {
+          errormsg += "Item description must be shorter than 100 characters.\n";
+        }
 
-          if(document.querySelector('input[name="tag"]:checked') == null) {
-            errormsg += "Must select one category.\n";
-          }
+        if (document.querySelector('input[name="tag"]:checked') == null) {
+          errormsg += "Must select one category.\n";
+        }
 
-          if (value === "") {
-              errormsg += "Starting price cannot be empty.\n";
-          }
-          else if (!$.isNumeric(value)) {
-              errormsg += "Starting price must be a number.\n";
-          }
-          else if (Number(value) < 0) {
-              errormsg += "Starting price must be a positive integer.\n";
-          }
-          else if (Math.floor(value) !== Number(value)) {
-              errormsg += "Starting price must be an integer.\n";
-          }
+        if (value === "") {
+          errormsg += "Starting price cannot be empty.\n";
+        }
+        else if (!$.isNumeric(value)) {
+          errormsg += "Starting price must be a number.\n";
+        }
+        else if (Number(value) < 0) {
+          errormsg += "Starting price must be a positive integer.\n";
+        }
+        else if (Math.floor(value) !== Number(value)) {
+          errormsg += "Starting price must be an integer.\n";
+        }
 
-          // if image is not uploaded
-          if (errormsg.length === 0) {
-            // console.log("if")
-            // $('#form').submit();
-            return 
-          }
-          else {
-            // console.log("else")
-            $('#error_display').text(errormsg);
-            event.preventDefault();
-          }
+        // if image is not uploaded
+        if (errormsg.length === 0) {
+          // console.log("if")
+          // $('#form').submit();
+          return
+        }
+        else {
+          // console.log("else")
+          $('#error_display').text(errormsg);
+          event.preventDefault();
+        }
       });
     }
 
     function file_display() {
       let f_name = String($("#inputGroupFile01").val())
       let endings = ['.jpeg', '.jpg', '.png', '.bmp', '.gif', '.tif']
-      if (f_name.length == 0) { $("#upload_label").html(f_name)}
+      if (f_name.length == 0) { $("#upload_label").html(f_name) }
       else {
         for (var i = 0; i < endings.length; i++) {
           if ((f_name.toLowerCase()).endsWith([endings[i]])) {
@@ -219,9 +245,9 @@
         // $("#upload_label").val('')
         document.getElementById("inputGroupFile01").value = "";
 
-        
+
       }
-      
+
     }
     $("document").ready(setup);
   </script>
