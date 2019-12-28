@@ -686,13 +686,12 @@ def search_helper(query):
             if len(defs) == 0:
                 continue
             elif type(defs[0]) is not dict:
+                # print("w: " + word)
                 query_words.append(defs[0])
                 if len(defs) > 1: 
                     query_words.append(defs[1])
-                if len(defs) > 2: 
-                    query_words.append(defs[2])
                 nouns.append(word) ## might not be a noun, but could be a common/colloquial word
-            elif defs[0]['fl'] == 'noun' or 'plural noun':
+            elif defs[0]['fl'] == 'noun' or defs[0]['fl'] == 'plural noun':
                 # nouns.append(defs[0]['meta']['id'])
                 nouns.append(word)
             else:
