@@ -54,6 +54,9 @@ IMAGE_DIR_PURCHASED = 'static/images/purchased'
 # once listing is deleted or sold, the id is removed
 itemid_hashset = []
 
+# merriam webster api key
+key = "************"
+
 # session objects to speed up remote API calls
 s1 = requests.Session()
 s2 = requests.Session()
@@ -651,8 +654,6 @@ def home_control():
 #-----------------------------------------------------------------------
 
 def search_helper(query):
-    # merriam webster api key
-    key = "9d189356-f47f-4545-b25c-63ed4d894d25"
 
     # parse query
     query_words = query.split(" ")
