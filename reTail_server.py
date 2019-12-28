@@ -58,6 +58,11 @@ itemid_hashset = []
 s1 = requests.Session()
 s2 = requests.Session()
 
+# merriam webster api_key
+# replace before deploying
+key = "************"
+
+
 database = Database()
 database.connect()
 
@@ -651,70 +656,72 @@ def home_control():
 #-----------------------------------------------------------------------
 
 def search_helper(query):
-    # merriam webster api key
-    key = "9d189356-f47f-4545-b25c-63ed4d894d25"
+    try:
+        # merriam webster api key
+        # parse query
+        query_words = query.split(" ")
+        for word in query_words:
+            if word == "a":
+                query_words.remove(word)
+            elif word == "the": 
+                query_words.remove(word)
+            elif word == "for": 
+                query_words.remove(word)
+            elif word == "of": 
+                query_words.remove(word)
+            elif word == "an": 
+                query_words.remove(word)
+            elif word == "on": 
+                query_words.remove(word)
+            elif word == "by": 
+                query_words.remove(word)
 
-    # parse query
-    query_words = query.split(" ")
-    for word in query_words:
-        if word == "a":
-            query_words.remove(word)
-        elif word == "the": 
-            query_words.remove(word)
-        elif word == "for": 
-            query_words.remove(word)
-        elif word == "of": 
-            query_words.remove(word)
-        elif word == "an": 
-            query_words.remove(word)
-        elif word == "on": 
-            query_words.remove(word)
-        elif word == "by": 
-            query_words.remove(word)
+        # find nouns in query
+        nouns = []
+        #start = time.time()
+        for word in query_words:
+            req = s1.get("https://dictionaryapi.com/api/v3/references/thesaurus/json/{}?key={}".format(word, key))
+            
+            defs = req.json()
 
-    # find nouns in query
-    nouns = []
-    #start = time.time()
-    for word in query_words:
-        req = s1.get("https://dictionaryapi.com/api/v3/references/thesaurus/json/{}?key={}".format(word, key))
-        
-        defs = req.json()
+            if len(defs) == 0:
+                continue
+            elif type(defs[0]) is not dict:
+                query_words.append(defs[0])
+                nouns.append(word) ## might not be a noun, but could be a common/colloquial word
+            elif defs[0]['fl'] == 'noun' or 'plural noun':
+                # nouns.append(defs[0]['meta']['id'])
+                nouns.append(word)
+            else:
+                print("error")
 
-        if len(defs) == 0:
-            continue
-        elif type(defs[0]) is not dict:
-            query_words.append(defs[0])
-            nouns.append(word) ## might not be a noun, but could be a common/colloquial word
-        elif defs[0]['fl'] == 'noun' or 'plural noun':
-            # nouns.append(defs[0]['meta']['id'])
-            nouns.append(word)
-        else:
-            print("error")
+        #print(time.time() - start)
 
-    #print(time.time() - start)
+        nouns2 = []
+        for n in nouns:
+            nouns2.append(n.split(":")[0])
 
-    nouns2 = []
-    for n in nouns:
-        nouns2.append(n.split(":")[0])
+        # get synonyms
+        print(nouns2)
+        nouns = []
+        for n in nouns2:
+            nouns.append(n)
+            req = s2.get("https://api.datamuse.com/words?ml={}&md=p".format(n))
+            syns = req.json()
 
-    # get synonyms
-    print(nouns2)
-    nouns = []
-    for n in nouns2:
-        nouns.append(n)
-        req = s2.get("https://api.datamuse.com/words?ml={}&md=p".format(n))
-        syns = req.json()
+            if len(syns) < 5: 
+                size = len(syns)
+            else:
+                size = 5
+            for i in range(size):
+                if 'n' in syns[i]['tags']:
+                    nouns.append(syns[i]['word'])
 
-        if len(syns) < 5: 
-            size = len(syns)
-        else:
-            size = 5
-        for i in range(size):
-            if 'n' in syns[i]['tags']:
-                nouns.append(syns[i]['word'])
-
-    print(nouns)
-    return nouns
+        print(nouns)
+        return nouns
+    except Exception as e:
+        print("search_helper exception: " + str(e))
+        return []
 
 @app.route('/search')
 def search():
