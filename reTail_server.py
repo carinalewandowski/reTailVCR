@@ -16,6 +16,7 @@ import io
 import random
 import string
 import datetime
+import requests
 import os
 from json import dumps
 
@@ -52,6 +53,10 @@ IMAGE_DIR_PURCHASED = 'static/images/purchased'
 # are being used by listings in available_items
 # once listing is deleted or sold, the id is removed
 itemid_hashset = []
+
+# session objects to speed up remote API calls
+s1 = requests.Session()
+s2 = requests.Session()
 
 database = Database()
 database.connect()
@@ -645,6 +650,70 @@ def home_control():
 
 #-----------------------------------------------------------------------
 
+def search_helper(query):
+    # merriam webster api key
+    key = "9d189356-f47f-4545-b25c-63ed4d894d25"
+
+    # parse query
+    query_words = query.split(" ")
+    for word in query_words:
+        if word == "a":
+            query_words.remove(word)
+        elif word == "the": 
+            query_words.remove(word)
+        elif word == "for": 
+            query_words.remove(word)
+        elif word == "of": 
+            query_words.remove(word)
+        elif word == "an": 
+            query_words.remove(word)
+        elif word == "on": 
+            query_words.remove(word)
+        elif word == "by": 
+            query_words.remove(word)
+
+    # find nouns in query
+    nouns = []
+    #start = time.time()
+    for word in query_words:
+        req = s1.get("https://dictionaryapi.com/api/v3/references/thesaurus/json/{}?key={}".format(word, key))
+        
+        defs = req.json()
+
+        if len(defs) == 0:
+            continue
+        elif type(defs[0]) is not dict:
+            query_words.append(defs[0])
+        elif defs[0]['fl'] == 'noun' or 'plural noun':
+            nouns.append(defs[0]['meta']['id'])
+        else:
+            print("error")
+
+    #print(time.time() - start)
+
+    nouns2 = []
+    for n in nouns:
+        nouns2.append(n.split(":")[0])
+
+    # get synonyms
+    print(nouns2)
+    nouns = []
+    for n in nouns2:
+        nouns.append(n)
+        req = s2.get("https://api.datamuse.com/words?ml={}&md=p".format(n))
+        syns = req.json()
+
+        if len(syns) < 5: 
+            size = len(syns)
+        else:
+            size = 5
+        for i in range(size):
+            if 'n' in syns[i]['tags']:
+                nouns.append(syns[i]['word'])
+
+    print(nouns)
+    return nouns
+
 @app.route('/search')
 def search():
     if 'username' not in session:
@@ -657,6 +726,8 @@ def search():
 
     try:
         query = request.args.get('query')
+        # print ("query: " + str(query))
+        query = query.strip()
         maxP = request.args.get('maxprice')
         minP = request.args.get('minprice')
         tags = request.args.getlist('tag')
@@ -679,7 +750,12 @@ def search():
         database = Database()
         database.connect()
         print('pre search')
-        results = database.search(query, maxP, minP, tags)
+
+        nlp_nouns = []
+        if query != '':
+            nlp_nouns = search_helper(query)
+
+        results = database.search(query, maxP, minP, tags, nlp_nouns)
         database.disconnect()
         print('post search')
 

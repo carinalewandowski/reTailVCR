@@ -267,13 +267,41 @@ class Database:
     #     results = cursor.fetchall()
     #     return results
 
-    def search(self, query, maxP, minP, tags):
+    # def search(self, query, maxP, minP, tags):
+    #     cursor = self._connection.cursor()
+
+    #     query_string = '%' + query + '%'
+
+    #     print("executing query")
+    #     postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s OR title ILIKE %s) AND (price BETWEEN %s AND %s"""
+    #     if len(tags) > 0:
+    #         postgres_search_string += ") AND ("
+    #         for tag in tags:
+    #             # CAREFUL here with SQL injection
+    #             postgres_search_string += f"""tag = '{tag}' OR """
+    #         postgres_search_string = postgres_search_string[:-4]
+    #     postgres_search_string += ");"
+    #     string_to_search = (query_string, query_string, minP, maxP)
+    #     cursor.execute(postgres_search_string, string_to_search)
+
+    #     results = cursor.fetchall()
+    #     return results
+    def search(self, query, maxP, minP, tags, nouns):
+        # start = time.time()
         cursor = self._connection.cursor()
 
         query_string = '%' + query + '%'
 
+        # add '%' to each noun in nouns
+        nouns2 = []
+        for n in nouns:
+            nouns2.append("%" + n + "%")
+        print(nouns2)
+
+        # search through all titles and descriptions and return anything that has the query_string in title or description
+        # or has any of the nouns in nouns2 in the title or description
         print("executing query")
-        postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s OR title ILIKE %s) AND (price BETWEEN %s AND %s"""
+        postgres_search_string = """SELECT * FROM "available_items" WHERE ((description ILIKE %s OR description ILIKE ANY(%s)) OR (title ILIKE %s or title ILIKE ANY(%s))) AND (price BETWEEN %s AND %s"""
         if len(tags) > 0:
             postgres_search_string += ") AND ("
             for tag in tags:
@@ -281,10 +309,12 @@ class Database:
                 postgres_search_string += f"""tag = '{tag}' OR """
             postgres_search_string = postgres_search_string[:-4]
         postgres_search_string += ");"
-        string_to_search = (query_string, query_string, minP, maxP)
+        print(postgres_search_string)
+        string_to_search = (query_string, nouns2, query_string, nouns2, minP, maxP)
         cursor.execute(postgres_search_string, string_to_search)
 
         results = cursor.fetchall()
+        # print(time.time() - start)
         return results
 
     def add_image(self, itemid, image_data, img_filename):
