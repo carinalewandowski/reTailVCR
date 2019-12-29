@@ -59,7 +59,8 @@ s1 = requests.Session()
 s2 = requests.Session()
 
 # merriam webster api_key
-key = "9d189356-f47f-4545-b25c-63ed4d894d25"
+# change b4 deploying
+key = "***"
 
 
 database = Database()
@@ -708,13 +709,13 @@ def search_helper(query):
         nouns = []
         for n in nouns2:
             nouns.append(n)
-            req = s2.get("https://api.datamuse.com/words?ml={}&md=p".format(n))
+            req = s2.get("https://api.datamuse.com/words?ml={}&topics=item&md=p".format(n))
             syns = req.json()
 
-            if len(syns) < 5: 
+            if len(syns) < 6: 
                 size = len(syns)
             else:
-                size = 5
+                size = 6
             for i in range(size):
                 if 'n' in syns[i]['tags']:
                     nouns.append(syns[i]['word'])
