@@ -614,6 +614,7 @@ def home_control():
         response.set_cookie('lastSearch', '')
         response.set_cookie('maxPrice', '')
         response.set_cookie('minPrice', '')
+        response.set_cookie('ntags', '0')
         return response
 
     except Exception as e:
