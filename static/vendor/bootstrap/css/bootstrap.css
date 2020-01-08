@@ -1803,7 +1803,33 @@ pre code {
   background-color: rgba(255, 255, 255, 0.075);
 }
 
+
+.bg-img-top-left {
+  position:fixed;
+  left:0;
+}
+
+.bg-img-top-right {
+  position:fixed;
+  right:0;
+}
+
+.bg-img-btm-left {
+  position:fixed;
+  left: 0;
+  bottom:1%;
+}
+
+.bg-img-btm-right {
+  position:fixed;
+  right: 0;
+  bottom:1%;
+}
+
 @media (max-width: 575.98px) {
+  .bg-img-top-left, .bg-img-top-right, .bg-img-btm-left, .bg-img-btm-right {
+    opacity: 0.5
+  }
   h4, .h4 {
     padding-top: 30px;
   }
@@ -4574,7 +4600,6 @@ input[type="button"].btn-block {
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: white;
   background-clip: border-box;
   border-radius: 0rem;
 }
@@ -4669,7 +4694,6 @@ input[type="button"].btn-block {
 
 .card-footer {
   padding: 0.75rem 1.25rem;
-  background-color: rgba(220, 235, 242, 0.7);
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
   border-top: 3px solid #ff9b5d;
