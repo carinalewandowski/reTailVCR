@@ -16,9 +16,6 @@
   <!-- Custom styles for this template -->
   <link href="{{ url_for('static', filename='css/retail.css') }}" rel="stylesheet">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon/favicon.png') }}">
-
 </head>
 
 <body>
@@ -26,7 +23,7 @@
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container" style="padding-right:0;padding-left:0">
-      <a class="navbar-brand" href=".."><img src="/static/images/logo.png" height="28" alt="reTail logo"></a>
+      <a class="navbar-brand" href="..">reTail</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -36,7 +33,7 @@
             <a class="nav-link" href="..">buy</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="sell">sell
+            <a class="nav-link" href="">sell
               <span class="sr-only">(current)</span>
             </a>
           </li>
@@ -100,41 +97,16 @@
                 <strong>Item Description:</strong><br>
                 <textarea type="text" class="form-control" id="item_desc" maxlength="100" name="description" aria-describedby="emailHelp">{{entry[5]}}</textarea><br>
                 <strong>Category:</strong><br>
-                <div class="row">
-                  <div class="col-lg-4">
-                    <div class="container">
-                      <input type="radio" name="tag" id="Clothing" value="Clothing"> Clothing
-                    </div>
-                    <div class="container">
-                      <input type="radio" name="tag" id="Furniture" value="Furniture"> Furniture
-                    </div>
-                    <div class="container">
-                      <input type="radio" name="tag" id="Technology" value="Technology">
-                      Technology
-                    </div>
-                  </div>
-                  <div class="col-lg-4">
-                    <div class="container">
-                      <input type="radio" name="tag" id="Sports Equipment" value="Sports Equipment"> Sports Equipment
-                    </div>
-                    <div class="container">
-                      <input type="radio" name="tag" id="Books" value="Books"> Books
-                    </div>
-                    <div class="container">
-                      <input type="radio" name="tag" id="Art" value="Art"> Art
-                    </div>
-                  </div>
-                  <div class="col-lg-4">
-                    <div class="container">
-                      <input type="radio" name="tag" id="Food & Drink" value="Food & Drink"> Food & Drink
-                    </div>
-                    <div class="container">
-                      <input type="radio" name="tag" id="Tickets" value="Tickets"> Tickets
-                    </div>
-                    <div class="container">
-                      <input type="radio" name="tag" id="Miscellaneous" value="Miscellaneous"> Miscellaneous
-                    </div>
-                  </div>
+                <div>
+                  <input type="radio" name="tag" id = "Clothing" value="Clothing">Clothing
+                  <input type="radio" name="tag" id = "Furniture" value="Furniture">Furniture
+                  <input type="radio" name="tag" id = "Technology & Electronics" value="Technology & Electronics">Technology & Electronics
+                  <input type="radio" name="tag" id = "Sports Equipment" value="Sports Equipment">Sports Equipment
+                  <input type="radio" name="tag" id = "Books" value="Books">Books
+                  <input type="radio" name="tag" id = "Art" value="Art">Art
+                  <input type="radio" name="tag" id = "Food & Drink" value="Food & Drink">Food & Drink
+                  <input type="radio" name="tag" id = "Tickets" value="Tickets">Tickets
+                  <input type="radio" name="tag" id = "Miscellaneous" value="Miscellaneous">Miscellaneous
                 </div><br>
                 <script>
                   document.getElementById("{{entry[9]}}").checked = true;
@@ -200,6 +172,11 @@
           else if ($('#item_desc').val().length > 100) {
             errormsg += "Item description must be shorter than 100 characters.\n";
           }
+
+          if (document.querySelector('input[name="tag"]:checked') == null) {
+          errormsg += "Must select one category.\n";
+          }
+
           if (value === "") {
               errormsg += "Starting price cannot be empty.\n";
           }
@@ -227,7 +204,7 @@
     }
 
     function file_display() {
-      let f_name = String($("#inputGroupFile01").val())
+      let f_name = String($("#inputGroupFile01").val().split('\\').pop())
       let endings = ['.jpeg', '.jpg', '.png', '.bmp', '.gif', '.tif']
       if (f_name.length == 0) { $("#upload_label").html(f_name)}
       else {
@@ -237,7 +214,7 @@
             return
           }
         }
-        $("#upload_label").html("image file must be a .jpeg, .jpg, .bmp, .gif, or .tif")
+        $("#upload_label").html("image file must be a .jpeg, .jpg, .png, .bmp, .gif, or .tif")
         // $("#upload_label").val('')
         document.getElementById("inputGroupFile01").value = "";
 

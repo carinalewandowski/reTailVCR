@@ -16,19 +16,14 @@
   <!-- Custom styles for this template -->
   <link href="{{ url_for('static', filename='css/retail.css') }}" rel="stylesheet">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon/favicon.png') }}">
-
 </head>
 
 <body>
-  <!-- Background images -->
-  <img class="bg-img-top-right" height="325" src="/static/images/pricetag.png" alt="pricetag cartoon">
 
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container" style="padding-right:0;padding-left:0">
-      <a class="navbar-brand" href=".."><img src="/static/images/logo.png" height="28" alt="reTail logo"></a>
+      <a class="navbar-brand" href="..">reTail</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
         aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -230,7 +225,7 @@
     }
 
     function file_display() {
-      let f_name = String($("#inputGroupFile01").val())
+      let f_name = String($("#inputGroupFile01").val().split('\\').pop())
       let endings = ['.jpeg', '.jpg', '.png', '.bmp', '.gif', '.tif']
       if (f_name.length == 0) { $("#upload_label").html(f_name) }
       else {
@@ -240,7 +235,7 @@
             return
           }
         }
-        $("#upload_label").html("image file must be a .jpeg, .jpg, .bmp, .gif, or .tif")
+        $("#upload_label").html("image file must be a .jpeg, .jpg, .png, .bmp, .gif, or .tif")
         // $("#upload_label").val('')
         document.getElementById("inputGroupFile01").value = "";
 
