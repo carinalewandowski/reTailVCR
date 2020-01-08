@@ -1804,6 +1804,9 @@ pre code {
 }
 
 @media (max-width: 575.98px) {
+  h4, .h4 {
+    padding-top: 30px;
+  }
   .table-responsive-sm {
     display: block;
     width: 100%;
