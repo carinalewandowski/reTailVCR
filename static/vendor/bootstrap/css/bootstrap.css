@@ -54,11 +54,11 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: Avenir, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #484560;
+  color: #5b618a;
   text-align: left;
   background-color: #fff;
 }
@@ -431,7 +431,7 @@ hr {
   margin-top: 1rem;
   margin-bottom: 1rem;
   border: 0;
-  border-top: 1px solid #ff9b5d;
+  border-top:3px solid rgba(220, 235, 242, 0.7);
 }
 
 small,
@@ -1870,7 +1870,7 @@ pre code {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #484560;
+  color: #5b618a;
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid rgba(220, 235, 242, 0.7);
@@ -2428,7 +2428,7 @@ fieldset:disabled a.btn {
 }
 
 .btn-primary {
-  color: #484560;
+  color: #5b618a;
   background-color: rgba(220, 235, 242, 0.7);
   border-color: white;
 }
@@ -4468,7 +4468,7 @@ input[type="button"].btn-block {
 }
 
 .navbar-light .navbar-brand {
-  color: #484560;
+  color: #5b618a;
 }
 
 .navbar-light .navbar-brand:hover, .navbar-light .navbar-brand:focus {
@@ -4484,18 +4484,18 @@ input[type="button"].btn-block {
 }
 
 .navbar-light .navbar-nav .nav-link.disabled {
-  color: #484560;
+  color: #5b618a;
 }
 
 .navbar-light .navbar-nav .show > .nav-link,
 .navbar-light .navbar-nav .active > .nav-link,
 .navbar-light .navbar-nav .nav-link.show,
 .navbar-light .navbar-nav .nav-link.active {
-  color: #484560;
+  color: #5b618a;
 }
 
 .navbar-light .navbar-toggler {
-  color: #484560;
+  color: #5b618a;
   border-color: rgba(220, 235, 242, 0.7);
 }
 
@@ -4504,15 +4504,15 @@ input[type="button"].btn-block {
 }
 
 .navbar-light .navbar-text {
-  color:#484560;
+  color:#5b618a;
 }
 
 .navbar-light .navbar-text a {
-  color: #484560;
+  color: #5b618a;
 }
 
 .navbar-light .navbar-text a:hover, .navbar-light .navbar-text a:focus {
-  color: #484560;
+  color: #5b618a;
 }
 
 .navbar-dark .navbar-brand {
@@ -4666,10 +4666,10 @@ input[type="button"].btn-block {
 
 .card-footer {
   padding: 0.75rem 1.25rem;
-  background-color: rgba(220, 235, 242, 0);
+  background-color: rgba(220, 235, 242, 0.7);
   -webkit-background-clip: padding-box;
   background-clip: padding-box;
-  border-top: 2px solid #ff9b5d;
+  border-top: 3px solid #ff9b5d;
 }
 
 .card-footer:last-child {
@@ -9952,7 +9952,7 @@ a.text-light:hover, a.text-light:focus {
 
 .text-dark {
   font-family: 'Courier New', Courier, monospace;
-  color: #484560 !important;
+  color: #5b618a !important;
 }
 
 a.text-dark:hover, a.text-dark:focus {
