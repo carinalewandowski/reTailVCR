@@ -22,4 +22,5 @@ stn==1.0.1
 Werkzeug==0.16.0
 gunicorn==19.9.0
 Flask-Mail==0.9.1
+requests==2.22.0
 

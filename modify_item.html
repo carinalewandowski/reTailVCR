@@ -62,13 +62,13 @@
       <div class="col-sm-4" style="margin-bottom: 30px;padding-left:0;padding-right:10">
         
 
-        <div class="card mt-4" style="border:solid">
+        <div class="card mt-4">
             <!-- <strong>Previous Image:</strong> -->
             <!-- <img class="card-img-top" src="https://homepages.cae.wisc.edu/~ece533/images/airplane.png" alt="">  -->
             {% if entry[4] != '' %}
               <img class="card-img-top" src="/static/images/available/{{entry[4]}}" alt="">
             {% else %}
-              <img class="card-img-top" src="/static/images/default.png" alt="">
+              <img class="card-img-top" src="/static/images/reTail_sell_default.png" alt="">
             {% endif %}
         </div>
       </div>
@@ -96,6 +96,21 @@
                 <input type="text" class="form-control" id="item_name" maxlength="25" name="title" aria-describedby="emailHelp" value="{{entry[6]}}"><br>
                 <strong>Item Description:</strong><br>
                 <textarea type="text" class="form-control" id="item_desc" maxlength="100" name="description" aria-describedby="emailHelp">{{entry[5]}}</textarea><br>
+                <strong>Category:</strong><br>
+                <div>
+                  <input type="radio" name="tag" id = "Clothing" value="Clothing">Clothing
+                  <input type="radio" name="tag" id = "Furniture" value="Furniture">Furniture
+                  <input type="radio" name="tag" id = "Technology & Electronics" value="Technology & Electronics">Technology & Electronics
+                  <input type="radio" name="tag" id = "Sports Equipment" value="Sports Equipment">Sports Equipment
+                  <input type="radio" name="tag" id = "Books" value="Books">Books
+                  <input type="radio" name="tag" id = "Art" value="Art">Art
+                  <input type="radio" name="tag" id = "Food & Drink" value="Food & Drink">Food & Drink
+                  <input type="radio" name="tag" id = "Tickets" value="Tickets">Tickets
+                  <input type="radio" name="tag" id = "Miscellaneous" value="Miscellaneous">Miscellaneous
+                </div><br>
+                <script>
+                  document.getElementById("{{entry[9]}}").checked = true;
+                </script>
                 <strong>Starting Price:</strong>
                 <div class="input-group">
                   <div class="input-group-prepend">
@@ -104,12 +119,12 @@
                   <input type="text" class="form-control" id="start_price" name="price" maxlength="10" aria-describedby="emailHelp" value="{{entry[3]}}"><br>
                 </div>
               </div>
+              <p id="error_display" style="color:#ff9b5d"></p>
               <input type='hidden' name='item_id' value="{{entry[0]}}">
               <input type="submit" class="btn btn-primary" id="submit_button" value="Confirm Changes">
               <a href="../track" id='cancel_modify' class='btn btn-primary' role='button'>Cancel Changes</a>
           </form>
         </div>
-        <p id="error_display"></p>
         <!-- /.card -->
 
         

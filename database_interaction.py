@@ -188,13 +188,13 @@ class Database:
         
         return results
 
-    def add_to_purchased(self, itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description):
+    def add_to_purchased(self, itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description, tag):
         cursor = self._connection.cursor()
         #image = psycopg2.Binary(image)
-        entry = [itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description]
+        entry = [itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description, tag]
         postgres_insert_query = """ INSERT INTO "purchased_items" 
-        (ITEM_ID, SELL_DATE, PRICE, IMG_FILENAME, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
-        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7])
+        (ITEM_ID, SELL_DATE, PRICE, IMG_FILENAME, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION, TAG) VALUES (%s,%s,%s,%s,%s,%s,%s,%s, %s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7], entry[8])
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
@@ -208,11 +208,12 @@ class Database:
         img_filename = entry_available[4]
         description = entry_available[5]
         title = entry_available[6]
+        tag = entry_available[9]
         
-        entry = [itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description]
+        entry = [itemid, selldate, price, img_filename, seller_netid, buyer_netid, title, description, tag]
         postgres_insert_query = """ INSERT INTO "purchased_items" 
-        (ITEM_ID, SELL_DATE, PRICE, IMG_FILENAME, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
-        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7])
+        (ITEM_ID, SELL_DATE, PRICE, IMG_FILENAME, SELLER_NETID, BUYER_NETID, TITLE, DESCRIPTION, TAG) VALUES (%s,%s,%s,%s,%s,%s,%s,%s, %s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[7], entry[8])
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
@@ -235,13 +236,13 @@ class Database:
     #---------------------------------------------------------------------
     # major db functions
 
-    def add_to_db(self, itemid, postdate, netid, price, img_filename, description, title):
+    def add_to_db(self, itemid, postdate, netid, price, img_filename, description, title, tag):
         cursor = self._connection.cursor()
         #image = psycopg2.Binary(image)
-        entry = [itemid, postdate, netid, price, img_filename, description, title]
+        entry = [itemid, postdate, netid, price, img_filename, description, title, tag]
         postgres_insert_query = """ INSERT INTO "available_items" 
-        (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMG_FILENAME, DESCRIPTION, TITLE, INITIAL_PRICE) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
-        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[3])
+        (ITEM_ID, POST_DATE, SELLER_NETID, PRICE, IMG_FILENAME, DESCRIPTION, TITLE, INITIAL_PRICE, TAG) VALUES (%s,%s,%s,%s,%s,%s,%s,%s, %s)"""
+        record_to_insert = (entry[0], entry[1], entry[2], entry[3], entry[4], entry[5], entry[6], entry[3], entry[7])
         cursor.execute(postgres_insert_query, record_to_insert)
         self._connection.commit()
 
@@ -254,16 +255,66 @@ class Database:
 
         self._connection.commit()
 
-    def search(self, string):
+    # def search(self, string):
+    #     cursor = self._connection.cursor()
+
+    #     query_string = '%' + string + '%'
+
+    #     postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s) OR (title ILIKE %s);"""
+    #     string_to_search = (query_string, query_string)
+    #     cursor.execute(postgres_search_string, string_to_search)
+
+    #     results = cursor.fetchall()
+    #     return results
+
+    # def search(self, query, maxP, minP, tags):
+    #     cursor = self._connection.cursor()
+
+    #     query_string = '%' + query + '%'
+
+    #     print("executing query")
+    #     postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s OR title ILIKE %s) AND (price BETWEEN %s AND %s"""
+    #     if len(tags) > 0:
+    #         postgres_search_string += ") AND ("
+    #         for tag in tags:
+    #             # CAREFUL here with SQL injection
+    #             postgres_search_string += f"""tag = '{tag}' OR """
+    #         postgres_search_string = postgres_search_string[:-4]
+    #     postgres_search_string += ");"
+    #     string_to_search = (query_string, query_string, minP, maxP)
+    #     cursor.execute(postgres_search_string, string_to_search)
+
+    #     results = cursor.fetchall()
+    #     return results
+    def search(self, query, maxP, minP, tags, nouns):
+        # start = time.time()
         cursor = self._connection.cursor()
 
-        query_string = '%' + string + '%'
+        query_string = '%' + query + '%'
 
-        postgres_search_string = """SELECT * FROM "available_items" WHERE (description ILIKE %s) OR (title ILIKE %s);"""
-        string_to_search = (query_string, query_string)
+        # add '%' to each noun in nouns
+        nouns2 = []
+        for n in nouns:
+            nouns2.append("%" + n + "%")
+        print(nouns2)
+
+        # search through all titles and descriptions and return anything that has the query_string in title or description
+        # or has any of the nouns in nouns2 in the title or description
+        print("executing query")
+        postgres_search_string = """SELECT * FROM "available_items" WHERE ((description ILIKE %s OR description ILIKE ANY(%s)) OR (title ILIKE %s or title ILIKE ANY(%s))) AND (price BETWEEN %s AND %s"""
+        if len(tags) > 0:
+            postgres_search_string += ") AND ("
+            for tag in tags:
+                # CAREFUL here with SQL injection
+                postgres_search_string += f"""tag = '{tag}' OR """
+            postgres_search_string = postgres_search_string[:-4]
+        postgres_search_string += ");"
+        print(postgres_search_string)
+        string_to_search = (query_string, nouns2, query_string, nouns2, minP, maxP)
         cursor.execute(postgres_search_string, string_to_search)
 
         results = cursor.fetchall()
+        # print(time.time() - start)
         return results
 
     def add_image(self, itemid, image_data, img_filename):

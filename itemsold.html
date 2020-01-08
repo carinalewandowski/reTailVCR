@@ -61,21 +61,14 @@
       </div> -->
       <!-- /.col-lg-3 -->
 
-      <div class="col-lg-9" style="margin-bottom: 30px">
+      <div class="col-lg-6">
 
         <div class="card mt-4">
           {% if entry[3] != '' %}
             <img class="card-img-top" src="/static/images/purchased/{{entry[3]}}" alt="">
           {% else %}
-            <img class="card-img-top" src="/static/images/default.png" alt="">
+            <img class="card-img-top" src="/static/images/reTail_sell_default.png" alt="">
           {% endif %}
-          <div class="card-body">
-            <h3 class="card-title">{{entry[6]}}</h3>
-            <h5>Sold on: {{entry[1]}}</h5>
-            <p class="card-text">Description: {{entry[7]}}</p>
-            <p class="card-text"><i>Sold by: {{entry[4]}}</i></p>
-            <p class="card-text"><i>Sold to: {{entry[5]}}</i></p>
-          </div>
         </div>
         <!-- /.card -->
 
@@ -99,15 +92,28 @@
         <!-- /.card -->
 
       </div>
-      <div class="col-sm" style="margin-bottom: 50px">
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="card-body">
+            <h3 class="card-title">{{entry[6]}}</h3><br>
+            <h5 style="color: #ff9b5d">sold on: {{entry[1]}}</h5><br>
+            <p class="card-text"><strong>description:</strong> {{entry[7]}}</p><br>
+            <p class="card-text"><strong>sold by: </strong><i>{{entry[4]}}</i></p>
+            <p class="card-text"><strong>sold to: </strong><i>{{entry[5]}}</i></p>
+          </div>
+        </div>
+        <br>
+        <hr>
+        <div class="row">
           <div class="card mt-4">
             <div class="card-body">
-            <p>Sold for:</p><h3>${{entry[2]}}</h3>
+            <p><strong>sold for:</strong></p><h3>${{entry[2]}}</h3>
             <p>
               <strong>{{errormsg}}</strong>
             </p>
             </div>
           </div>
+        </div>
       </div>
       <!-- /.col-lg-9 -->
 

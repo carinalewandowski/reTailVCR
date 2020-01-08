@@ -16,6 +16,7 @@ import io
 import random
 import string
 import datetime
+import requests
 import os
 from json import dumps
 
@@ -47,6 +48,20 @@ mail = Mail(app)
 app.secret_key = b'\rb\x98G`\xaa\xb5\xa6i$\xe0TWk\x0b\x1e'
 IMAGE_DIR_AVAILABLE = 'static/images/available'
 IMAGE_DIR_PURCHASED = 'static/images/purchased'
+
+# a list used to store randomly generated itemids while they
+# are being used by listings in available_items
+# once listing is deleted or sold, the id is removed
+itemid_hashset = []
+
+# session objects to speed up remote API calls
+s1 = requests.Session()
+s2 = requests.Session()
+
+# merriam webster api_key
+# change b4 deploying
+key = "***"
+
 
 database = Database()
 database.connect()
@@ -170,6 +185,8 @@ def modify_item():
         print("desc")
         price = request.form['price']
         print("pr")
+        tag = request.form['tag']
+        print("tag")
         postdate = datetime.date.today()
         netid = username
         old_item_id = request.form['item_id']
@@ -190,36 +207,36 @@ def modify_item():
         database.delete_from_db(old_item_id)
 
         new_img_bool = True
+        
         # if new image is null and previous image is not null
         if image.filename == '' and prev_info[4] != '': 
-        	safefilename = prev_info[4]
-        	new_img_bool = False
-        	# retain old image
+            safefilename = prev_info[4]
+            new_img_bool = False
 
         print("db stuff")
         # insert the new image into the db
         if new_img_bool == True:
-        	# delete the old image
-        	os.remove(os.path.join(IMAGE_DIR_AVAILABLE, prev_info[4]))
-        	database.delete_image(old_item_id)
+            # delete the old image if there was one
+            if (prev_info[4] != ''):
+                os.remove(os.path.join(IMAGE_DIR_AVAILABLE, prev_info[4]))
+                database.delete_image(old_item_id)
 
-	        if (image.filename == ''):
-	            # print("none")
-	            image = ''
-	            image_read = None
-	            safefilename = ''
-	        else:
-	            # print(image)
-	            safefilename = secure_filename(randstr() + '-' + image.filename)
-	            imgpath = '{}/{}'.format(IMAGE_DIR_AVAILABLE, safefilename)
-	            image.save(imgpath)
-	            image.seek(0)
-	            image_read = image.read()
-	            database.add_image(old_item_id, image_read, safefilename)
+            if (image.filename == ''):
+                image = ''
+                image_read = None
+                safefilename = ''
+            else:
+                # print(image)
+                safefilename = secure_filename(randstr() + '-' + image.filename)
+                imgpath = '{}/{}'.format(IMAGE_DIR_AVAILABLE, safefilename)
+                image.save(imgpath)
+                image.seek(0)
+                image_read = image.read()
+                database.add_image(old_item_id, image_read, safefilename)
             # print(database.image_table_size())
 
         # add new db info for the item
-        database.add_to_db(old_item_id, postdate, netid, price, safefilename, description, title)
+        database.add_to_db(old_item_id, postdate, netid, price, safefilename, description, title, tag)
 
         # add to bid database with null bidder netid
         database.bid(old_item_id, price, None)
@@ -243,6 +260,17 @@ def item():
     string = request.cookies.get('lastSearch')
     if string is None:
         string = ''
+    maxP = request.cookies.get('maxPrice')
+    if maxP is None:
+        maxP = ''
+    minP = request.cookies.get('minPrice')
+    if minP is None:
+        minP = ''
+    ntags = request.cookies.get('ntags')
+
+    tags = []
+    for i in range(int(ntags)):
+        tags.append(request.cookies.get(f'tag{i + 1}'))
     
     database = Database()
     database.connect()
@@ -275,7 +303,7 @@ def item():
             entry = database.get_item(itemid)
             database.disconnect()
             msg = 'Please enter a valid bid.'
-            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP, tags=tags)
             response = make_response(html)
             return response
 
@@ -295,7 +323,7 @@ def item():
         if (seller_id == netid):
             database.disconnect()
             msg = 'Sorry, you may not bid on an item you are selling.'
-            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP, tags=tags)
             response = make_response(html)
             return response
 
@@ -304,7 +332,7 @@ def item():
         if (float(bid) <= current_price):
             database.disconnect()
             msg = 'Please enter a bid higher than the current price.'
-            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
+            html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP, tags=tags)
             response = make_response(html)
             return response
     
@@ -312,7 +340,7 @@ def item():
         entry = database.get_item(itemid)
         database.disconnect()
         msg = 'Your bid has been processed. Thank you!'
-        html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string)
+        html = render_template('item.html', entry=entry[0], msg=msg, lastSearch=string, maxPrice=maxP, minPrice=minP, tags=tags)
         response = make_response(html)
         return response
     else:
@@ -321,7 +349,7 @@ def item():
             database.connect()
             entry = database.get_item(itemid)
             database.disconnect()
-            html = render_template('item.html', entry=entry[0], lastSearch=string)
+            html = render_template('item.html', entry=entry[0], lastSearch=string, maxPrice=maxP, minPrice=minP, tags=tags)
             response = make_response(html)
             return response
         except Exception as e:
@@ -371,6 +399,7 @@ def sell():
         title = request.form['title']
         description = request.form['description']
         price = request.form['price']
+        tag = request.form['tag']
 
         if title is None:
             title = ''
@@ -378,8 +407,15 @@ def sell():
             description = ''
         if price is None:
             price = ''
-        #if itemid is None:
+
+        # generate a random itemid until you get one that isn't
+        # in the itemdid_hashet, meaning that it isn't already being
+        # used by an item in available_items 
         itemid = int(random.uniform(100, 1000000))
+        while str(itemid) in itemid_hashset:
+            itemid = int(random.uniform(100, 1000000))
+        itemid_hashset.append(str(itemid))
+
         #if postdate is None:
         postdate = datetime.date.today()
         #if netid is None:
@@ -404,7 +440,7 @@ def sell():
             database.add_image(itemid, image_read, safefilename)
             print(database.image_table_size())
 
-        database.add_to_db(itemid, postdate, netid, price, safefilename, description, title)
+        database.add_to_db(itemid, postdate, netid, price, safefilename, description, title, tag)
 
 
         # add to bid database with null bidder netid
@@ -459,6 +495,8 @@ def track():
 
             database.delete_from_db(delete_item_itemid)
             database.delete_from_bids(delete_item_itemid)
+            if str(delete_item_itemid) in itemid_hashset:
+                itemid_hashset.remove(str(delete_item_itemid))
 
         else:
             # print("accepted bid!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
@@ -487,6 +525,9 @@ def track():
                     os.rename(os.path.join(IMAGE_DIR_AVAILABLE, delete_item_filename), os.path.join(IMAGE_DIR_PURCHASED, delete_item_filename))
                     database.copy_image_to_purchased_images(itemid)
                     database.delete_image(itemid)
+
+                if str(itemid) in itemid_hashset:
+                    itemid_hashset.remove(str(itemid))
 
     if request.args.get('action') == None:
         print("first arrivalllllllllll")
@@ -565,12 +606,15 @@ def home_control():
         results = database.get_available_db()
         database.disconnect()
 
-        html = render_template('index.html', results=results, lastSearch='')
+        html = render_template('index.html', results=results, lastSearch='', maxPrice='', minPrice='', tags=[])
         # html = render_template('index.html')
         response = make_response(html)
 
         # NOTE: deal with cookies
         response.set_cookie('lastSearch', '')
+        response.set_cookie('maxPrice', '')
+        response.set_cookie('minPrice', '')
+        response.set_cookie('ntags', '0')
         return response
 
     except Exception as e:
@@ -612,6 +656,148 @@ def home_control():
 
 #-----------------------------------------------------------------------
 
+def search_helper(query):
+    try:
+        # merriam webster api key
+        # parse query
+        query_words = query.split(" ")
+        for word in query_words:
+            if word == "a":
+                query_words.remove(word)
+            elif word == "the": 
+                query_words.remove(word)
+            elif word == "for": 
+                query_words.remove(word)
+            elif word == "of": 
+                query_words.remove(word)
+            elif word == "an": 
+                query_words.remove(word)
+            elif word == "on": 
+                query_words.remove(word)
+            elif word == "by": 
+                query_words.remove(word)
+
+        # find nouns in query
+        nouns = []
+        #start = time.time()
+        for word in query_words:
+            req = s1.get("https://dictionaryapi.com/api/v3/references/thesaurus/json/{}?key={}".format(word, key))
+            
+            defs = req.json()
+
+            if len(defs) == 0:
+                continue
+            elif type(defs[0]) is not dict:
+                # print("w: " + word)
+                query_words.append(defs[0])
+                if len(defs) > 1: 
+                    query_words.append(defs[1])
+                nouns.append(word) ## might not be a noun, but could be a common/colloquial word
+            elif defs[0]['fl'] == 'noun' or defs[0]['fl'] == 'plural noun':
+                # nouns.append(defs[0]['meta']['id'])
+                nouns.append(word)
+            else:
+                print("error")
+
+        #print(time.time() - start)
+
+        nouns2 = []
+        for n in nouns:
+            nouns2.append(n.split(":")[0])
+
+        # get synonyms
+        print(nouns2)
+        nouns = []
+        for n in nouns2:
+            nouns.append(n)
+            req = s2.get("https://api.datamuse.com/words?ml={}&topics=item&md=p".format(n))
+            syns = req.json()
+
+            if len(syns) < 6: 
+                size = len(syns)
+            else:
+                size = 6
+            for i in range(size):
+                if 'n' in syns[i]['tags']:
+                    nouns.append(syns[i]['word'])
+
+        print(nouns)
+        return nouns
+    except Exception as e:
+        print("search_helper exception: " + str(e))
+        return []
+
+@app.route('/search')
+def search():
+    if 'username' not in session:
+        username = CASClient().authenticate().strip()
+        check_user(username)
+    else:
+        username = session.get('username').strip()
+
+    #username = 'jjsalama'
+
+    try:
+        query = request.args.get('query')
+        # print ("query: " + str(query))
+        query = query.strip()
+        maxP = request.args.get('maxprice')
+        minP = request.args.get('minprice')
+        tags = request.args.getlist('tag')
+
+        set_max_cookie = True
+        set_min_cookie = True
+
+        if (query is None) or (query.strip() == ''):
+            query = ''
+
+        # setting it to a number larger than all possible entries on the site
+        if (maxP is None) or (maxP.strip() == ''):
+            maxP = '99999999999'
+            set_max_cookie = False
+        # setting it to lowest possible entry
+        if (minP is None) or (minP.strip() == ''):
+            minP = '0'
+            set_min_cookie = False
+
+        database = Database()
+        database.connect()
+        print('pre search')
+
+        nlp_nouns = []
+        if query != '':
+            nlp_nouns = search_helper(query)
+
+        results = database.search(query, maxP, minP, tags, nlp_nouns)
+        database.disconnect()
+        print('post search')
+
+        if not set_max_cookie:
+            maxP = ''
+        
+        if not set_min_cookie:
+            minP = ''
+
+        html = render_template('index.html', results=results, lastSearch=query, maxPrice=maxP, minPrice=minP, tags=tags)
+        # html = prep_results(results)
+        response = make_response(html)
+        print('post response')
+
+
+        # NOTE: deal with cookies
+        response.set_cookie('lastSearch', query)
+        response.set_cookie('maxPrice', maxP)
+        response.set_cookie('minPrice', minP)
+        response.set_cookie('ntags', str(len(tags)))
+        for i in range(len(tags)):
+            response.set_cookie(f'tag{i + 1}', tags[i])
+        return response
+        
+    except Exception as e:
+        print('error-search(): ' + str(e), file=stderr)
+        exit(1)
+
+#-----------------------------------------------------------------------
 
 def prep_results(results):
 
@@ -657,44 +843,6 @@ def prep_results(results):
     #       </div>
     #     </div>
     # {% endfor %} 
-
-
-
-
-@app.route('/search')
-def search():
-    if 'username' not in session:
-        username = CASClient().authenticate().strip()
-        check_user(username)
-    else:
-        username = session.get('username').strip()
-
-    #username = 'jjsalama'
-
-    try:
-        string = request.args.get('string')
-        if (string is None) or (string.strip() == ''):
-            string = ''
-        
-        database = Database()
-        database.connect()
-        results = database.search(string)
-        database.disconnect()
-
-        html = render_template('index.html', results=results, lastSearch=string)
-        # html = prep_results(results)
-        response = make_response(html)
-
-        # NOTE: deal with cookies
-        response.set_cookie('lastSearch', string)
-        return response
-        
-    except Exception as e:
-        print('error-search(): ' + str(e), file=stderr)
-        exit(1)
-
-#-----------------------------------------------------------------------
-
 
 if __name__ == '__main__':
     # if len(argv) != 2:

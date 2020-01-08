@@ -3,18 +3,18 @@
 
 <head>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  <title>reTail // track</title>
+    <title>reTail // track</title>
 
-  <!-- Bootstrap core CSS -->
-  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.css') }}" rel="stylesheet">
 
-  <!-- Custom styles for this template -->
-  <link href="{{ url_for('static', filename='css/retail.css') }}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='css/retail.css') }}" rel="stylesheet">
 
 </head>
 
@@ -34,119 +34,135 @@
 
 <body>
 
-  <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
-    <div class="container" style="padding-right:0;padding-left:0">
-      <a class="navbar-brand" href="..">reTail</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="..">buy</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="sell">sell</a>
-          </li>
-          <li class="nav-item active">
-            <a class="nav-link" href="track">track
-                <span class="sr-only">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="history" style="padding-right:0">history</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+        <div class="container" style="padding-right:0;padding-left:0">
+            <a class="navbar-brand" href="..">reTail</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="..">buy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sell">sell</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="track">track
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="history" style="padding-right:0">history</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-  <!-- Page Content -->
-  <div class="container">
-      <div class="row" style="padding-top: 5%">
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row">
             <div class="col-sm-6">
-            <!-- Entry Start -->
-                <p id="sell_results"></p>   
+                <!-- Entry Start -->
+                <p id="sell_results"></p>
             </div>
             <!-- Entry End -->
             <div class="col-sm-6">
-                <p id="bid_results"></p> 
+                <p id="bid_results"></p>
             </div>
         </div>
-  </div>
-  <br>
-  <br>
-  
-  <!-- /.container -->
-
-  <!-- Footer -->
-  <footer class="py-0 bg-white fixed-bottom">
-    <div class="container">
-      <p class="m-0 text-center text-dark"><small>copyright &copy; reTail 2019</small></p>
     </div>
+    <br>
+    <br>
+
     <!-- /.container -->
-  </footer>
 
-  <!-- Bootstrap core JavaScript -->
-  <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-  <script>
+    <!-- Footer -->
+    <footer class="py-0 bg-white fixed-bottom">
+        <div class="container">
+            <p class="m-0 text-center text-dark"><small>copyright &copy; reTail 2019</small></p>
+        </div>
+        <!-- /.container -->
+    </footer>
 
-      function setup()
-         {
+    <!-- Bootstrap core JavaScript -->
+    <script src="{{ url_for('static', filename='vendor/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script>
+
+        function deleteMsg(form) {
+            if (confirm("Are you sure you want to delete this item?")) {
+                form.submit();
+            }
+            else {
+                event.preventDefault();
+            }
+        }
+
+        function acceptMsg(form) {
+            if (confirm("Are you sure you want to accept this bid? Doing so will send a confirmation email to you and the buyer with one another's netids for contact purposes.")) {
+                form.submit();
+            }
+            else {
+                event.preventDefault();
+            }
+        }
+
+        function setup() {
             refresh_page()
-         }
+        }
 
-     let request = null;
-     function make_request() {
+        let request = null;
+        function make_request() {
             let url = '/track?action=refresh'
             // ?action=' + action + "&item_id="
-            
+
             if (request != null)
-               request.abort();
+                request.abort();
             request = $.ajax(
-               {
-                  type: "GET",
-                  url: url,
-                  dataType: "json",
-                  success: action_handler
-               }
+                {
+                    type: "GET",
+                    url: url,
+                    dataType: "json",
+                    success: action_handler
+                }
             );
 
-     }
-     function refresh_page()
-         { 
+        }
+        function refresh_page() {
             // let a = 'refresh'
             make_request()
-            setTimeout(refresh_page, 5000);      
-         }
-         
-     function action_handler(response)
-         { 
+            setTimeout(refresh_page, 5000);
+        }
+
+        function action_handler(response) {
             // return structure [[{entry1}, {entryN}], [{e1}, {eN}]]
             let res = response
             // console.log(res)
             sell_data = res[0]
             // console.log(sell_data)
             bid_data = res[1]
-            
+
             results_html = ''
-            results_html += "<table><tr><th colspan='2'>I'm Selling:</th></tr><th style='width:60%'></th><th style='width:40%'></th>"
+            results_html += "<table><tr><th colspan='2'><h1 class='my-4'>I'm Selling:</h1></th></tr><th style='width:60%'></th><th style='width:40%'></th>"
             for (e in sell_data) {
                 let entry = sell_data[e]
                 results_html += "<tr>\
-                <td> <a href=../item?itemid=@@z1@@>@@z2@@</a> <br> @@z3@@</td> \
+                <td style='vertical-align:top'> <a href=../item?itemid=@@z1@@>@@z2@@</a> <br> @@z3@@</td> \
                 <td align='left'> \
                     @@z4@@ \
                     <form action='track' method='post'>\
                       <input type='hidden' name='deleteitem'\ value=@@z5@@>\
-                      <button type='submit' class='btn btn-\primary' style='width:100%'>Delete Item</button>\
+                      <button type='submit' onclick='deleteMsg(this.form)' class='btn btn-\primary' style='width:100%'>Delete Item</button>\
                     </form>\
                     <form action='modify_item' method='get'>\
                       <input type='hidden' name='modify'\ value=@@z6@@>\
                       <button type='submit' class='btn btn-primary' style='width:100%'>Modify Item</button>\
-                    </form>\
+                    </form><br>\
                 </td>\
                 </tr>"
 
@@ -163,12 +179,12 @@
                 }
                 console.log('max_bidder: ')
                 console.log(entry['max_bidder'])
-                            
+
 
                 if (entry['max_bidder'] !== "None") {
                     var temp = '<form action="track" method="post">\
                                 <input type="hidden" name="accept" value=@@z7@@>\
-                                <button type="submit" class="btn\ btn-primary" style="width:100%">Accept Bid</button>\
+                                <button type="submit" onclick="acceptMsg(this.form)" class="btn\ btn-primary" style="width:100%">Accept Bid</button>\
                               </form>'
                     temp = temp.replace("@@z7@@", entry['item_id'])
                     results_html = results_html.replace("@@z4@@", temp)
@@ -186,18 +202,18 @@
 
 
             results_html = ''
-            results_html += "<table><tr><th colspan='2'>I'm Bidding:</th></tr><th style='width:60%'></th><th style='width:40%'></th>"
+            results_html += "<table><tr><th colspan='2'><h1 class='my-4'>I'm Bidding:</h1></th></tr><th style='width:60%'></th><th style='width:40%'></th>"
             for (e in bid_data) {
                 // console.log(e)
                 let entry = bid_data[e]
                 results_html += "<tr>"
-                results_html += "<td> <a href=../item?itemid=@@x1@@>@@x2@@</a><br>$@@x3@@</td>"
+                results_html += "<td style='vertical-align:top'> <a href=../item?itemid=@@x1@@>@@x2@@</a><br>$@@x3@@</td>"
                 results_html += "<td align='left'>\
                      <a href=../item?itemid=@@x4@@ id='update' class='btn btn-primary' role='button' style='width:100%'>Update Bid</a>\
                     <form action='track' method='post'>\
                         <input type='hidden' name='deletebid' value=@@x5@@>\
                         <button type='submit' class='btn btn-primary' style='width:100%'>Remove Bid</button>\
-                    </form>\
+                    </form><br>\
                 </td>\
                 </tr>"
 
@@ -215,13 +231,13 @@
             // console.log("results2: ")
             // console.log(results_html)
             $('#bid_results').html(results_html);
-         }
+        }
 
 
-     $('document').ready(setup);
+        $('document').ready(setup);
 
 
-  </script>
+    </script>
 
 </body>
 

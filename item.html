@@ -53,7 +53,12 @@
 
     <div class="row">
       <form action='search' method="get">
-        <input type="hidden" name="string" value="{{lastSearch}}">
+        <input type="hidden" name="query" value="{{lastSearch}}">
+        <input type="hidden" name="maxprice" value="{{maxPrice}}">
+        <input type="hidden" name="minprice" value="{{minPrice}}">
+        {% for tag in tags: %}
+        <input type="hidden" name="tag" value="{{tag}}">
+        {% endfor %}
         <button class="btn btn-primary">Back to Browse</button>
       </form>
     </div>
@@ -75,21 +80,19 @@
           {% if entry[4] != '' %}
             <img class="card-img-top" src="/static/images/available/{{entry[4]}}" alt="">
           {% else %}
-            <img class="card-img-top" src="/static/images/default.png" alt="">
+            <img class="card-img-top" src="/static/images/reTail_sell_default.png" alt="">
           {% endif %}
         </div>
       </div>
 
       <div class="col-lg-6">
-
         <div class="row">
-          <div class="card mt-4">
-            <div class="card-body">
-              <h3 class="card-title">{{entry[6]}}</h3>
-              <h5>{{entry[1]}}</h5>
-              <p class="card-text">{{entry[5]}}</p>
-              <p class="card-text">seller: <i>{{entry[2]}}</i></p>
-            </div>
+          <div class="card-body">
+            <h3 class="card-title">{{entry[6]}}</h3>
+            <h5 style="color: #ff9b5d">{{entry[1]}}</h5><br>
+            <p class="card-text">{{entry[5]}}</p>
+            <p class="card-text"><strong>category: </strong>{{entry[9]}}</p>
+            <p class="card-text"><strong>seller: </strong><i>{{entry[2]}}</i></p>
           </div>
         </div>
         <br>
@@ -104,14 +107,13 @@
                           <div class="input-group-prepend">
                             <span class="input-group-text" id="basic-addon1">$</span>
                           </div>
-                          <input type="text" class="form-control" id="bid" name="bid" aria-describedby="emailHelp" maxlength="10" placeholder="place bid...">
+                          <input type="text" class="form-control" id="bid" name="bid" aria-describedby="emailHelp" maxlength="10" placeholder="enter bid...">
+                          <button type="submit" class="btn btn-primary" style="border: 1px solid rgba(220, 235, 242, 0.7)">place bid</button>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">place bid</button>
                   </form>
-                <p>
-                  <strong>{{msg}}</strong>
-                </p>
+                <p style="color:#ff9b5d">{{msg}}</p>
+                <body><br><strong style="color:#ff9b5d">* Note:</strong> If you place a bid on this item and another user later outbids you, the item will no longer be listed on your track page.</body>
             </div>
           </div>
         </div>
