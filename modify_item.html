@@ -36,7 +36,7 @@
             <a class="nav-link" href="..">buy</a>
           </li>
           <li class="nav-item active">
-            <a class="nav-link" href="">sell
+            <a class="nav-link" href="sell">sell
               <span class="sr-only">(current)</span>
             </a>
           </li>
@@ -100,16 +100,41 @@
                 <strong>Item Description:</strong><br>
                 <textarea type="text" class="form-control" id="item_desc" maxlength="100" name="description" aria-describedby="emailHelp">{{entry[5]}}</textarea><br>
                 <strong>Category:</strong><br>
-                <div>
-                  <input type="radio" name="tag" id = "Clothing" value="Clothing">Clothing
-                  <input type="radio" name="tag" id = "Furniture" value="Furniture">Furniture
-                  <input type="radio" name="tag" id = "Technology & Electronics" value="Technology & Electronics">Technology & Electronics
-                  <input type="radio" name="tag" id = "Sports Equipment" value="Sports Equipment">Sports Equipment
-                  <input type="radio" name="tag" id = "Books" value="Books">Books
-                  <input type="radio" name="tag" id = "Art" value="Art">Art
-                  <input type="radio" name="tag" id = "Food & Drink" value="Food & Drink">Food & Drink
-                  <input type="radio" name="tag" id = "Tickets" value="Tickets">Tickets
-                  <input type="radio" name="tag" id = "Miscellaneous" value="Miscellaneous">Miscellaneous
+                <div class="row">
+                  <div class="col-lg-4">
+                    <div class="container">
+                      <input type="radio" name="tag" id="Clothing" value="Clothing"> Clothing
+                    </div>
+                    <div class="container">
+                      <input type="radio" name="tag" id="Furniture" value="Furniture"> Furniture
+                    </div>
+                    <div class="container">
+                      <input type="radio" name="tag" id="Technology" value="Technology">
+                      Technology
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="container">
+                      <input type="radio" name="tag" id="Sports Equipment" value="Sports Equipment"> Sports Equipment
+                    </div>
+                    <div class="container">
+                      <input type="radio" name="tag" id="Books" value="Books"> Books
+                    </div>
+                    <div class="container">
+                      <input type="radio" name="tag" id="Art" value="Art"> Art
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="container">
+                      <input type="radio" name="tag" id="Food & Drink" value="Food & Drink"> Food & Drink
+                    </div>
+                    <div class="container">
+                      <input type="radio" name="tag" id="Tickets" value="Tickets"> Tickets
+                    </div>
+                    <div class="container">
+                      <input type="radio" name="tag" id="Miscellaneous" value="Miscellaneous"> Miscellaneous
+                    </div>
+                  </div>
                 </div><br>
                 <script>
                   document.getElementById("{{entry[9]}}").checked = true;
