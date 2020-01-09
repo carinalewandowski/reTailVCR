@@ -89,7 +89,7 @@ print("Retrieving retail images...")
 for entry in retail_images:
     image_data = entry[1]
     im = Image.open(io.BytesIO(image_data))
-    imgpath = '{}/{}'.format(IMAGE_DIR_AVAILABLE, entry[2])
+    imgpath = '{}/{}'.format(IMAGE_DIR_RETAIL, entry[2])
     im.save(imgpath)
 
 print("All Images Retrieved")
