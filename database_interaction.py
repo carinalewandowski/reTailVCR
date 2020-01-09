@@ -119,7 +119,15 @@ class Database:
         cursor = self._connection.cursor()
         
         # NOTE: Shouldn't this be a prepared statement?
-        cursor.execute("""SELECT * from "images" """)
+        cursor.execute("""SELECT * from "available_images" """)
+        results = cursor.fetchall()
+        return results
+
+    def get_retail_images(self):
+        cursor = self._connection.cursor()
+        
+        # NOTE: Shouldn't this be a prepared statement?
+        cursor.execute("""SELECT * from "retail_images" """)
         results = cursor.fetchall()
         return results
 
@@ -135,7 +143,7 @@ class Database:
         cursor = self._connection.cursor()
         
         # NOTE: Shouldn't this be a prepared statement?
-        cursor.execute("""SELECT * from "images" WHERE item_id="""+itemid+";")
+        cursor.execute("""SELECT * from "available_images" WHERE item_id="""+itemid+";")
         entry = cursor.fetchall()
         imaga_data = entry[1]
         
@@ -145,7 +153,7 @@ class Database:
         cursor = self._connection.cursor()
         
         # NOTE: Shouldn't this be a prepared statement?
-        cursor.execute("""SELECT pg_size_pretty( pg_total_relation_size('images') )""")
+        cursor.execute("""SELECT pg_size_pretty( pg_total_relation_size('available_images') )""")
         entry = cursor.fetchall()
         size = entry[0]
         return size
@@ -219,7 +227,7 @@ class Database:
 
     def copy_image_to_purchased_images(self, itemid):
         cursor = self._connection.cursor()
-        cursor.execute("""SELECT * from "images" WHERE item_id="""+itemid+";")
+        cursor.execute("""SELECT * from "available_images" WHERE item_id="""+itemid+";")
         entry = cursor.fetchone()
 
         image_data = entry[1]
@@ -321,7 +329,7 @@ class Database:
         cursor = self._connection.cursor()
         #binary_image = psycopg2.Binary(image_data)
 
-        postgres_insert_query = """ INSERT INTO "images" (ITEM_ID, IMG_DATA, IMG_FILENAME) VALUES (%s,%s,%s)"""
+        postgres_insert_query = """ INSERT INTO "available_images" (ITEM_ID, IMG_DATA, IMG_FILENAME) VALUES (%s,%s,%s)"""
         
         record_to_insert = (itemid, image_data, img_filename)
         cursor.execute(postgres_insert_query, record_to_insert)
@@ -331,7 +339,7 @@ class Database:
     def change_image_id(self, old_item_id, new_item_id):
         cursor = self._connection.cursor()
         
-        statement = """UPDATE images SET item_id= %s WHERE item_id= %s"""
+        statement = """UPDATE available_images SET item_id= %s WHERE item_id= %s"""
         cursor.execute(statement, (new_item_id, old_item_id))
         updated_rows = cursor.rowcount
         print("updated rows: " + str(updated_rows))
@@ -341,12 +349,21 @@ class Database:
     def delete_image(self, itemid):
         cursor = self._connection.cursor()
 
-        postgres_delete_query = """ DELETE FROM "images" WHERE ITEM_ID = %s """
+        postgres_delete_query = """ DELETE FROM "available_images" WHERE ITEM_ID = %s """
         record_to_delete = (itemid, )
         cursor.execute(postgres_delete_query, record_to_delete)
 
         self._connection.commit()
 
+    def add_retail_image(self, name, image_data, img_filename):
+        cursor = self._connection.cursor()
+        #binary_image = psycopg2.Binary(image_data)
+
+        postgres_insert_query = """ INSERT INTO "retail_images" (NAME, IMG_DATA, IMG_FILENAME) VALUES (%s,%s,%s)"""
+        
+        record_to_insert = (name, image_data, img_filename)
+        cursor.execute(postgres_insert_query, record_to_insert)
+        self._connection.commit()
     #---------------------------------------------------------------------
     # bidding functions
 
