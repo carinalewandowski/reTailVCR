@@ -66,7 +66,7 @@
         <form action="sell" id="form" method="post" enctype=multipart/form-data> <div class="input-group">
           <div class="custom-file">
             <input type="file" class="custom-file-input" id="inputGroupFile01" name="image" value="" aria-describedby="inputGroupFileAddon01">
-            <label class="custom-file-label" id="upload_label" for="inputGroupFile01">Upload image</label>
+            <label class="custom-file-label" id="upload_label" for="inputGroupFile01">Upload image (optional)</label>
           </div>
       </div>
 
@@ -74,9 +74,11 @@
 
       <div class="form-group">
         <strong>Item Name:</strong><br>
-        <input type="text" class="form-control" id="item_name" name="title" aria-describedby="emailHelp"><br>
+        <input type="text" class="form-control" id="item_name" name="title" aria-describedby="emailHelp">
+        <small style="color:#7d87a9">max length 30 characters</small><br><br>
         <strong>Item Description:</strong><br>
-        <textarea type="text" class="form-control" id="item_desc" name="description" aria-describedby="emailHelp"></textarea><br>
+        <textarea type="text" class="form-control" id="item_desc" name="description" aria-describedby="emailHelp"></textarea>
+        <small style="color:#7d87a9">max length 100 characters</small><br><br>
         <strong>Category:</strong><br>
         <!-- NOTE: need to make sure this is not left empty! -->
         <div class="row">
