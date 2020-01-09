@@ -37,6 +37,7 @@
 
 <body>
     <!-- Background images -->
+    <img class="bg-img-btm-left" height="250" src="/static/images/prints.png" alt="search cartoon">
     <img class="bg-img-btm-right" height="250" src="/static/images/search.png" alt="search cartoon">
 
     <!-- Navigation -->
@@ -157,7 +158,7 @@
             for (e in sell_data) {
                 let entry = sell_data[e]
                 results_html += "<tr>\
-                <td style='vertical-align:top'> <a href=../item?itemid=@@z1@@>@@z2@@</a> <br> @@z3@@</td> \
+                <td style='vertical-align:top'> <strong><a href=../item?itemid=@@z1@@>@@z2@@</a></strong> <br> @@z3@@</td> \
                 <td align='left'> \
                     @@z4@@ \
                     <form action='track' method='post'>\
@@ -212,7 +213,7 @@
                 // console.log(e)
                 let entry = bid_data[e]
                 results_html += "<tr>"
-                results_html += "<td style='vertical-align:top'> <a href=../item?itemid=@@x1@@>@@x2@@</a><br>$@@x3@@</td>"
+                results_html += "<td style='vertical-align:top'> <strong><a href=../item?itemid=@@x1@@>@@x2@@</a></strong><br>$@@x3@@</td>"
                 results_html += "<td align='left'>\
                      <a href=../item?itemid=@@x4@@ id='update' class='btn btn-primary' role='button' style='width:100%'>Update Bid</a>\
                     <form action='track' method='post'>\

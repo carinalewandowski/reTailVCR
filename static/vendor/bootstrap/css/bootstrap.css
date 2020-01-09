@@ -1807,23 +1807,27 @@ pre code {
 .bg-img-top-left {
   position:fixed;
   left:0;
+  z-index: -1;
 }
 
 .bg-img-top-right {
   position:fixed;
   right:0;
+  z-index: -1;
 }
 
 .bg-img-btm-left {
   position:fixed;
   left: 0;
   bottom:1%;
+  z-index: -1;
 }
 
 .bg-img-btm-right {
   position:fixed;
   right: 0;
   bottom:1%;
+  z-index: -1;
 }
 
 @media (max-width: 575.98px) {
@@ -2458,18 +2462,20 @@ fieldset:disabled a.btn {
 
 .btn-primary {
   color: #5b618a;
-  background-color: rgba(220, 235, 242, 0.7);
-  border-color: white;
+  background-color: #e8f1f5;
+  margin-bottom: 5px;
+  /* border: 10px solid none; */
+  /* border-color: white; */
 }
 
 .btn-primary:hover {
   color: rgba(72, 69, 96, 0.7);
   background-color: #fff;
-  border-color: 10px solid rgba(220, 235, 242, 0.7);
+  border-color: 2px solid#e8f1f5;
 }
 
 .btn-primary:focus, .btn-primary.focus {
-  box-shadow: 0 0 0 0.2rem rgba(220, 235, 242, 0.7);
+  box-shadow: 0 0 0 0.2rem #e8f1f5;
 }
 
 .btn-primary.disabled, .btn-primary:disabled {
