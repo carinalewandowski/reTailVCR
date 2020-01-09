@@ -118,6 +118,15 @@
             }
         }
 
+        function rmvMsg(form) {
+            if (confirm("Are you sure you want to remove your bid? This item will no longer be listed on your track page.")) {
+                form.submit();
+            }
+            else {
+                event.preventDefault();
+            }
+        }
+
         function setup() {
             refresh_page()
         }
@@ -218,7 +227,7 @@
                      <a href=../item?itemid=@@x4@@ id='update' class='btn btn-primary' role='button' style='width:100%'>Update Bid</a>\
                     <form action='track' method='post'>\
                         <input type='hidden' name='deletebid' value=@@x5@@>\
-                        <button type='submit' class='btn btn-primary' style='width:100%'>Remove Bid</button>\
+                        <button type='submit' onclick='rmvMsg(this.form)' class='btn btn-primary' style='width:100%'>Remove Bid</button>\
                     </form><br>\
                 </td>\
                 </tr>"
