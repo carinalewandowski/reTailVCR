@@ -17,7 +17,7 @@
   <link href="{{ url_for('static', filename='css/retail.css') }}" rel="stylesheet">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon/favicon.png') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/retail/fav.png') }}">
 
 </head>
 
@@ -25,7 +25,7 @@
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
     <div class="container" style="padding-right:0;padding-left:0">
-      <a class="navbar-brand" href=".."><img src="/static/images/logo.png" height="28" alt="reTail logo"></a>
+      <a class="navbar-brand" href=".."><img src="/static/images/logo.jpeg" height="28" alt="reTail logo"></a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
         aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -133,7 +133,7 @@
                   {% if entry[4] != '' %}
                   <img class="card-img-top custom-size" src="/static/images/available/{{entry[4]}}" alt="">
                   {% else %}
-                  <img class="card-img-top custom-size" src="/static/images/reTail_sell_default.png" alt="">
+                  <img class="card-img-top custom-size" src="/static/images/retail/reTail_sell_default.png" alt="">
                   {% endif %}
                 </a>
                 <div class="card-body">
@@ -231,7 +231,7 @@
   <footer class="py-0 bg-white fixed-bottom">
     <div class="container">
       <p class="m-0 text-center text-dark"><small>copyright &copy; reTail 2019 with search enhanced by DataMuse and</small> 
-      <img src="/static/images/merriam_webster.png" alt="webster tag" height="50" width="50"></p>
+      <img src="/static/images/retail/merriam_webster.png" alt="webster tag" height="50" width="50"></p>
     </div>
     <!-- /.container -->
   </footer>
