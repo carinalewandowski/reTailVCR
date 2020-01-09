@@ -2463,15 +2463,13 @@ fieldset:disabled a.btn {
 .btn-primary {
   color: #5b618a;
   background-color: #e8f1f5;
-  margin-bottom: 5px;
-  /* border: 10px solid none; */
-  /* border-color: white; */
+  margin-bottom: 2px;
 }
 
 .btn-primary:hover {
   color: rgba(72, 69, 96, 0.7);
   background-color: #fff;
-  border-color: 2px solid#e8f1f5;
+  border-color: 10px solid#e8f1f5;
 }
 
 .btn-primary:focus, .btn-primary.focus {
