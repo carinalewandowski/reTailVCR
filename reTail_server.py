@@ -35,7 +35,7 @@ mail_settings = {
     "MAIL_USE_TLS": False,
     "MAIL_USE_SSL": True,
     "MAIL_USERNAME": 'retail.cos333@gmail.com',
-    "MAIL_PASSWORD": '***'
+    "MAIL_PASSWORD": 'NZ_~m;9t'
 }
 
 app.config.update(mail_settings)
@@ -61,11 +61,17 @@ s2 = requests.Session()
 
 # merriam webster api_key
 # change b4 deploying
-key = "***"
+key = "9d189356-f47f-4545-b25c-63ed4d894d25"
 
 
 database = Database()
 database.connect()
+
+
+all_items = database.get_available_db()
+for item in all_items:
+	if item[0] not in itemid_hashset:
+		itemid_hashset.append(item[0])
 
 stored_images = database.get_available_images()
 purchased_images = database.get_purchased_images()
@@ -110,7 +116,7 @@ def send_purchase_mail(buyer, seller, item, price):
         # send to buyer
         # sendee = buyer_netid + "@princeton.edu"
         msg = Message(subject="reTail: Purchase Notification!", sender=app.config.get("MAIL_USERNAME"), 
-            recipients=[buyer], body='You have purhcased the item, "{}", for ${}. The seller e-mail is {}. Please contact the seller via e-mail to arrange a payment method and pick-up/drop-off details.\n\nThanks for using reTail!'.format(item, price, seller))
+            recipients=[buyer], body='You have purchased the item, "{}", for ${}. The seller e-mail is {}. Please contact the seller via e-mail to arrange a payment method and pick-up/drop-off details.\n\nThanks for using reTail!'.format(item, price, seller))
 
         mail.send(msg)
     except Exception as e:
