@@ -35,7 +35,7 @@ mail_settings = {
     "MAIL_USE_TLS": False,
     "MAIL_USE_SSL": True,
     "MAIL_USERNAME": 'retail.cos333@gmail.com',
-    "MAIL_PASSWORD": 'NZ_~m;9t'
+    "MAIL_PASSWORD": '***'
 }
 
 app.config.update(mail_settings)
@@ -69,7 +69,7 @@ database.connect()
 
 stored_images = database.get_available_images()
 purchased_images = database.get_purchased_images()
-retail_images = database.get_retail_images()
+# retail_images = database.get_retail_images()
 
 print("Retrieving available images...")
 for entry in stored_images:
@@ -85,12 +85,12 @@ for soldentry in purchased_images:
     imgpath = '{}/{}'.format(IMAGE_DIR_PURCHASED, soldentry[2])
     im.save(imgpath)
 
-print("Retrieving retail images...")
-for entry in retail_images:
-    image_data = entry[1]
-    im = Image.open(io.BytesIO(image_data))
-    imgpath = '{}/{}'.format(IMAGE_DIR_RETAIL, entry[2])
-    im.save(imgpath)
+# print("Retrieving retail images...")
+# for entry in retail_images:
+#     image_data = entry[1]
+#     im = Image.open(io.BytesIO(image_data))
+#     imgpath = '{}/{}'.format(IMAGE_DIR_RETAIL, entry[2])
+#     im.save(imgpath)
 
 print("All Images Retrieved")
 database.disconnect()
