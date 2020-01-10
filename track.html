@@ -71,7 +71,12 @@
     </nav>
 
     <!-- Page Content -->
+    
     <div class="container">
+        {% if errormsg != '' %}
+        <br>
+        {% endif %}
+        <strong style="color:#ff9b5d">{{errormsg}}</strong>
         <div class="row">
             <div class="col-sm-6">
                 <!-- Entry Start -->
@@ -163,8 +168,8 @@
             // console.log(sell_data)
             bid_data = res[1]
 
-            consistence = res[2]
-            console.log(consistence)
+            // consistence = res[2]
+            // console.log(consistence)
 
             results_html = ''
             results_html += "<table><tr><th colspan='2'><h1 class='my-4' align='center'>I'm Selling:</h1></th></tr><th style='width:60%'></th><th style='width:40%'></th>"
@@ -254,12 +259,10 @@
             // console.log(results_html)
             $('#bid_results').html(results_html);
 
-            if (consistence === 'f') {
-                alert("The bid you were trying to accept was removed \
-                by the bidder right before you hit accept, so we could not \
-                process the transaction. Sorry for the inconvenience.")
-                console.log("hereeee")
-            }
+            // if (consistence === 'f') {
+            //     alert("The bid you were trying to accept was removed by the bidder right before you hit accept, so we could not process the transaction. Sorry for the inconvenience.")
+            //     console.log("hereeee")
+            // }
 
         }
 
