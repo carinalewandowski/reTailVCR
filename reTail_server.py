@@ -19,6 +19,7 @@ import datetime
 import requests
 import os
 from json import dumps
+import math
 
 from flask_mail import Mail
 from flask_mail import Message
@@ -329,7 +330,7 @@ def item():
             return response
 
         # round bid to nearest 0.5
-        bid = round( (float(bid) * 2) / 2 )
+        bid = math.floor(bid)
 
         #if netid is None:
         netid = username

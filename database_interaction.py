@@ -73,8 +73,7 @@ class Database:
     def check_exists_item(self, itemid):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
-        cursor.execute("""SELECT EXISTS(SELECT 1 from "available_items" WHERE item_id="""+itemid+");")
+        cursor.execute("""SELECT EXISTS(SELECT 1 from "available_items" WHERE item_id= %s);""", (itemid, ))
         exists = cursor.fetchone()[0]
         
         return exists
@@ -82,8 +81,7 @@ class Database:
     def get_item(self, itemid):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
-        cursor.execute("""SELECT * from "available_items" WHERE item_id="""+itemid+";")
+        cursor.execute("""SELECT * from "available_items" WHERE item_id= %s""", (itemid, ))
         entry = cursor.fetchall()
         
         return entry
@@ -91,7 +89,6 @@ class Database:
     def get_all_items_from_netid(self, netid):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
         cursor.execute("""SELECT * from "available_items" WHERE SELLER_NETID=\'"""+netid+"\';")
         results = cursor.fetchall()
         
@@ -100,7 +97,6 @@ class Database:
     def get_activeitems_from_netid(self, netid):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
         cursor.execute("""SELECT * from "available_items" WHERE MAX_BID_USER IS NOT NULL AND SELLER_NETID=\'"""+netid+"\';")
         results = cursor.fetchall()
         
@@ -109,7 +105,6 @@ class Database:
     def get_all_items_from_maxbidder(self, maxbidder):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
         cursor.execute("""SELECT * from "available_items" WHERE MAX_BID_USER=\'"""+maxbidder+"\';")
         results = cursor.fetchall()
         
@@ -118,7 +113,6 @@ class Database:
     def get_available_images(self):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
         cursor.execute("""SELECT * from "available_images" """)
         results = cursor.fetchall()
         return results
@@ -126,7 +120,6 @@ class Database:
     def get_retail_images(self):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
         cursor.execute("""SELECT * from "retail_images" """)
         results = cursor.fetchall()
         return results
@@ -134,7 +127,6 @@ class Database:
     def get_purchased_images(self):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
         cursor.execute("""SELECT * from "purchased_images" """)
         results = cursor.fetchall()
         return results
@@ -142,8 +134,7 @@ class Database:
     def get_image(self, itemid):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
-        cursor.execute("""SELECT * from "available_images" WHERE item_id="""+itemid+";")
+        cursor.execute("""SELECT * from "available_images" WHERE item_id=%s;""", (itemid, ))
         entry = cursor.fetchall()
         imaga_data = entry[1]
         
@@ -152,7 +143,6 @@ class Database:
     def image_table_size(self):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
         cursor.execute("""SELECT pg_size_pretty( pg_total_relation_size('available_images') )""")
         entry = cursor.fetchall()
         size = entry[0]
@@ -164,7 +154,6 @@ class Database:
     def get_solditems_from_netid(self, netid):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
         cursor.execute("""SELECT * from "purchased_items" WHERE SELLER_NETID=\'"""+netid+"\';")
         results = cursor.fetchall()
 
@@ -173,8 +162,7 @@ class Database:
     def get_solditem(self, itemid):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
-        cursor.execute("""SELECT * from "purchased_items" WHERE item_id="""+itemid+";")
+        cursor.execute("""SELECT * from "purchased_items" WHERE item_id=%s;""", (itemid, ))
         entry = cursor.fetchall()
         
         return entry
@@ -182,8 +170,7 @@ class Database:
     def check_exists_solditem(self, itemid):
         cursor = self._connection.cursor()
         
-        # NOTE: Shouldn't this be a prepared statement?
-        cursor.execute("""SELECT EXISTS(SELECT 1 from "purchased_items" WHERE item_id="""+itemid+");")
+        cursor.execute("""SELECT EXISTS(SELECT 1 from "purchased_items" WHERE item_id=%s);""", (itemid, ))
         exists = cursor.fetchone()[0]
         return exists
 
@@ -208,7 +195,7 @@ class Database:
 
     def copy_to_purchased(self, itemid, selldate, buyer_netid):
         cursor = self._connection.cursor()
-        cursor.execute("""SELECT * from "available_items" WHERE item_id="""+itemid+";")
+        cursor.execute("""SELECT * from "available_items" WHERE item_id=%s;""", (itemid, ))
         entry_available = cursor.fetchone()
 
         seller_netid = entry_available[2]
@@ -227,7 +214,7 @@ class Database:
 
     def copy_image_to_purchased_images(self, itemid):
         cursor = self._connection.cursor()
-        cursor.execute("""SELECT * from "available_images" WHERE item_id="""+itemid+";")
+        cursor.execute("""SELECT * from "available_images" WHERE item_id=%s;""", (itemid, ))
         entry = cursor.fetchone()
 
         image_data = entry[1]
@@ -458,8 +445,6 @@ class Database:
         result = cursor.fetchall()[0]
         return result
 
-#---------------------------------------------------------------------
-#---------------------------------------------------------------------
 #---------------------------------------------------------------------
 
 # if __name__ == '__main__':
